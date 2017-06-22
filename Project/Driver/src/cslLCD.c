@@ -84,114 +84,168 @@ void CslLCD_lowlevel_Init(void)
 void CslLCD_Init(void)
 {
 	CslLCD_lowlevel_Init();
-	WriteComm(0x01);
+	CSL_LCD_WriteComm(0x01);
 	Delay(1200);
-	WriteComm(0xE0);
-	WriteData(0x00);
-	WriteData(0x07);
-	WriteData(0x0f);
-	WriteData(0x0D);
-	WriteData(0x1B);
-	WriteData(0x0A);
-	WriteData(0x3c);
-	WriteData(0x78);
-	WriteData(0x4A);
-	WriteData(0x07);
-	WriteData(0x0E);
-	WriteData(0x09);
-	WriteData(0x1B);
-	WriteData(0x1e);
-	WriteData(0x0f); 
+	CSL_LCD_WriteComm(0xE0);
+	CSL_LCD_WriteData(0x00);
+	CSL_LCD_WriteData(0x07);
+	CSL_LCD_WriteData(0x0f);
+	CSL_LCD_WriteData(0x0D);
+	CSL_LCD_WriteData(0x1B);
+	CSL_LCD_WriteData(0x0A);
+	CSL_LCD_WriteData(0x3c);
+	CSL_LCD_WriteData(0x78);
+	CSL_LCD_WriteData(0x4A);
+	CSL_LCD_WriteData(0x07);
+	CSL_LCD_WriteData(0x0E);
+	CSL_LCD_WriteData(0x09);
+	CSL_LCD_WriteData(0x1B);
+	CSL_LCD_WriteData(0x1e);
+	CSL_LCD_WriteData(0x0f); 
 	
-	WriteComm(0xE1);
-	WriteData(0x00);
-	WriteData(0x22);
-	WriteData(0x24);
-	WriteData(0x06);
-	WriteData(0x12);
-	WriteData(0x07);
-	WriteData(0x36);
-	WriteData(0x47);
-	WriteData(0x47);
-	WriteData(0x06);
-	WriteData(0x0a);
-	WriteData(0x07);
-	WriteData(0x30);
-	WriteData(0x37);
-	WriteData(0x0f);
+	CSL_LCD_WriteComm(0xE1);
+	CSL_LCD_WriteData(0x00);
+	CSL_LCD_WriteData(0x22);
+	CSL_LCD_WriteData(0x24);
+	CSL_LCD_WriteData(0x06);
+	CSL_LCD_WriteData(0x12);
+	CSL_LCD_WriteData(0x07);
+	CSL_LCD_WriteData(0x36);
+	CSL_LCD_WriteData(0x47);
+	CSL_LCD_WriteData(0x47);
+	CSL_LCD_WriteData(0x06);
+	CSL_LCD_WriteData(0x0a);
+	CSL_LCD_WriteData(0x07);
+	CSL_LCD_WriteData(0x30);
+	CSL_LCD_WriteData(0x37);
+	CSL_LCD_WriteData(0x0f);
 	
-	WriteComm(0xC0);
-	WriteData(0x10);
-	WriteData(0x10);
+	CSL_LCD_WriteComm(0xC0);
+	CSL_LCD_WriteData(0x10);
+	CSL_LCD_WriteData(0x10);
 	
-	WriteComm(0xC1);
-	WriteData(0x41);
+	CSL_LCD_WriteComm(0xC1);
+	CSL_LCD_WriteData(0x41);
 	
-	WriteComm(0xC5);
-	WriteData(0x00);
-	WriteData(0x22);
-	WriteData(0x80);
+	CSL_LCD_WriteComm(0xC5);
+	CSL_LCD_WriteData(0x00);
+	CSL_LCD_WriteData(0x22);
+	CSL_LCD_WriteData(0x80);
 	
-	WriteComm(0x36);
-	WriteData(0x68);
-	//WriteData(0x48);
+	CSL_LCD_WriteComm(0x36);
+	CSL_LCD_WriteData(0x68);
+	//CSL_LCD_WriteData(0x48);
 	
-	WriteComm(0x3A);//Interface Mode Control
-	WriteData(0x55);
+	CSL_LCD_WriteComm(0x3A);//Interface Mode Control
+	CSL_LCD_WriteData(0x55);
 	
-	WriteComm(0xB0);//Interface Mode Control  
-	WriteData(0x00);
-	WriteComm(0xB1);//Frame rate 70HZ  
-	WriteData(0xB0);
-	WriteData(0x11);
-	WriteComm(0xB4);
-	WriteData(0x02);  
-	WriteComm(0xB6);//RGB/MCU Interface Control
-	WriteData(0x02);
-	WriteData(0x02);
+	CSL_LCD_WriteComm(0xB0);//Interface Mode Control  
+	CSL_LCD_WriteData(0x00);
+	CSL_LCD_WriteComm(0xB1);//Frame rate 70HZ  
+	CSL_LCD_WriteData(0xB0);
+	CSL_LCD_WriteData(0x11);
+	CSL_LCD_WriteComm(0xB4);
+	CSL_LCD_WriteData(0x02);  
+	CSL_LCD_WriteComm(0xB6);//RGB/MCU Interface Control
+	CSL_LCD_WriteData(0x02);
+	CSL_LCD_WriteData(0x02);
 	
-	WriteComm(0xB7);
-	WriteData(0xC6);
+	CSL_LCD_WriteComm(0xB7);
+	CSL_LCD_WriteData(0xC6);
 	
 	//WriteComm(0xBE);
 	//WriteData(0x00);
 	//WriteData(0x04);
 	
-	WriteComm(0xE9); 
-	WriteData(0x00);
+	CSL_LCD_WriteComm(0xE9); 
+	CSL_LCD_WriteData(0x00);
 
-	WriteComm(0xF7);
-	WriteData(0xA9);
-	WriteData(0x51);
-	WriteData(0x2C); 
-	WriteData(0x82);
+	CSL_LCD_WriteComm(0xF7);
+	CSL_LCD_WriteData(0xA9);
+	CSL_LCD_WriteData(0x51);
+	CSL_LCD_WriteData(0x2C); 
+	CSL_LCD_WriteData(0x82);
 
-	WriteComm(0x11);
+	CSL_LCD_WriteComm(0x11);
 	Delay(120);
-	WriteComm(0x29);
+	CSL_LCD_WriteComm(0x29);
 }
 
 void BlockWrite(unsigned int Xstart,unsigned int Xend,unsigned int Ystart,unsigned int Yend)
 {
-	WriteComm(0x2a);
-	WriteData(Xstart>>8);
-	WriteData(Xstart&0xff);
-	WriteData(Xend>>8);
-	WriteData(Xend&0xff);
+	CSL_LCD_WriteComm(0x2a);
+	CSL_LCD_WriteData(Xstart>>8);
+	CSL_LCD_WriteData(Xstart&0xff);
+	CSL_LCD_WriteData(Xend>>8);
+	CSL_LCD_WriteData(Xend&0xff);
 
-	WriteComm(0x2b);
-	WriteData(Ystart>>8);
-	WriteData(Ystart&0xff);
-	WriteData(Yend>>8);
-	WriteData(Yend&0xff);
+	CSL_LCD_WriteComm(0x2b);
+	CSL_LCD_WriteData(Ystart>>8);
+	CSL_LCD_WriteData(Ystart&0xff);
+	CSL_LCD_WriteData(Yend>>8);
+	CSL_LCD_WriteData(Yend&0xff);
 
-	WriteComm(0x2c);
+	CSL_LCD_WriteComm(0x2c);
 }
 
-void PutPixel(unsigned int x,unsigned int y,unsigned int color)
+void SetPixel(unsigned int x,unsigned int y, unsigned int color)
 {
 	BlockWrite(x,x+1,y,y+1);
-	WriteData(color & 0xFFFF);
+	CSL_LCD_WriteData(color & 0xFFFF);
+}
+
+unsigned int GetPixel(unsigned int x, unsigned int y)
+{
+	return 0;
+}
+
+void CslLCD_WR_REG(uint16_t Reg)
+{
+	CSL_LCD_WriteComm(Reg);
+}
+
+void CslLCD_WR_DATA(uint16_t Data)
+{
+	CSL_LCD_WriteData(Data);
+}
+
+void CslLCD_MRD_DATA(uint16_t* pData, int Count)
+{
+	volatile uint16_t dummy;
+	uint16_t read1,read2,read3;
+	uint16_t r1,g1,b1,r2,g2,b2;
+	
+	dummy = CSL_LCD_RAM;
+	while(Count>1)
+	{
+		read1 = CSL_LCD_RAM;
+		read2 = CSL_LCD_RAM;
+		read3 = CSL_LCD_RAM;
+		r1 = read1 >> 11;
+		g1 = read1 >> 2 & 0x3F;
+		b1 = read2 >> 11;
+		r2 = read2 >> 3 & 0x1F;
+		g2 = read3 >> 10;
+		b2 = read3 >> 3 & 0x1F;
+		*pData++ = (r1<<11) + (g1<<5) + b1;
+		*pData++ = (r2<<11) + (g2<<5) + b2;
+		Count-=2;
+	}
+	if(Count)
+	{
+		read1 = CSL_LCD_RAM;
+		read2 = CSL_LCD_RAM;
+		r1 = read1 >> 11;
+		g1 = read1 >> 2 & 0x3F;
+		b1 = read2 >> 11;
+		*pData++ = (r1<<11) + (g1<<5) + b1;
+	}
+}
+
+void CslLCD_MWR_DATA(uint16_t* pData, int Count)
+{
+	while(Count--)
+		CSL_LCD_WriteData(*pData++);
 }
 
 void CslLCD_Clear(uint16_t BackColor)
@@ -201,6 +255,17 @@ void CslLCD_Clear(uint16_t BackColor)
 	BlockWrite(0, 480, 0, 320);
 	for(i=0;i<480*320;i++)
 	{
-		WriteData(BackColor);
+		CSL_LCD_WriteData(BackColor);
+	}
+}
+
+void CslLCD_FillRect(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd, uint16_t Color)
+{
+	uint32_t i;
+	
+	BlockWrite(xStart, xEnd, yStart, yEnd);
+	for(i=0;i<(xEnd-xStart+2)*(yEnd-yStart+2);i++)
+	{
+		CSL_LCD_WriteData(Color);
 	}
 }

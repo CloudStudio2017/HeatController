@@ -53,3 +53,5 @@ dkms.conf
 
 *release/
 *JLinkLog.txt
+Libraries/emWin/Tool/*.c
+Libraries/emWin/Tool/*.txt
