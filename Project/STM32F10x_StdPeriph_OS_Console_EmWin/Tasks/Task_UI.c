@@ -8,7 +8,7 @@ WM_HWIN wm_main;
 
 static char string_buf[50];
 static WM_HWIN hItem;
-static uint32_t InitCount = 2;
+static uint32_t InitCount = 3;
 
 void vTask_UI( void *pvParameters )
 {
@@ -44,6 +44,9 @@ void vTask_UI( void *pvParameters )
 					break;
 				case CONTROL_INIT_DONE:
 					GUI_DispString("Control OK\n");
+					break;
+				case KEYBOARD_INIT_DONE:
+					GUI_DispString("KeyBoard OK\n");
 					break;
 				//case UI_INIT_DONE:
 				//	GUI_DispString("\n");

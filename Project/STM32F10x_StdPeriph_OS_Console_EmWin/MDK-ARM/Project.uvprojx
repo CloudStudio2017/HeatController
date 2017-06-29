@@ -627,6 +627,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\Driver\src\cslRTC.c</FilePath>
             </File>
+            <File>
+              <FileName>myButton.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\myButton.c</FilePath>
+            </File>
+            <File>
+              <FileName>myLed.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\myLed.c</FilePath>
+            </File>
+            <File>
+              <FileName>myBeep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\myBeep.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -721,6 +736,11 @@
               <FileName>Task_Common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Tasks\Task_Common.c</FilePath>
+            </File>
+            <File>
+              <FileName>Task_KeyBoard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Tasks\Task_KeyBoard.c</FilePath>
             </File>
           </Files>
         </Group>

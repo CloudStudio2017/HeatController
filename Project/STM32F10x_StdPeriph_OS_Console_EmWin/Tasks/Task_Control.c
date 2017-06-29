@@ -1,5 +1,7 @@
 #include "stm32f10x.h"
 #include "Task_Control.h"
+#include "myButton.h"
+#include "myLed.h"
 
 #define ADC1_DR_Address    ((uint32_t)0x4001244C)
 
@@ -73,6 +75,16 @@ static void Control_LowLevel_Init(void)
 {
 	Control_IO_Init();
 	Control_ADC_Init();
+	
+	myLed_Init();
+	myLed_Off(0);
+	myLed_Off(1);
+	myLed_Off(2);
+	myLed_Off(3);
+	myLed_Off(4);
+	myLed_Off(5);
+	myLed_Off(6);
+	myLed_Off(7);
 }
 
 static uint32_t Is_Init=0;
@@ -84,5 +96,40 @@ void vTask_Control( void *pvParameters )
 	Is_Init = CONTROL_INIT_DONE;
 	xQueueSendToBack(InitQueue, &Is_Init, 0);
 	
-	while(1);
+	while(1)
+	{
+		myLed_On(0);
+		vTaskDelay(200);
+		myLed_On(1);
+		vTaskDelay(200);
+		myLed_On(2);
+		vTaskDelay(200);
+		myLed_On(3);
+		vTaskDelay(200);
+		myLed_On(4);
+		vTaskDelay(200);
+		myLed_On(5);
+		vTaskDelay(200);
+		myLed_On(6);
+		vTaskDelay(200);
+		myLed_On(7);
+		vTaskDelay(200);
+		
+		myLed_Off(0);
+		vTaskDelay(200);
+		myLed_Off(1);
+		vTaskDelay(200);
+		myLed_Off(2);
+		vTaskDelay(200);
+		myLed_Off(3);
+		vTaskDelay(200);
+		myLed_Off(4);
+		vTaskDelay(200);
+		myLed_Off(5);
+		vTaskDelay(200);
+		myLed_Off(6);
+		vTaskDelay(200);
+		myLed_Off(7);
+		vTaskDelay(200);
+	}
 }

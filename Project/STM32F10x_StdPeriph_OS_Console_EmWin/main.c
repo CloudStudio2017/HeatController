@@ -29,6 +29,7 @@
 #include "Task_Console.h"
 #include "Task_UI.h"
 #include "Task_Control.h"
+#include "Task_KeyBoard.h"
 #include "Task_Common.h"
 
 
@@ -66,6 +67,7 @@ int main(void)
 	xTaskCreate(vTask_Console, "Task_Console", 256, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate(vTask_UI, "Task_UI", 256, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate(vTask_Control, "Task_Control", 256, NULL, tskIDLE_PRIORITY, NULL);
+	xTaskCreate(vTask_KeyBoard, "Task_KeyBoard", 256, NULL, tskIDLE_PRIORITY, NULL);
 
 	vTaskStartScheduler();
   /* Infinite loop */
