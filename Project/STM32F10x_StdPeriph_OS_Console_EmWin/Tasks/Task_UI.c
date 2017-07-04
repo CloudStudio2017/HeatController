@@ -4,11 +4,13 @@
 #include "Frames.h"
 #include "stdio.h"
 
+#include "FlashControl.h"
+
 WM_HWIN wm_main;
 
 static char string_buf[50];
 static WM_HWIN hItem;
-static uint32_t InitCount = 3;
+static uint32_t InitCount = INIT_TOTAL_COUNT;
 
 void vTask_UI( void *pvParameters )
 {
@@ -56,11 +58,50 @@ void vTask_UI( void *pvParameters )
 		else
 		{
 			GUI_DispString("Sys init fail\n");
-			while(1);
+			//while(1);
 		}
 		GUI_Delay(200);
 	}
 	vQueueDelete(InitQueue);
+	
+	//Test Read Flash ID
+	do
+	{
+		if(FlashControl_Init())
+		{
+			GUI_DispString("Flash init fail\n");
+			break;
+		}
+		GUI_DispString("Flash init done\n");
+		
+		uint32_t flashID;
+		flashID = FlashControl_ReadID();
+		GUI_DispString("Flash ID = 0x");
+		GUI_DispHex(flashID, 8);
+		
+		FlashControl_Erase(0x00, 0x1000);
+		GUI_DispString(" Erase 0 ");
+		
+		uint8_t tmpBuf[512] = {0x34, 0x56, 0x78, 0x12};
+		tmpBuf[254] = 0x11;
+		tmpBuf[255] = 0x22;
+		tmpBuf[256] = 0x33;
+		tmpBuf[257] = 0x44;
+		tmpBuf[511] = 0x55;
+		FlashControl_Write(tmpBuf, 0x00, 512);
+		GUI_DispString(" Wrtie 4B \n");
+		
+		uint8_t tmpBuf2[4];
+		FlashControl_Read(tmpBuf2, 0x100, 4);
+		GUI_DispString("Read 4B: 0x");
+		GUI_DispHex(tmpBuf2[0], 2);
+		GUI_DispHex(tmpBuf2[1], 2);
+		GUI_DispHex(tmpBuf2[2], 2);
+		GUI_DispHex(tmpBuf2[3], 2);
+		
+		GUI_Delay(4000);
+		GUI_DispString("\n");
+	}while(0);
 	
 	GUI_DispString("Run\n");
 	GUI_Delay(500);

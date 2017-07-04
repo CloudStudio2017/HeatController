@@ -642,6 +642,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\Driver\src\myBeep.c</FilePath>
             </File>
+            <File>
+              <FileName>w25q128.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\w25q128.c</FilePath>
+            </File>
+            <File>
+              <FileName>FlashControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\FlashControl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
