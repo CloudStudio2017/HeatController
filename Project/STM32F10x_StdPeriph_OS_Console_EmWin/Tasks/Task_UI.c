@@ -79,17 +79,17 @@ void vTask_UI( void *pvParameters )
 		GUI_DispString("Flash ID = 0x");
 		GUI_DispHex(flashID, 8);
 		
-		FlashControl_Erase(0x00, 0x1000);
-		GUI_DispString(" Erase 0 ");
+		//FlashControl_Erase(0x00, 0x1000);
+		//GUI_DispString(" Erase 0 ");
 		
-		uint8_t tmpBuf[512] = {0x34, 0x56, 0x78, 0x12};
-		tmpBuf[254] = 0x11;
-		tmpBuf[255] = 0x22;
-		tmpBuf[256] = 0x33;
-		tmpBuf[257] = 0x44;
-		tmpBuf[511] = 0x55;
-		FlashControl_Write(tmpBuf, 0x00, 512);
-		GUI_DispString(" Wrtie 4B \n");
+		//uint8_t tmpBuf[512] = {0x34, 0x56, 0x78, 0x12};
+		//tmpBuf[254] = 0x11;
+		//tmpBuf[255] = 0x22;
+		//tmpBuf[256] = 0x33;
+		//tmpBuf[257] = 0x44;
+		//tmpBuf[511] = 0x55;
+		//FlashControl_Write(tmpBuf, 0x00, 512);
+		//GUI_DispString(" Wrtie 4B \n");
 		
 		uint8_t tmpBuf2[4];
 		FlashControl_Read(tmpBuf2, 0x100, 4);
