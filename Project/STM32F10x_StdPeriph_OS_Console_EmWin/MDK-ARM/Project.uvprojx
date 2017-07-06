@@ -727,6 +727,11 @@
               <FileType>1</FileType>
               <FilePath>..\GUI_Frames\Window_MainDLG.c</FilePath>
             </File>
+            <File>
+              <FileName>UI_Sources.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI_Frames\UI_Sources.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

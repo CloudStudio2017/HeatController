@@ -12,6 +12,8 @@ static char string_buf[50];
 static WM_HWIN hItem;
 static uint32_t InitCount = INIT_TOTAL_COUNT;
 
+
+
 void vTask_UI( void *pvParameters )
 {
 	uint32_t Qv;
@@ -110,6 +112,17 @@ void vTask_UI( void *pvParameters )
 	//GUI_FillRect(40,140, 140, 240);
 	//GUI_DispStringAt("Hello", 20, 120);
 	//GUI_Delay(2000);
+	
+	
+	/* GUI BMP DRAW TEST */
+	do
+	{
+		uint32_t tmpBMP_Index = 0;
+		
+		GUI_BMP_DrawEx(GetUISourceData, &tmpBMP_Index, 100, 100);
+	}while(0);
+	
+	GUI_Delay(4000);
 	
 	wm_main = CreateWindow_Main();
 	
