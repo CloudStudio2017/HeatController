@@ -219,7 +219,7 @@ uint8_t xmodemReceive(uint8_t checkType, xmodemWrite_cbType WriteCB)
 					//memcpy(g_DataTempBuf,xbuff,128);
 					memcpy(g_DataTempBuf[ReceiveDataOK], xbuff, 128);
 					
-					WriteCB(xbuff, 128);
+					WriteCB(xbuff+3, 128);
 //					for(j=0;j<128;j++)
 //					{
 //						k+=6;
