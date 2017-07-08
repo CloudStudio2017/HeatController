@@ -1,17 +1,162 @@
 #include "CslRTC.h"
 
+static const uint8_t _mDays[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+static const uint8_t _sDays[12] = {31,29,31,30,31,30,31,31,30,31,30,31};
+
+#define IsLeapYear(YYYY)   (((YYYY) % 4 == 0) && ((YYYY) % 100 != 0) || ((YYYY) % 400 == 0))
+
+void CslRTC_Sec2Date(uint32_t sec, CslRTC_Date* pDate)
+{
+	uint16_t YY = 2000;
+	uint8_t MM = 1;
+	uint32_t tmpDate;
+	const uint8_t* pDayMap;
+	
+	tmpDate = sec / (24 * 3600);
+	while(tmpDate > 365)
+	{
+		if(IsLeapYear(YY))
+		{
+			tmpDate -= 366;
+		}
+		else
+		{
+			tmpDate -= 365;
+		}
+		YY++;
+	}
+	pDate->Year = YY;
+	if(IsLeapYear(YY))
+	{
+		pDayMap = _sDays;
+	}
+	else
+	{
+		pDayMap = _mDays;
+	}
+	while(tmpDate > pDayMap[MM - 1])
+	{
+		tmpDate -= pDayMap[MM - 1];
+		MM++;
+	}
+	pDate->Month = MM;
+	pDate->Date = tmpDate + 1;
+}
+
+void CslRTC_Date2Sec(CslRTC_Date* pDate, uint32_t* psec)
+{
+	uint16_t YY;
+	uint8_t MM, DD;
+	uint32_t tmpDate = 0;
+	const uint8_t* pDayMap;
+	
+	YY = pDate->Year;
+	MM = pDate->Month;
+	DD = pDate->Date;
+	
+	if(IsLeapYear(YY))
+	{
+		pDayMap = _sDays;
+	}
+	else
+	{
+		pDayMap = _mDays;
+	}
+	while(YY > 2000)
+	{
+		if(IsLeapYear(YY-1))
+		{
+			tmpDate += 366;
+		}
+		else
+		{
+			tmpDate += 365;
+		}
+		YY--;
+	}
+	while(MM > 1)
+	{
+		MM--;
+		tmpDate += pDayMap[MM-1];
+	}
+	tmpDate += DD - 1;
+	
+	*psec = tmpDate * 24 * 3600;
+}
+
+void CslRTC_Sec2Time(uint32_t sec, CslRTC_Time *pTime)
+{
+	pTime->Hou = sec / 3600 % 24;
+	pTime->Min = sec / 60 % 60;
+	pTime->Sec = sec % 60;
+}
+
+void CslRTC_Time2Sec(CslRTC_Time *pTime, uint32_t* psec)
+{
+	*psec = pTime->Hou * 3600 + pTime->Min * 60 + pTime->Sec;
+}
 
 void CslRTC_GetTime(CslRTC_Time* pTime)
 {
 	uint32_t tmpCounter;
 	
 	tmpCounter = RTC_GetCounter();
+	CslRTC_Sec2Time(tmpCounter, pTime);
+}
+
+void CslRTC_GetDate(CslRTC_Date* pDate)
+{
+	uint32_t tmpCounter;
 	
-	pTime->Sec = tmpCounter % 60;
+	tmpCounter = RTC_GetCounter();
+	CslRTC_Sec2Date(tmpCounter, pDate);
+}
+
+void CslRTC_SetTime(CslRTC_Time* pTime)
+{
+	uint32_t tmpCounter;
+	uint32_t tmpSec;
+	
+	tmpCounter = RTC_GetCounter() / (24 * 3600);
+	CslRTC_Time2Sec(pTime, &tmpSec);
+	tmpCounter = tmpCounter * (24 * 3600) + tmpSec;
+	RTC_SetCounter(tmpCounter);
+	RTC_WaitForLastTask();
+}
+
+void CslRTC_SetDate(CslRTC_Date* pDate)
+{
+	uint32_t tmpCounter;
+	uint32_t tmpSec;
+	
+	tmpCounter = RTC_GetCounter() % (24 * 3600);
+	CslRTC_Date2Sec(pDate, &tmpSec);
+	tmpCounter = tmpCounter + tmpSec;
+	RTC_SetCounter(tmpCounter);
+	RTC_WaitForLastTask();
+}
+
+#define CSL_RTC_BKP_REG         BKP_DR1
+#define CSL_RTC_BKP_REG_VALUE   0x2234
+uint8_t CslRTC_CheckBackupReg(void)
+{
+	if(BKP_ReadBackupRegister(CSL_RTC_BKP_REG) != CSL_RTC_BKP_REG_VALUE)
+	{
+		return 0xFF;
+	}
+	
+	return 0x00;
+}
+
+void inline CslRTC_SetBackupReg(void)
+{
+	BKP_WriteBackupRegister(CSL_RTC_BKP_REG, CSL_RTC_BKP_REG_VALUE);
 }
 
 void CslRTC_Init(void)
 {
+	CslRTC_Date InitDate;
+	CslRTC_Time InitTime;
 	//NVIC_InitTypeDef NVIC_InitStructure;
 
   /* Enable the RTC Interrupt */
@@ -25,9 +170,21 @@ void CslRTC_Init(void)
 	
 	/* Allow access to BKP Domain */
   PWR_BackupAccessCmd(ENABLE);
-
+	
+	BKP_ClearFlag();
+	if(RCC_GetFlagStatus(RCC_FLAG_PORRST) != RESET)
+	{
+		RCC_ClearFlag();
+		
+		if(CslRTC_CheckBackupReg() == 0x00)
+		{
+			return;
+		}
+	}
+	CslRTC_SetBackupReg();
+	
   /* Reset Backup Domain */
-  BKP_DeInit();
+  //BKP_DeInit();
 
   /* Enable LSE */
   RCC_LSEConfig(RCC_LSE_ON);
@@ -58,6 +215,17 @@ void CslRTC_Init(void)
 
   /* Wait until last write operation on RTC registers has finished */
   RTC_WaitForLastTask();
+	
+	InitDate.Year = 2017;
+	InitDate.Month = 7;
+	InitDate.Date = 9;
+	
+	InitTime.Hou = 00;
+	InitTime.Min = 33;
+	InitTime.Sec = 00;
+	
+	CslRTC_SetDate(&InitDate);
+	CslRTC_SetTime(&InitTime);
 }
 
 void RTC_1IRQHandler(void)

@@ -5,6 +5,7 @@
 #include "stdio.h"
 
 #include "FlashControl.h"
+#include "CslRTC.h"
 
 WM_HWIN wm_main;
 
@@ -101,9 +102,38 @@ void vTask_UI( void *pvParameters )
 		GUI_DispHex(tmpBuf2[2], 2);
 		GUI_DispHex(tmpBuf2[3], 2);
 		
-		GUI_Delay(4000);
 		GUI_DispString("\n");
 	}while(0);
+	
+	do
+	{
+		CslRTC_Date tmpDate;
+		CslRTC_Time tmpTime;
+		uint32_t tmpSec;
+		CslRTC_Date tmpDate2;
+		CslRTC_Time tmpTime2;
+		
+		tmpDate.Year = 2005;
+		tmpDate.Month = 1;
+		tmpDate.Date = 1;
+		
+		CslRTC_Date2Sec(&tmpDate, &tmpSec);
+		GUI_DispString("Sec=");
+		GUI_DispDec(tmpSec / 24 / 3600, 12);
+		GUI_DispString("\n");
+		
+		CslRTC_Sec2Date(tmpSec, &tmpDate2);
+		GUI_DispString("YY=");
+		GUI_DispDec(tmpDate2.Year, 4);
+		GUI_DispString(" MM=");
+		GUI_DispDec(tmpDate2.Month, 2);
+		GUI_DispString(" DD=");
+		GUI_DispDec(tmpDate2.Date, 2);
+		GUI_DispString("\n");
+		
+		GUI_Delay(4000);
+	}while(0);
+	
 	
 	GUI_DispString("Run\n");
 	GUI_Delay(500);
@@ -120,6 +150,8 @@ void vTask_UI( void *pvParameters )
 		uint32_t tmpBMP_Index = 0;
 		
 		GUI_BMP_DrawEx(GetUISourceData, &tmpBMP_Index, 100, 100);
+		
+		GUI_BMP_DrawScaledEx(GetUISourceData, &tmpBMP_Index, 100, 200, 2, 1);
 	}while(0);
 	
 	GUI_Delay(4000);
@@ -127,12 +159,15 @@ void vTask_UI( void *pvParameters )
 	wm_main = CreateWindow_Main();
 	
 	uint32_t iTime=0;
+	CslRTC_Time ui_time;
+	CslRTC_Date ui_date;
 	while(1)
 	{
 		GUI_Delay(500);
 		
-		
-		sprintf(string_buf, "xx--%d", iTime++);
+		CslRTC_GetTime(&ui_time);
+		CslRTC_GetDate(&ui_date);
+		sprintf(string_buf, "%4d/%2d/%2d  %02d-%02d-%02d",ui_date.Year, ui_date.Month, ui_date.Date, ui_time.Hou, ui_time.Min, ui_time.Sec);
 		hItem = WM_GetDialogItem(wm_main, (GUI_ID_USER + 0x03));
 		TEXT_SetText(hItem, string_buf);
 	}
