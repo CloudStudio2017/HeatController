@@ -10,7 +10,7 @@
       <TargetName>STM32103VCT6</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060183::V5.06 update 2 (build 183)::ARMCC</pCCUsed>
+      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103VC</Device>
@@ -298,7 +298,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0xc000</Size>
+                <Size>0x10000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -330,6 +330,7 @@
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
+            <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F10X_HD</Define>
@@ -347,6 +348,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -732,6 +734,16 @@
               <FileType>1</FileType>
               <FilePath>..\GUI_Frames\UI_Sources.c</FilePath>
             </File>
+            <File>
+              <FileName>Window_ConfigDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI_Frames\Window_ConfigDLG.c</FilePath>
+            </File>
+            <File>
+              <FileName>CNFonts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI_Frames\CNFonts.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -761,6 +773,11 @@
               <FileName>Task_KeyBoard.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Tasks\Task_KeyBoard.c</FilePath>
+            </File>
+            <File>
+              <FileName>HeatControlSys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Tasks\HeatControlSys.c</FilePath>
             </File>
           </Files>
         </Group>

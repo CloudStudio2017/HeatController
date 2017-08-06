@@ -63,6 +63,7 @@ int main(void)
 	
 	InitQueue = xQueueCreate( 5, sizeof(uint32_t));
 	FlashQueue = xQueueCreate( 4, sizeof(uint32_t));
+	KeyBoardQueue = xQueueCreate( 3, sizeof(uint32_t));
 	
 	xTaskCreate(vTask_Console, "Task_Console", 1024, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate(vTask_UI, "Task_UI", 1024, NULL, tskIDLE_PRIORITY, NULL);
