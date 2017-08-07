@@ -136,7 +136,16 @@ static int xflash_Info(void)
 }
 
 int CslConsole_Cmd_xflash(pCslConsole_Cmd_t st, int flag, int argc, char* argv[])
-{	
+{
+	if(argc == 1)
+	{
+		printf("xflash info\r\n");
+		printf("xflash erase [StartAddress] [Size]\r\n");
+		printf("xflash read [StartAddress] [Size]\r\n");
+		printf("xflash write [StartAddress] -> then using XModem to transmit your file\r\n");
+		return -1;
+	}
+	
 	if(strcmp(argv[1], "write") == 0)
 	{
 		if(argc <= 2)
@@ -167,6 +176,11 @@ int CslConsole_Cmd_xflash(pCslConsole_Cmd_t st, int flag, int argc, char* argv[]
 	else if(strcmp(argv[1], "info") == 0)
 	{
 		xflash_Info();
+	}
+	else
+	{
+		printf("""%s"" is not support\r\n", argv[1]);
+		return -1;
 	}
 	
 	return 0;
