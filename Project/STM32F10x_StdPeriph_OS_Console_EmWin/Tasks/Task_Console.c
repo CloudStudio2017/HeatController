@@ -8,7 +8,7 @@ void vTask_Console( void *pvParameters )
 	CslConsole_Init();
 	
 	Is_Init = CONSOLE_INIT_DONE;
-	xQueueSendToBack(InitQueue, &Is_Init, 0);
+	xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
 	
 	CslConsole_Process();
 	while(1)

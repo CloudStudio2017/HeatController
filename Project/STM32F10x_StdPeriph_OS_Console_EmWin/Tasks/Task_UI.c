@@ -9,6 +9,7 @@
 #include "HeatControlSys.h"
 
 extern GUI_CONST_STORAGE GUI_FONT GUI_FontCNFonts;
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontCNFonts_StartupLog;
 
 WM_HWIN wm_main;
 WM_HWIN wm_config;
@@ -221,6 +222,45 @@ static void UI_Config_Update(void)
 	TEXT_SetText(hItem, string_buf);
 }
 
+void static UI_ShowStartupLogo(void)
+{
+	/*显示   易暖科技 */
+	GUI_SetBkColor(GUI_WHITE);
+	GUI_SetColor(GUI_BLUE);
+	GUI_Clear();
+	
+	GUI_SetFont(&GUI_FontCNFonts_StartupLog);
+	GUI_DispStringAt("\xe6\x98\x93\xe6\x9a\x96\xe7\xa7\x91\xe6\x8a\x80", 150,100);
+	
+	GUI_SetFont(GUI_FONT_32B_ASCII);
+	GUI_Delay(200);
+	GUI_DispStringAt("Y", 160, 160);
+	GUI_Delay(50);
+	GUI_DispString("i");
+	GUI_Delay(50);
+	GUI_DispString(" ");
+	GUI_Delay(50);
+	GUI_DispString("N");
+	GUI_Delay(50);
+	GUI_DispString("u");
+	GUI_Delay(50);
+	GUI_DispString("a");
+	GUI_Delay(50);
+	GUI_DispString("n");
+	GUI_Delay(50);
+	GUI_DispString(" ");
+	GUI_Delay(50);
+	GUI_DispString("K");
+	GUI_Delay(50);
+	GUI_DispString("e");
+	GUI_Delay(50);
+	GUI_DispString(" ");
+	GUI_Delay(50);
+	GUI_DispString("J");
+	GUI_Delay(50);
+	GUI_DispString("i");
+}
+
 void static UI_Init(void)
 {
 	uint32_t Qv;
@@ -231,7 +271,7 @@ void static UI_Init(void)
 	
 	GUI_UC_SetEncodeUTF8();
 	
-	GUI_SetFont(GUI_FONT_COMIC24B_1);
+	GUI_SetFont(GUI_FONT_8X8_ASCII);
 	GUI_SetBkColor(GUI_BLACK);
 	GUI_SetColor(GUI_WHITE);
 	GUI_DispString("System init.");
@@ -312,35 +352,6 @@ void static UI_Init(void)
 		GUI_DispString("\n");
 	}while(0);
 	
-	do
-	{
-		CslRTC_Date tmpDate;
-		CslRTC_Time tmpTime;
-		uint32_t tmpSec;
-		CslRTC_Date tmpDate2;
-		CslRTC_Time tmpTime2;
-		
-		tmpDate.Year = 2005;
-		tmpDate.Month = 1;
-		tmpDate.Date = 1;
-		
-		CslRTC_Date2Sec(&tmpDate, &tmpSec);
-		GUI_DispString("Sec=");
-		GUI_DispDec(tmpSec / 24 / 3600, 12);
-		GUI_DispString("\n");
-		
-		CslRTC_Sec2Date(tmpSec, &tmpDate2);
-		GUI_DispString("YY=");
-		GUI_DispDec(tmpDate2.Year, 4);
-		GUI_DispString(" MM=");
-		GUI_DispDec(tmpDate2.Month, 2);
-		GUI_DispString(" DD=");
-		GUI_DispDec(tmpDate2.Date, 2);
-		GUI_DispString("\n");
-		
-		//GUI_Delay(4000);
-	}while(0);
-	
 	GUI_DispString("Run\n");
 	GUI_Delay(500);
 	//GUI_FillRect(10,100, 100, 200);
@@ -350,16 +361,19 @@ void static UI_Init(void)
 	//GUI_Delay(2000);
 	
 	/* GUI BMP DRAW TEST */
-	do
-	{
-		uint32_t tmpBMP_Index = 0;
-		
-		GUI_BMP_DrawEx(GetUISourceData, &tmpBMP_Index, 100, 100);
-		
-		GUI_BMP_DrawScaledEx(GetUISourceData, &tmpBMP_Index, 100, 200, 2, 1);
-	}while(0);
+	//do
+	//{
+	//	uint32_t tmpBMP_Index = 0;
+	//	
+	//	GUI_BMP_DrawEx(GetUISourceData, &tmpBMP_Index, 100, 100);
+	//	
+	//	GUI_BMP_DrawScaledEx(GetUISourceData, &tmpBMP_Index, 100, 200, 2, 1);
+	//}while(0);
 	
 	//GUI_Delay(4000);
+	
+	UI_ShowStartupLogo();
+	GUI_Delay(5000);
 }
 
 typedef struct {
@@ -469,6 +483,19 @@ void UI_MainAnimation_Update(void)
 	}
 }
 
+void UI_MainShow(void)
+{
+	uint32_t tmpBMP_Index = 0;
+	WM_HWIN wm_old;
+	
+	GUI_Exec();
+	
+	wm_old = WM_SelectWindow(wm_main);
+	GUI_BMP_DrawEx(GetUISourceData, &tmpBMP_Index, 10, 50);
+	
+	WM_SelectWindow(wm_old);
+}
+
 void vTask_UI( void *pvParameters )
 {
 	unsigned int UI_Tick = 0;
@@ -483,6 +510,8 @@ void vTask_UI( void *pvParameters )
 	CslRTC_Date ui_date;
 	
 	uint8_t Last_UI_Mode = UI_Mode;
+	UI_MainShow();
+	
 	while(1)
 	{
 		if(Last_UI_Mode != UI_Mode)    //UI Frames switch
@@ -493,6 +522,7 @@ void vTask_UI( void *pvParameters )
 				case 0:
 					WM_HideWindow(wm_config);
 					WM_ShowWindow(wm_main);
+					UI_MainShow();
 					WM_SetFocus(wm_main);
 					break;
 				case 1:
@@ -506,7 +536,7 @@ void vTask_UI( void *pvParameters )
 		{
 			CslRTC_GetTime(&ui_time);
 			CslRTC_GetDate(&ui_date);
-			sprintf(string_buf, "%4d/%2d/%2d  %02d-%02d-%02d",ui_date.Year, ui_date.Month, ui_date.Date, ui_time.Hou, ui_time.Min, ui_time.Sec);
+			sprintf(string_buf, "%4d/%2d/%2d  %02d:%02d:%02d",ui_date.Year, ui_date.Month, ui_date.Date, ui_time.Hou, ui_time.Min, ui_time.Sec);
 			hItem = WM_GetDialogItem(wm_main, (GUI_ID_USER + 0x03));
 			TEXT_SetText(hItem, string_buf);
 		}
@@ -524,7 +554,7 @@ void vTask_UI( void *pvParameters )
 		}
 		if(UI_Tick % 5 == 0)
 		{
-			UI_MainAnimation_Update();
+			//UI_MainAnimation_Update();
 		}
 		UI_Tick++;
 		GUI_Delay(50);

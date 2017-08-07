@@ -744,6 +744,11 @@
               <FileType>1</FileType>
               <FilePath>..\GUI_Frames\CNFonts.c</FilePath>
             </File>
+            <File>
+              <FileName>CNFonts_StartupLog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI_Frames\CNFonts_StartupLog.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

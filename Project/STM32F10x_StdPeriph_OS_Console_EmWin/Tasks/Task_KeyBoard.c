@@ -174,7 +174,7 @@ void vTask_KeyBoard( void *pvParameters )
 	MyBeep_Init();
 	
 	Is_Init = KEYBOARD_INIT_DONE;
-	xQueueSendToBack(InitQueue, &Is_Init, 0);
+	xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
 	
 	while(1)
 	{
