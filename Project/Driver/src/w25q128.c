@@ -1,5 +1,6 @@
 #include "w25q128.h"
 #include "stm32f10x.h"
+#include "board.h"
 
 #define flash_CMD_WREN   0x06    //Write Enable
 #define flash_CMD_READ   0x03    //Read Memory
@@ -39,19 +40,19 @@ static inline void flash_CS_LOW(void)
 
 static inline void flash_WP_HIGH(void)
 {
-	GPIO_SetBits(GPIOB, GPIO_Pin_0);
+	GPIO_SetBits(_FLASH_WP_GPIO, _FLASH_WP_PIN);
 }
 
 static inline void flash_WP_LOW(void)
 {
-	GPIO_ResetBits(GPIOB, GPIO_Pin_0);
+	GPIO_ResetBits(_FLASH_WP_GPIO, _FLASH_WP_PIN);
 }
 
 static void flash_spi_LowlevelInit(void)
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | GPIO2RCC(_FLASH_WP_GPIO), ENABLE);
 	
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	//CLK
@@ -70,8 +71,8 @@ static void flash_spi_LowlevelInit(void)
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOA, &GPIO_InitStruct);
 	//WP
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
-	GPIO_Init(GPIOB, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin = _FLASH_WP_PIN;
+	GPIO_Init(_FLASH_WP_GPIO, &GPIO_InitStruct);
 	
 }
 static void flash_spi_Init(void)

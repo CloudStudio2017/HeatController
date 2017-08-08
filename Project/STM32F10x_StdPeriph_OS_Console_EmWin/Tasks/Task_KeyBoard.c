@@ -4,6 +4,7 @@
 #include "myLed.h"
 #include "myBeep.h"
 #include "HeatControlSys.h"
+#include "board.h"
 
 #include "Frames.h"
 
@@ -126,43 +127,43 @@ void KeyBoard_Regs(void)
 	btn.ButtonIdleState = SET;
 	
 	btn.CallBackFunc = KB_PowerSwitch;
-	btn.ButtonGPIO = GPIOB;
-	btn.ButtonPin = GPIO_Pin_11;
+	btn.ButtonGPIO = _BUTTON_POWER_GPIO;
+	btn.ButtonPin = _BUTTON_POWER_PIN;
 	MyButton_Reg(0, &btn);
 	
 	btn.CallBackFunc = KB_SysSwitch;
-	btn.ButtonGPIO = GPIOB;
-	btn.ButtonPin = GPIO_Pin_10;
+	btn.ButtonGPIO = _BUTTON_SWITCH_GPIO;
+	btn.ButtonPin = _BUTTON_SWITCH_PIN;
 	MyButton_Reg(1, &btn);
 	
 	btn.CallBackFunc = KB_SetSwitch;
-	btn.ButtonGPIO = GPIOC;
-	btn.ButtonPin = GPIO_Pin_5;
+	btn.ButtonGPIO = _BUTTON_SET_GPIO;
+	btn.ButtonPin = _BUTTON_SET_PIN;
 	MyButton_Reg(2, &btn);
 	
 	btn.CallBackFunc = KB_UpKey;
-	btn.ButtonGPIO = GPIOC;
-	btn.ButtonPin = GPIO_Pin_4;
+	btn.ButtonGPIO = _BUTTON_UP_GPIO;
+	btn.ButtonPin = _BUTTON_UP_PIN;
 	MyButton_Reg(3, &btn);
 	
 	btn.CallBackFunc = KB_DownKey;
-	btn.ButtonGPIO = GPIOC;
-	btn.ButtonPin = GPIO_Pin_3;
+	btn.ButtonGPIO = _BUTTON_DOWN_GPIO;
+	btn.ButtonPin = _BUTTON_DOWN_PIN;
 	MyButton_Reg(4, &btn);
 	
 	btn.CallBackFunc = KB_LeftKey;
-	btn.ButtonGPIO = GPIOC;
-	btn.ButtonPin = GPIO_Pin_2;
+	btn.ButtonGPIO = _BUTTON_LEFT_GPIO;
+	btn.ButtonPin = _BUTTON_LEFT_PIN;
 	MyButton_Reg(5, &btn);
 	
 	btn.CallBackFunc = KB_RightKey;
-	btn.ButtonGPIO = GPIOC;
-	btn.ButtonPin = GPIO_Pin_1;
+	btn.ButtonGPIO = _BUTTON_RIGHT_GPIO;
+	btn.ButtonPin = _BUTTON_RIGHT_PIN;
 	MyButton_Reg(6, &btn);
 	
 	btn.CallBackFunc = KB_TestSwitch;
-	btn.ButtonGPIO = GPIOC;
-	btn.ButtonPin = GPIO_Pin_0;
+	btn.ButtonGPIO = _BUTTON_RESERVE_GPIO;
+	btn.ButtonPin = _BUTTON_RESERVE_PIN;
 	MyButton_Reg(7, &btn);
 }
 

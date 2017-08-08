@@ -2,11 +2,84 @@
 #define __HEAT_CONTROL_SYS_H__
 
 #include "stm32f10x.h"
+#include "board.h"
 
 #define HCS_IO_INPUT   volatile uint8_t
 #define HCS_IO_OUTPUT  volatile uint8_t
 #define HCS_VA_INPUT   volatile uint32_t
 #define HCS_VA_OUTPUT  volatile uint32_t
+	
+
+#if BOARD_TYPE == RELEASE_BOARD_V1
+	#define _WaterPumpOn_             myLed_On(0)
+	#define _WaterPumpOff_            myLed_Off(0)
+	#define _MaterialMachineOn_       myLed_On(1)
+	#define _MaterialMachineOff_      myLed_Off(1)
+	#define _FireUpOn_                myLed_On(2)
+	#define _FireUpOff_               myLed_Off(2)
+	#define _AirBlowerOn_             myLed_On(4)
+	#define _AirBlowerOff_            myLed_On(4)
+	#define _LeadFanOn_               myLed_On(5)
+	#define _LeadFanOff_              myLed_On(5)
+#elif BOARD_TYPE == TEST_BOARD_V1
+	#define _WaterPumpOn_             myLed_On(0)
+	#define _WaterPumpOff_            myLed_Off(0)
+	#define _MaterialMachineOn_       myLed_On(1)
+	#define _MaterialMachineOff_      myLed_Off(1)
+	#define _FireUpOn_                myLed_On(2)
+	#define _FireUpOff_               myLed_Off(2)
+	#define _AirBlowerOn_             myLed_On(3)
+	#define _AirBlowerOff_            myLed_On(3)
+	#define _LeadFanOn_               myLed_On(4)
+	#define _LeadFanOff_              myLed_On(4)
+#endif
+
+/*  开启/关闭 水泵  */
+#define _WaterPump_On_()   do{ \
+		_WaterPumpOn_;             \
+		HCS_Struct.WaterPump = 1;  \
+	}while(0)
+#define _WaterPump_Off_()  do{ \
+		_WaterPumpOff_;            \
+		HCS_Struct.WaterPump = 0;  \
+}while(0)
+/*  开启/关闭 物料机  */
+#define _MaterialMachine_On_()     do{ \
+		_MaterialMachineOn_;               \
+		HCS_Struct.MaterialMachine = 1;    \
+	}while(0)
+#define _MaterialMachine_Off_()    do{ \
+		_MaterialMachineOff_;              \
+		HCS_Struct.MaterialMachine = 0;    \
+}while(0)
+/*  开启/关闭 点火器  */
+#define _FireUp_On_()       do{ \
+		_FireUpOn_;                 \
+		HCS_Struct.FireUp = 1;      \
+	}while(0)
+#define _FireUp_Off_()      do{ \
+		_FireUpOff_;                \
+		HCS_Struct.FireUp = 0;      \
+}while(0)
+/*  开启/关闭 吹风机  */
+#define _AirBlower_On_()    do{ \
+		_AirBlowerOn_;              \
+		HCS_Struct.AirBlower = 1;   \
+	}while(0)
+#define _AirBlower_Off_()   do{ \
+		_AirBlowerOff_;             \
+		HCS_Struct.AirBlower = 0;   \
+}while(0)
+/*  开启/关闭 引风机  */
+#define _LeadFan_On_()      do{ \
+		_LeadFanOn_;                \
+		HCS_Struct.LeadFan = 1;     \
+	}while(0)
+#define _LeadFan_Off_()     do{ \
+		_LeadFanOff_;               \
+		HCS_Struct.LeadFan = 0;     \
+}while(0)
+
 	
 typedef enum
 {

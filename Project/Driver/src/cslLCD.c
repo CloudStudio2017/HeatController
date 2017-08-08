@@ -1,6 +1,5 @@
 #include "cslLCD.h"
 
-
 //LCD_FSMC_D0   D14
 //LCD_FSMC_D1   D15
 //LCD_FSMC_D2   D0
@@ -39,6 +38,9 @@ void CslLCD_lowlevel_Init(void)
 	FSMC_NORSRAMTimingInitTypeDef FSMC_NORSRAMTimingInitStructure;
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE, ENABLE);
+#if BOARD_TYPE == RELEASE_BOARD_V1
+	RCC_APB2PeriphClockCmd(GPIO2RCC(_LCD_BLK_GPIO), ENABLE);
+#endif
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
 	
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -79,6 +81,20 @@ void CslLCD_lowlevel_Init(void)
 	
 	FSMC_NORSRAMInit(&FSMC_NORSRAMInitStructure);
 	FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM1, ENABLE);
+}
+
+void CslLCD_BLK(unsigned char NewStatus)
+{
+#if BOARD_TYPE == RELEASE_BOARD_V1
+	if(NewStatus)
+	{
+		GPIO_SetBits(_LCD_BLK_GPIO, _LCD_BLK_PIN);
+	}
+	else
+	{
+		GPIO_ResetBits(_LCD_BLK_GPIO, _LCD_BLK_PIN);
+	}
+#endif
 }
 
 void CslLCD_Init(void)
@@ -169,6 +185,8 @@ void CslLCD_Init(void)
 	CSL_LCD_WriteComm(0x11);
 	Delay(120);
 	CSL_LCD_WriteComm(0x29);
+	
+	CslLCD_BLK(1);
 }
 
 void BlockWrite(unsigned int Xstart,unsigned int Xend,unsigned int Ystart,unsigned int Yend)

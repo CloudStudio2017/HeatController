@@ -8,63 +8,42 @@ volatile uint16_t ADCConvertedValue[3];
 
 volatile HCS_TypeDef HCS_Struct;
 
-/*  开启/关闭 水泵  */
-#define _WaterPump_On_()   do{ \
-		myLed_On(0);               \
-		HCS_Struct.WaterPump = 1;  \
-	}while(0)
-#define _WaterPump_Off_()  do{ \
-		myLed_Off(0);              \
-		HCS_Struct.WaterPump = 0;  \
-}while(0)
-/*  开启/关闭 物料机  */
-#define _MaterialMachine_On_()     do{ \
-		myLed_On(1);                       \
-		HCS_Struct.MaterialMachine = 1;    \
-	}while(0)
-#define _MaterialMachine_Off_()    do{ \
-		myLed_Off(1);                      \
-		HCS_Struct.MaterialMachine = 0;    \
-}while(0)
-/*  开启/关闭 点火器  */
-#define _FireUp_On_()       do{ \
-		myLed_On(2);                \
-		HCS_Struct.FireUp = 1;      \
-	}while(0)
-#define _FireUp_Off_()      do{ \
-		myLed_Off(2);               \
-		HCS_Struct.FireUp = 0;      \
-}while(0)
-/*  开启/关闭 吹风机  */
-#define _AirBlower_On_()    do{ \
-		myLed_On(3);                \
-		HCS_Struct.AirBlower = 1;   \
-	}while(0)
-#define _AirBlower_Off_()   do{ \
-		myLed_Off(3);               \
-		HCS_Struct.AirBlower = 0;   \
-}while(0)
-/*  开启/关闭 引风机  */
-#define _LeadFan_On_()      do{ \
-		myLed_On(4);                \
-		HCS_Struct.LeadFan = 1;     \
-	}while(0)
-#define _LeadFan_Off_()     do{ \
-		myLed_Off(4);               \
-		HCS_Struct.LeadFan = 0;     \
-}while(0)
-
 
 static void HCS_IO_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	
+#if BOARD_TYPE == RELEASE_BOARD_V1
+	RCC_APB2PeriphClockCmd(
+		GPIO2RCC(_IN_W1_GPIO) | GPIO2RCC(_IN_W2_GPIO) | GPIO2RCC(_IN_W3_GPIO) |
+		GPIO2RCC(_IN_W4_GPIO) | GPIO2RCC(_IN_TH_GPIO) | GPIO2RCC(_IN_PHH_GPIO) |
+		GPIO2RCC(_IN_PH_GPIO) , ENABLE);
+	
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING; //GPIO_Mode_IPD;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_10MHz;
+	
+	GPIO_InitStruct.GPIO_Pin  = _IN_W1_PIN;
+	GPIO_Init(_IN_W1_GPIO, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin  = _IN_W2_PIN;
+	GPIO_Init(_IN_W2_GPIO, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin  = _IN_W3_PIN;
+	GPIO_Init(_IN_W3_GPIO, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin  = _IN_W4_PIN;
+	GPIO_Init(_IN_W4_GPIO, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin  = _IN_TH_PIN;
+	GPIO_Init(_IN_TH_GPIO, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin  = _IN_PHH_PIN;
+	GPIO_Init(_IN_PHH_GPIO, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin  = _IN_PH_PIN;
+	GPIO_Init(_IN_PH_GPIO, &GPIO_InitStruct);
+#elif BOARD_TYPE == TEST_BOARD_V1
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOE, ENABLE);
 	
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStruct.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOE, &GPIO_InitStruct);
+#endif
 }
 
 #define ADC1_DR_Address    ((uint32_t)0x4001244C)
@@ -198,13 +177,13 @@ uint16_t HCS_GetWaterLow(void)
 //提示加水
 void inline HCS_WaterLowIndicationSet(void)
 {
-	myLed_On(LED5);
+//	myLed_On(LED5);
 }
 
 //关闭加水提示
 void inline HCS_WaterLowIndicationReset(void)
 {
-	myLed_Off(LED5);
+//	myLed_Off(LED5);
 }
 
 //检测加料信号
@@ -223,13 +202,13 @@ uint16_t HCS_GetMaterialLow(void)
 //提示加料
 void inline HCS_MaterialLowIndicationSet(void)
 {
-	myLed_On(LED6);
+//	myLed_On(LED6);
 }
 
 //关闭加料提示
 void inline HCS_MaterialLowIndicationReset(void)
 {
-	myLed_Off(LED6);
+//	myLed_Off(LED6);
 }
 
 //检测炉温

@@ -389,6 +389,11 @@
               <FileType>1</FileType>
               <FilePath>..\main.c</FilePath>
             </File>
+            <File>
+              <FileName>board.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\board.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -665,6 +670,11 @@
               <FilePath>..\..\Console_Cmds\CslConsoleCmd_echo.c</FilePath>
             </File>
             <File>
+              <FileName>CslConsoleCmd_xflash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Console_Cmds\CslConsoleCmd_xflash.c</FilePath>
+            </File>
+            <File>
               <FileName>CslConsoleCmd_md.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Console_Cmds\CslConsoleCmd_md.c</FilePath>
@@ -673,11 +683,6 @@
               <FileName>cslConsole_Cmd_config.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\cslConsole_Cmd_config.h</FilePath>
-            </File>
-            <File>
-              <FileName>CslConsoleCmd_xflash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Console_Cmds\CslConsoleCmd_xflash.c</FilePath>
             </File>
           </Files>
         </Group>

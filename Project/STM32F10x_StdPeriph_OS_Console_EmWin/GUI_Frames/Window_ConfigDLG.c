@@ -101,7 +101,7 @@ extern GUI_CONST_STORAGE GUI_FONT GUI_FontCNFonts;
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { WINDOW_CreateIndirect, "Window_Config", ID_WINDOW_0, 0, 0, 480, 320, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Text", ID_TEXT_0, 161, 1, 123, 28, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text", ID_TEXT_0, 181, 6, 123, 28, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Text", ID_TEXT_1, 20, 40, 100, 24, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Text", ID_TEXT_2, 20, 66, 100, 24, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Text", ID_TEXT_3, 20, 92, 100, 24, 0, 0x64, 0 },
