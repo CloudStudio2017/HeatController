@@ -33,9 +33,24 @@
 #define ID_TEXT_0 (GUI_ID_USER + 0x01)
 #define ID_TEXT_1 (GUI_ID_USER + 0x02)
 #define ID_TEXT_2 (GUI_ID_USER + 0x03)
+#define ID_TEXT_3 (GUI_ID_USER + 0x04)
+#define ID_TEXT_4 (GUI_ID_USER + 0x05)
+#define ID_TEXT_5 (GUI_ID_USER + 0x06)
+#define ID_TEXT_6 (GUI_ID_USER + 0x07)
+#define ID_TEXT_7 (GUI_ID_USER + 0x08)
+#define ID_TEXT_8 (GUI_ID_USER + 0x09)
+#define ID_TEXT_9 (GUI_ID_USER + 0x0A)
+#define ID_TEXT_10 (GUI_ID_USER + 0x0B)
+#define ID_TEXT_11 (GUI_ID_USER + 0x0C)
+#define ID_TEXT_12 (GUI_ID_USER + 0x0D)
+#define ID_TEXT_13 (GUI_ID_USER + 0x0E)
+#define ID_TEXT_14 (GUI_ID_USER + 0x0F)
+#define ID_TEXT_15 (GUI_ID_USER + 0x10)
+#define ID_TEXT_16 (GUI_ID_USER + 0x11)
 
 
 // USER START (Optionally insert additional defines)
+extern GUI_CONST_STORAGE GUI_FONT GUI_FontCNFonts;
 // USER END
 
 /*********************************************************************
@@ -56,7 +71,21 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { WINDOW_CreateIndirect, "Window_Main", ID_WINDOW_0, 0, 0, 480, 320, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Text_LSysStatus", ID_TEXT_0, 267, 19, 103, 32, 0, 0x64, 0 },
   { TEXT_CreateIndirect, "Text_VSysStatus", ID_TEXT_1, 387, 19, 80, 35, 0, 0x64, 0 },
-  { TEXT_CreateIndirect, "Text_SysTime", ID_TEXT_2, 289, 295, 191, 24, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_SysTime", ID_TEXT_2, 287, 294, 191, 24, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_Func1", ID_TEXT_3, 320, 50, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_Func2", ID_TEXT_4, 320, 75, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_Func3", ID_TEXT_5, 320, 100, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_Func4", ID_TEXT_6, 320, 125, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_Func5", ID_TEXT_7, 320, 150, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_Func6", ID_TEXT_8, 320, 175, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_Func7", ID_TEXT_9, 320, 200, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_F1S", ID_TEXT_10, 400, 50, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_F2S", ID_TEXT_11, 400, 75, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_F3S", ID_TEXT_12, 400, 100, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_F4S", ID_TEXT_13, 400, 125, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_F5S", ID_TEXT_14, 400, 150, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_F6S", ID_TEXT_15, 400, 175, 80, 25, 0, 0x64, 0 },
+  { TEXT_CreateIndirect, "Text_F7S", ID_TEXT_16, 400, 200, 80, 25, 0, 0x64, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -91,22 +120,140 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
     // Initialization of 'Text_LSysStatus'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
-    TEXT_SetText(hItem, "XiTZT:");
+    TEXT_SetText(hItem, "\xe7\xb3\xbb\xe7\xbb\x9f\xe7\x8a\xb6\xe6\x80\x81\xef\xbc\x9a");
     //
     // Initialization of 'Text_VSysStatus'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
-    TEXT_SetText(hItem, "YunX");
+    TEXT_SetText(hItem, "\xe8\xbf\x90\xe8\xa1\x8c");
     //
     // Initialization of 'Text_SysTime'
     //
     hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
-    TEXT_SetText(hItem, "2017/06/06/  11:12");
+    TEXT_SetText(hItem, "----/--/--  --:--");
     TEXT_SetFont(hItem, GUI_FONT_20_1);
     TEXT_SetTextAlign(hItem, GUI_TA_HCENTER | GUI_TA_VCENTER);
+    //
+    // Initialization of 'Text_Func1'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_3);
+    TEXT_SetText(hItem, "\xe9\x80\x81\xe6\x96\x99:");
+    //
+    // Initialization of 'Text_Func2'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+    TEXT_SetText(hItem, "\xe7\x82\xb9\xe7\x81\xab:");
+    //
+    // Initialization of 'Text_Func3'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_5);
+    TEXT_SetText(hItem, "\xe6\xb0\xb4\xe6\xb3\xb5:");
+    //
+    // Initialization of 'Text_Func4'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_6);
+    TEXT_SetText(hItem, "\xe5\xbc\x95\xe9\xa3\x8e:");
+    //
+    // Initialization of 'Text_Func5'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_7);
+    TEXT_SetText(hItem, "\xe9\xbc\x93\xe9\xa3\x8e:");
+    //
+    // Initialization of 'Text_Func6'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_8);
+    TEXT_SetText(hItem, "\xe5\x8e\x8b\xe5\x8a\x9b:");
+    //
+    // Initialization of 'Text_Func7'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_9);
+    TEXT_SetText(hItem, "\xe6\xb0\xb4\xe4\xbd\x8d:");
+    //
+    // Initialization of 'Text_F1S'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_10);
+    TEXT_SetText(hItem, "\xe5\x81\x9c\xe6\xad\xa2");
+    //
+    // Initialization of 'Text_F2S'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_11);
+    TEXT_SetText(hItem, "\xe5\x81\x9c\xe6\xad\xa2");
+    //
+    // Initialization of 'Text_F3S'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_12);
+    TEXT_SetText(hItem, "\xe5\x81\x9c\xe6\xad\xa2");
+    //
+    // Initialization of 'Text_F4S'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_13);
+    TEXT_SetText(hItem, "\xe5\x81\x9c\xe6\xad\xa2");
+    //
+    // Initialization of 'Text_F5S'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_14);
+    TEXT_SetText(hItem, "\xe5\x81\x9c\xe6\xad\xa2");
+    //
+    // Initialization of 'Text_F6S'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_15);
+    TEXT_SetText(hItem, "\xe6\xad\xa3\xe5\xb8\xb8");
+    //
+    // Initialization of 'Text_F7S'
+    //
+    hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_16);
+    TEXT_SetText(hItem, "\xe6\xad\xa3\xe5\xb8\xb8");
     // USER START (Optionally insert additional code for further widget initialization)
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_0);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_1);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+		
 		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_2);
     TEXT_SetBkColor(hItem, GUI_DARKGREEN);
+		
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_3);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_4);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_5);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_6);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_7);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_8);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_9);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_10);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_11);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_12);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_13);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_14);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_15);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
+		hItem = WM_GetDialogItem(pMsg->hWin, ID_TEXT_16);
+		TEXT_SetFont(hItem, &GUI_FontCNFonts);
+    TEXT_SetBkColor(hItem, GUI_LIGHTBLUE);
     // USER END
     break;
   // USER START (Optionally insert additional message handling)

@@ -2,7 +2,8 @@
 #define __CSL_LCD_H__
 
 #include "stm32f10x.h"
-
+#include "cslCommon.h"
+#include "board.h"
 
 #define CSL_LCD_REG  *(volatile u16*)(0x60000000)
 #define CSL_LCD_RAM  *(volatile u16*)(0x60020000)
@@ -19,5 +20,7 @@ extern void CslLCD_WR_REG(uint16_t Reg);
 extern void CslLCD_WR_DATA(uint16_t Data);
 extern void CslLCD_MRD_DATA(uint16_t* Reg, int Count);
 extern void CslLCD_MWR_DATA(uint16_t* Data, int Count);
+
+extern void CslLCD_BLK(unsigned char NewStatus);
 
 #endif

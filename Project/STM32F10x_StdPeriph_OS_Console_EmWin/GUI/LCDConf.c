@@ -135,7 +135,11 @@ void LCD_X_Config(void) {
 	//
   // Orientation
   //
+#if BOARD_TYPE == RELEASE_BOARD_V1
+	Config.Orientation = GUI_SWAP_XY | GUI_MIRROR_X | GUI_MIRROR_Y;
+#elif BOARD_TYPE == TEST_BOARD_V1
 	Config.Orientation = GUI_SWAP_XY;
+#endif
   GUIDRV_FlexColor_Config(pDevice, &Config);
 	//
   // Set controller and operation mode

@@ -32,5 +32,6 @@ typedef struct Common_FlashControlBlock
 
 extern xQueueHandle InitQueue;
 extern xQueueHandle FlashQueue;
+extern xQueueHandle KeyBoardQueue;
 
 #endif

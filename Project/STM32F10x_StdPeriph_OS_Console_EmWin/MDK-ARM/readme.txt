@@ -1,85 +1,93 @@
-/**
-  @page mdkarm MDK-ARM Project Template
-  
-  @verbatim
-  ******************** (C) COPYRIGHT 2011 STMicroelectronics *******************
-  * @file    readme.txt
-  * @author  MCD Application Team
-  * @version V3.5.0
-  * @date    08-April-2011
-  * @brief   This sub directory contains all the user modifiable files needed 
-  *          to create a new project linked with the STM32F10x Standard Peripheral  
-  *          Library and working with RealView MDK-ARM toolchain (Version 4.12 and later).
-  ******************************************************************************
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
-  * AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
-  * INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE
-  * CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
-  * INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  ******************************************************************************
-  @endverbatim
- 
- @par Directory contents
- 
- - Project.Uv2/.Opt: A pre-configured project file with the provided library structure
-                     that produces an executable image with MDK-ARM
+/*
 
-Enabling "Options for Target 'Output' Browser Information" is useful for quick 
-source files navigation but may slow the compilation time.  
-              
-@note the @subpage note file contains the needed steps to follow when using the 
-default startup file provided by MDK-ARM when creating new projects.
-      
- @par How to use it ?
- 
- - Open the Project.uvproj project
- - In the build toolbar select the project config:
-     - STM32100B-EVAL: to configure the project for STM32 Medium-density Value 
-       line devices
-     @note The needed define symbols for this config are already declared in the
-           preprocessor section: USE_STDPERIPH_DRIVER, STM32F10X_MD_VL, USE_STM32100B_EVAL
+//IO Map
+PA00-- ADC              Rt3
+PA01-- ADC StoveTemp    x
+PA02-- ADC WaterTemp    x
+PA03--
+PA04-- FLASH_SPI_CS
+PA05-- FLASH_SPI_CLK
+PA06-- FLASH_SPI_MISO
+PA07-- FLASH_SPI_MOSI
+PA08--
+PA09-- UART Tx
+PA10-- UART Rx
+PA11-- USB D-
+PA12-- USB D+
+PA13-- TMS
+PA14-- TCK
+PA15--                  LCD_BLK
 
-     - STM3210C-EVAL: to configure the project for STM32 Connectivity line devices
-     @note The needed define symbols for this config are already declared in the
-           preprocessor section: USE_STDPERIPH_DRIVER, STM32F10X_CL, USE_STM3210C_EVAL
+PB00-- FLASH_WP         x
+PB01--
+PB02-- BOOT1
+PB03--
+PB04--                  TH(in)
+PB05--                  W4(in)
+PB06--                  W3(in)
+PB07--                  W2(in)
+PB08-- LED7             W1(in)
+PB09-- LED8             x
+PB10-- KEY2             UART3_Tx
+PB11-- KEY1             UART3_Rx
+PB12-- LED2             SPI2_CS1
+PB13-- LED1             SPI2_CLK
+PB14-- LED3             SPI2_MISO
+PB15-- LED4             SPI2_CS2
 
-     - STM3210B-EVAL: to configure the project for STM32 Medium-density devices
-     @note The needed define symbols for this config are already declared in the
-           preprocessor section: USE_STDPERIPH_DRIVER, STM32F10X_MD, USE_STM3210B_EVAL
+PC00-- KEY8             KEY1(up)
+PC01-- KEY7             KEY2(right)
+PC02-- KEY6             KEY3(set)
+PC03-- KEY5             FLASH_WP
+PC04-- KEY4             KEY4(left)
+PC05-- KEY3             KEY5(down)
+PC06-- LED5             L1(out)
+PC07-- LED6             L2(out)
+PC08-- TF SDIO_D0       L3(out)
+PC09-- TF SDIO_D1       L4(out)
+PC10-- TF SDIO_D2       KEY6(power)
+PC11-- TF SDIO_D3       KEY8(reserve)
+PC12-- TF SDIO_CLK      KEY7(switch)
+PC13-- BEEP
+PC14-- OSC32768 IN
+PC15-- OSC32768 OUT
 
-     - STM3210E-EVAL: to configure the project for STM32 High-density devices
-     @note The needed define symbols for this config are already declared in the
-           preprocessor section: USE_STDPERIPH_DRIVER, STM32F10X_HD, USE_STM3210E_EVAL
+PD00-- LCD_FSMC_D2
+PD01-- LCD_FSMC_D3
+PD02-- TF SDIO_CMD      x
+PD03--
+PD04-- LCD_RD
+PD05-- LCD_WR
+PD06--
+PD07-- LCD_CS
+PD08-- LCD_FSMC_D13
+PD09-- LCD_FSMC_D14
+PD10-- LCD_FSMC_D15
+PD11-- LCD_RS
+PD12--                  RWP(out)
+PD13--                  LWP(out)
+PD14-- LCD_FSMC_D0
+PD15-- LCD_FSMC_D1
 
-     - STM3210E-EVAL_XL: to configure the project for STM32 XL-density devices
-     @note The needed define symbols for this config are already declared in the
-           preprocessor section: USE_STDPERIPH_DRIVER, STM32F10X_XL, USE_STM3210E_EVAL
+PE00-- HCS_IO  "WaterLow"       PHH(in)
+PE01-- HCS_IO  "MaterialLow"    PH(in)
+PE02--
+PE03--
+PE04--
+PE05--
+PE06--
+PE07-- LCD_FSMC_D4
+PE08-- LCD_FSMC_D5
+PE09-- LCD_FSMC_D6
+PE10-- LCD_FSMC_D7
+PE11-- LCD_FSMC_D8
+PE12-- LCD_FSMC_D9
+PE13-- LCD_FSMC_D10
+PE14-- LCD_FSMC_D11
+PE15-- LCD_FSMC_D12
 
-     - STM32100E-EVAL: to configure the project for STM32 High-density Value line devices
-     @note The needed define symbols for this config are already declared in the
-           preprocessor section: USE_STDPERIPH_DRIVER, STM32F10X_HD_VL, USE_STM32100E_EVAL
-           
- - Rebuild all files: Project->Rebuild all target files
- - Load project image: Debug->Start/Stop Debug Session
- - Run program: Debug->Run (F5)
 
-@note
- - Low-density Value line devices are STM32F100xx microcontrollers where the 
-   Flash memory density ranges between 16 and 32 Kbytes.
- - Low-density devices are STM32F101xx, STM32F102xx and STM32F103xx 
-   microcontrollers where the Flash memory density ranges between 16 and 32 Kbytes.
- - Medium-density Value line devices are STM32F100xx microcontrollers where
-   the Flash memory density ranges between 64 and 128 Kbytes.  
- - Medium-density devices are STM32F101xx, STM32F102xx and STM32F103xx 
-   microcontrollers where the Flash memory density ranges between 64 and 128 Kbytes.
- - High-density Value line devices are STM32F100xx microcontrollers where
-   the Flash memory density ranges between 256 and 512 Kbytes.  
- - High-density devices are STM32F101xx and STM32F103xx microcontrollers where
-   the Flash memory density ranges between 256 and 512 Kbytes. 
- - XL-density devices are STM32F101xx and STM32F103xx microcontrollers where
-   the Flash memory density ranges between 512 and 1024 Kbytes.
- - Connectivity line devices are STM32F105xx and STM32F107xx microcontrollers.
-    
- * <h3><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h3>
- */
+
+
+
+*/

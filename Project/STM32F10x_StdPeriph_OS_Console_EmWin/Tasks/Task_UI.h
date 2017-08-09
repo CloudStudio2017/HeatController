@@ -3,6 +3,7 @@
 
 #include "FreeRTOS.h"
 #include "Task_Common.h"
+#include "UI_Sources.h"
 
 extern void vTask_UI( void *pvParameters );
 
