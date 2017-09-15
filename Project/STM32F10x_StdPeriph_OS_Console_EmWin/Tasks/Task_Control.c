@@ -29,7 +29,7 @@ void vTask_Control( void *pvParameters )
 	HCS_Init();
 	
 	Is_Init = CONTROL_INIT_DONE;
-	xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
+	//xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
 	
 	while(1)
 	{

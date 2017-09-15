@@ -66,6 +66,8 @@ void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
 
 void KB_TestSwitch(uint8_t BtnHandle, uint8_t BtnState)
 {
+	static uint8_t xx = 0;
+	
 	if(BtnState == BUTTON_STATUS_PRESS)
 	{
 		MyBeep_Beep(1);
@@ -73,6 +75,11 @@ void KB_TestSwitch(uint8_t BtnHandle, uint8_t BtnState)
 	if(BtnState == BUTTON_STATUS_RELEASE)
 	{
 		MyBeep_Beep(0);
+	}
+	if(BtnState == BUTTON_STATUS_HOLD)
+	{
+		MyBeep_Beep(xx);
+		xx = 1 - xx;
 	}
 }
 
@@ -175,7 +182,7 @@ void vTask_KeyBoard( void *pvParameters )
 	MyBeep_Init();
 	
 	Is_Init = KEYBOARD_INIT_DONE;
-	xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
+	//xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
 	
 	while(1)
 	{

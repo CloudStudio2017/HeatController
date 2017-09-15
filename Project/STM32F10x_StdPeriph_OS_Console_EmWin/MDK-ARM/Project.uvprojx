@@ -15,7 +15,7 @@
         <TargetCommonOption>
           <Device>STM32F103VC</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.2.1.0</PackID>
+          <PackID>Keil.STM32F1xx_DFP.1.0.5</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0xC000) IROM(0x08000000,0x40000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -683,76 +683,6 @@
               <FileName>cslConsole_Cmd_config.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\cslConsole_Cmd_config.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>emWin</GroupName>
-          <Files>
-            <File>
-              <FileName>GUI_CM3_L.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\..\..\Libraries\emWin\Lib\ARM\GUI_CM3_L.lib</FilePath>
-            </File>
-            <File>
-              <FileName>GUIConf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\GUIConf.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIConf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\GUI\GUIConf.h</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDRV_Template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\GUIDRV_Template.c</FilePath>
-            </File>
-            <File>
-              <FileName>LCDConf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\LCDConf.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_X_FreeRTOS.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\GUI_X_FreeRTOS.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>UI</GroupName>
-          <Files>
-            <File>
-              <FileName>Frames.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\GUI_Frames\Frames.h</FilePath>
-            </File>
-            <File>
-              <FileName>Window_MainDLG.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\Window_MainDLG.c</FilePath>
-            </File>
-            <File>
-              <FileName>UI_Sources.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\UI_Sources.c</FilePath>
-            </File>
-            <File>
-              <FileName>Window_ConfigDLG.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\Window_ConfigDLG.c</FilePath>
-            </File>
-            <File>
-              <FileName>CNFonts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\CNFonts.c</FilePath>
-            </File>
-            <File>
-              <FileName>CNFonts_StartupLog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\CNFonts_StartupLog.c</FilePath>
             </File>
           </Files>
         </Group>
