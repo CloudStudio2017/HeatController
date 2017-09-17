@@ -149,8 +149,9 @@ void CslLCD_Init(void)
 	CSL_LCD_WriteData(0x80);
 	
 	CSL_LCD_WriteComm(0x36);
-	CSL_LCD_WriteData(0x68);
+	//CSL_LCD_WriteData(0x68);
 	//CSL_LCD_WriteData(0x48);
+	CSL_LCD_WriteData(0x28);
 	
 	CSL_LCD_WriteComm(0x3A);//Interface Mode Control
 	CSL_LCD_WriteData(0x55);
@@ -189,7 +190,7 @@ void CslLCD_Init(void)
 	CslLCD_BLK(1);
 }
 
-void BlockWrite(unsigned int Xstart,unsigned int Xend,unsigned int Ystart,unsigned int Yend)
+void BlockWrite(unsigned int Xstart, unsigned int Xend, unsigned int Ystart, unsigned int Yend)
 {
 	CSL_LCD_WriteComm(0x2a);
 	CSL_LCD_WriteData(Xstart>>8);

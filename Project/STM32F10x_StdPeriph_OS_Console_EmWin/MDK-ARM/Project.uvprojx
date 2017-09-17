@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F10X_HD</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Libraries\FreeRTOS\Source\include;..\..\..\Libraries\FreeRTOS\Source\portable\RVDS\ARM_CM3;..\..\Driver\inc;..\..\Console_Cmds\include;..\..\..\Libraries\emWin\Include;..\GUI;..\GUI_Frames;..\Tasks;..\..\Xmodem</IncludePath>
+              <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Libraries\FreeRTOS\Source\include;..\..\..\Libraries\FreeRTOS\Source\portable\RVDS\ARM_CM3;..\..\Driver\inc;..\..\Console_Cmds\include;..\Tasks;..\..\Xmodem;..\..\CsUI\include;..\CsUI</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -733,6 +733,21 @@
               <FileName>crc16.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Xmodem\crc16.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CsUI</GroupName>
+          <Files>
+            <File>
+              <FileName>CsUI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CsUI\CsUI.c</FilePath>
+            </File>
+            <File>
+              <FileName>CsUI_Font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CsUI\CsUI_Font.c</FilePath>
             </File>
           </Files>
         </Group>

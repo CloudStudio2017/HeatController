@@ -59,7 +59,7 @@ int main(void)
 	volatile uint32_t i = 0;
   /* Add your application code here
      */
-	CslRTC_Init();
+	//CslRTC_Init();
 	
 	InitQueue = xQueueCreate( 1, sizeof(uint32_t));
 	FlashQueue = xQueueCreate( 2, sizeof(uint32_t));
@@ -68,7 +68,7 @@ int main(void)
 	xTaskCreate(vTask_Console, "Task_Console", 1024, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate(vTask_UI, "Task_UI", 1024, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate(vTask_Control, "Task_Control", 1024, NULL, tskIDLE_PRIORITY, NULL);
-	xTaskCreate(vTask_KeyBoard, "Task_KeyBoard", 256, NULL, tskIDLE_PRIORITY, NULL);
+	xTaskCreate(vTask_KeyBoard, "Task_KeyBoard", 1024, NULL, tskIDLE_PRIORITY, NULL);
 
 	vTaskStartScheduler();
   /* Infinite loop */

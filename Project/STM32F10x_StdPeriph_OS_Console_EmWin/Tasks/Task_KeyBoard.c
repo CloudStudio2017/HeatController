@@ -6,9 +6,7 @@
 #include "HeatControlSys.h"
 #include "board.h"
 
-#include "Frames.h"
-
-static uint32_t Is_Init=0;
+//static uint32_t Is_Init=0;
 
 
 void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState)
@@ -90,7 +88,7 @@ void KB_SetSwitch(uint8_t BtnHandle, uint8_t BtnState)
 		//…Ë÷√ΩÁ√Ê«–ªª
 		if(BtnState == BUTTON_STATUS_RELEASE)
 		{
-			UI_Mode = !UI_Mode;
+			//UI_Mode = !UI_Mode;
 		}
 	}
 }
@@ -181,7 +179,7 @@ void vTask_KeyBoard( void *pvParameters )
 	
 	MyBeep_Init();
 	
-	Is_Init = KEYBOARD_INIT_DONE;
+//	Is_Init = KEYBOARD_INIT_DONE;
 	//xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
 	
 	while(1)
