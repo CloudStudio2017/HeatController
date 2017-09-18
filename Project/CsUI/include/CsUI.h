@@ -56,16 +56,17 @@ typedef TCsUI_BaseObject* TCsUI_BaseObjectTable;
 typedef struct TCsUI_Frame
 {
 	TCsUI_BaseObject Obj;
-	TCsUI_Color BackColor;
 	struct TCsUI_Frame* Parent;
 	TCsUI_BaseObjectTable* Childs;
 	TCsUI_TypeBase ChildCount;
+	TCsUI_Color BackColor;
 }TCsUI_Frame;
 
 /* Lable */
 typedef struct TCsUI_Lable
 {
 	TCsUI_BaseObject Obj;
+	struct TCsUI_Frame* Parent;
 	TCsUI_Font Font;
 	TCsUI_Color FrontColor;
 	TCsUI_Color BackColor;
@@ -75,6 +76,8 @@ typedef struct TCsUI_Lable
 
 
 /* Functions */
+extern void CsUI_DrawLine(TCsUI_TypeBase x1, TCsUI_TypeBase y1, TCsUI_TypeBase x2, TCsUI_TypeBase y2, TCsUI_Color Color);
+
 extern TCsUI_TypeBase CsUI_Init(void);
 extern TCsUI_TypeBase TCsUI_Frame_Draw(TCsUI_Frame* Self);
 extern TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self);
