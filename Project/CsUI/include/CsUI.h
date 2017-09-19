@@ -40,6 +40,14 @@ typedef struct TCsUI_Font
 	unsigned char* pFontMatrixData;
 }TCsUI_Font;
 
+/* Bit draw mode define */
+typedef struct TCsUI_BitDrawMode
+{
+	unsigned char xDir : 1;   //0:Left to right 1:Right to left
+	unsigned char yDir : 1;   //0:Top to bottom 1:Bottom to Top
+}TCsUI_BitDrawMode;
+
+
 /* Draw call back function define */
 typedef TCsUI_TypeBase(*TCsUI_Draw)(void* Self);
 
@@ -73,6 +81,36 @@ typedef struct TCsUI_Lable
 	char *Text;
 }TCsUI_Lable;
 
+/* Bitmap struct type */
+__packed typedef struct TBitmap_Head
+{
+	unsigned short bfType;            //00   //'B' 'M'
+	unsigned int   bfSize;            //02   //File size in byte
+	unsigned short bfReserved1;       //06   //0
+	unsigned short bfReserved2;       //08   //0
+	unsigned int   bfOffBits;         //0A   //Bitmap data offset from head
+	unsigned int   biSize;            //0E   //Size of struct 'BitmapInfoHead'
+	unsigned int   biWidth;           //12   //Witdh of Bitmap
+	unsigned int   biHeight;          //16   //Height of Bitmap
+	unsigned short biPlanes;          //1A   //1
+	unsigned short biBitCount;        //1C   //Bits per pixcel  1/4/8/16/24/32
+	unsigned int   biCompression;     //1E   //Compression type 0:RGB 1:RLE8 2:RLE4 3:Bitfields 4:JPEG 5:PNG
+	unsigned int   biSizeImage;       //22   //Size of Picture  0 in RGB mode
+	unsigned int   biXPelsPerMeter;   //26   //XSize
+	unsigned int   biYPelsPerMeter;   //2A   //YSize
+	unsigned int   biClrUsed;         //2E
+	unsigned int   biClrImportant;    //32
+}TBitmap_Head;
+
+/* Picture */
+typedef struct TCsUI_Bitmap
+{
+	TCsUI_BaseObject Obj;
+	struct TCsUI_Frame* Parent;
+	TCsUI_Color FrontColor;
+	TCsUI_Color BackColor;
+	TBitmap_Head* pBmp;
+}TCsUI_Bitmap;
 
 
 /* Functions */
@@ -81,6 +119,28 @@ extern void CsUI_DrawLine(TCsUI_TypeBase x1, TCsUI_TypeBase y1, TCsUI_TypeBase x
 extern TCsUI_TypeBase CsUI_Init(void);
 extern TCsUI_TypeBase TCsUI_Frame_Draw(TCsUI_Frame* Self);
 extern TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self);
+extern TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self);
+
+
+
+
+
+
+
+
+/* Object define macros */
+#define CS_FRAME(ObjName, xParent, L, R, T, B, xBackColor, xChilds) \
+  TCsUI_Frame ObjName ={    \
+		.BackColor = xBackColor, \
+		.Parent = xParent,       \
+		.Childs = xChilds,       \
+		.ChildCount = sizeof(xChilds) / sizeof(TCsUI_BaseObjectTable), \
+		.Obj.Rect.Left = L,     \
+		.Obj.Rect.Right = R,    \
+		.Obj.Rect.Top = T,      \
+		.Obj.Rect.Bottom = B,   \
+		.Obj.Draw = (TCsUI_Draw)TCsUI_Frame_Draw \
+	};
 
 
 

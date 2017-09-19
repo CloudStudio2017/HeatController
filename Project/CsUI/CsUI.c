@@ -57,7 +57,7 @@ void CsUI_DrawLine(TCsUI_TypeBase x1, TCsUI_TypeBase y1, TCsUI_TypeBase x2, TCsU
 	
 	if(dx >= (ydir * dy))
 	{
-		for(i=0;i<dx;i++)
+		for(i=0;i<=dx;i++)
 		{
 			CsUI_SetPixel(x, y, Color);
 			x++;
@@ -71,7 +71,7 @@ void CsUI_DrawLine(TCsUI_TypeBase x1, TCsUI_TypeBase y1, TCsUI_TypeBase x2, TCsU
 	}
 	else
 	{
-		for(i=0;i<dy;i++)
+		for(i=0;i<=dy;i++)
 		{
 			CsUI_SetPixel(x, y, Color);
 			y++;
@@ -129,6 +129,71 @@ TCsUI_TypeBase TCsUI_Frame_Draw(TCsUI_Frame* Self)
 	return 0;
 }
 
+void CsUI_DrawBitmap_Bits(TCsUI_TypeBase Left, TCsUI_TypeBase Top, TCsUI_TypeBase Width, TCsUI_TypeBase Height,
+	                        const unsigned char* pDataBits, TCsUI_BitDrawMode Mode,
+										      TCsUI_Color FrontColor, TCsUI_Color BackColor)
+{
+	unsigned int x,y,i;
+	
+	CsUI_BlockBegin(Left, Top, Left + Width -1, Top + Height -1);
+	
+	if(Mode.xDir)
+	{
+		for(y=0;y<Height;y++)
+		{
+			x=Width;
+			while(x>8)
+			{
+				for(i=0;i<8;i++)
+				{
+					if(*pDataBits & (1<<(7-i)))
+						CsUI_BlockWriteData(BackColor);
+					else
+						CsUI_BlockWriteData(FrontColor);
+				}
+				pDataBits++;
+				x-=8;
+			}
+			for(i=0;i<x;i++)
+			{
+				if(*pDataBits & (1<<(7-i)))
+					CsUI_BlockWriteData(BackColor);
+				else
+					CsUI_BlockWriteData(FrontColor);
+			}
+			pDataBits++;
+		}
+	}
+	else
+	{
+		for(y=0;y<Height;y++)
+		{
+			x=Width;
+			while(x>8)
+			{
+				for(i=0;i<8;i++)
+				{
+					if(*pDataBits & (1<<(i)))
+						CsUI_BlockWriteData(BackColor);
+					else
+						CsUI_BlockWriteData(FrontColor);
+				}
+				pDataBits++;
+				x-=8;
+			}
+			for(i=0;i<x;i++)
+			{
+				if(*pDataBits & (1<<(i)))
+					CsUI_BlockWriteData(BackColor);
+				else
+					CsUI_BlockWriteData(FrontColor);
+			}
+			pDataBits++;
+		}
+	}
+	CsUI_BlockEnd();
+}
+
 TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self)
 {
 	TCsUI_TypeBase x,y;
@@ -143,6 +208,7 @@ TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self)
 	unsigned int CharOffset = 0;
 	unsigned char* pData;
 	unsigned int i;
+	TCsUI_BitDrawMode tmpMode;
 	
 	AbsRect.Left = Self->Obj.Rect.Left;
 	AbsRect.Top = Self->Obj.Rect.Top;
@@ -178,41 +244,70 @@ TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self)
 	{
 		pData = Self->Font.pFontMatrixData;
 		pData += ((*pChar - ' ') * OffsetBase);
-		CsUI_BlockBegin(AbsRect.Left + CharOffset,
-		                AbsRect.Top,
-		                AbsRect.Left + CharOffset + XSize - 1,
-		                AbsRect.Top + YSize - 1);
-		for(y=0;y<YSize;y++)
-		{
-			x=XSize;
-			while(x>8)
-			{
-				for(i=0;i<8;i++)
-				{
-					if(*pData & (1<<i))
-						CsUI_BlockWriteData(Color1);
-					else
-						CsUI_BlockWriteData(Color2);
-				}
-				pData++;
-				x-=8;
-			}
-			for(i=0;i<x;i++)
-			{
-				if(*pData & (1<<i))
-					CsUI_BlockWriteData(Color1);
-				else
-					CsUI_BlockWriteData(Color2);
-			}
-			pData++;
-		}
-		CsUI_BlockEnd();
+		
+		tmpMode.xDir = 0;
+		tmpMode.yDir = 0;
+		CsUI_DrawBitmap_Bits(AbsRect.Left + CharOffset, AbsRect.Top, XSize, YSize, pData, tmpMode, Color2, Color1);
 		pChar++;
 		CharOffset += XSize;
 	}
 	
 	return 0;
 }
+
+TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
+{
+	TCsUI_Frame* pParent;
+	TCsUI_Rect AbsRect;
+	TCsUI_TypeBase Width;
+	TCsUI_TypeBase Height;
+	unsigned char* pBitData;
+	TCsUI_BitDrawMode tmpMode;
+	
+	AbsRect.Left = Self->Obj.Rect.Left;
+	AbsRect.Top = Self->Obj.Rect.Top;
+	Width = Self->Obj.Rect.Right - AbsRect.Left;
+	Height = Self->Obj.Rect.Bottom - AbsRect.Top;
+	
+	pParent = Self->Parent;
+	while(pParent != NULL)
+	{
+		AbsRect.Left += pParent->Obj.Rect.Left;
+		AbsRect.Top += pParent->Obj.Rect.Top;
+		pParent = pParent->Parent;
+	}
+	AbsRect.Right = AbsRect.Left + Width;
+	AbsRect.Bottom = AbsRect.Top + Height;
+	
+	AbsRect.Right = AbsRect.Left + Self->pBmp->biWidth;
+	AbsRect.Bottom = AbsRect.Top + Self->pBmp->biHeight;
+	
+	/* Draw Background */
+	CsUI_FillRect(AbsRect.Left,
+	              AbsRect.Top,
+	              AbsRect.Right,
+	              AbsRect.Bottom,
+                Self->BackColor);
+	/* Get bitmap data*/
+	pBitData = (unsigned char*)((unsigned int)(Self->pBmp) + (unsigned int)(Self->pBmp->bfOffBits));
+	switch(Self->pBmp->biBitCount)
+	{
+		case 1:
+			tmpMode.xDir = 1;
+		  tmpMode.yDir = 0;
+			CsUI_DrawBitmap_Bits(AbsRect.Left, AbsRect.Top, AbsRect.Right - AbsRect.Left, AbsRect.Bottom - AbsRect.Top, pBitData, tmpMode, Self->FrontColor, Self->BackColor);
+			break;
+		case 4:
+		case 8:
+		case 16:
+		case 24:
+		case 32:
+			break;
+	}
+	
+	return 0;
+}
+
 
 
 

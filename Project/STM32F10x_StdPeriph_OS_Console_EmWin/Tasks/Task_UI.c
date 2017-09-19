@@ -8,15 +8,43 @@
 #include "Math.h"
 #include "stdlib.h"
 
-TCsUI_Frame xFrame1;
-TCsUI_Frame xChildFrame1;
-TCsUI_Frame xChildFrame2;
-TCsUI_Frame xChildFrame3;
-TCsUI_Frame xChildFrame4;
-TCsUI_Lable xLable1;
 
-TCsUI_BaseObjectTable xFrame1_ChildTable[]={&xChildFrame1.Obj, &xChildFrame2.Obj, &xChildFrame3.Obj, &xChildFrame4.Obj};
+CS_FRAME(xChildFrame1, NULL, 10, 30, 20, 40, 0x3300, NULL);
+CS_FRAME(xChildFrame2, NULL, 100, 120, 20, 40, 0x0000, NULL);
+CS_FRAME(xChildFrame3, NULL, 210, 330, 40, 80, 0xF1FF, NULL);
+
+TCsUI_Lable xLable1;
+TCsUI_Bitmap xBitmap1;
+
+
 TCsUI_BaseObjectTable xChildFrame4_ChildTable[]={&xLable1.Obj};
+
+volatile const unsigned char xBitmapdata1[] ={
+	0x42, 0x4D, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3E, 0x00, 0x00, 0x00, 0x28, 0x00, 
+	0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x18, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 
+	0xFF, 0xFF, 0xFF, 0xFF, 0xEF, 0xDF, 0xFF, 0xDF, 0xFF, 0xFE, 0xFF, 0xFF, 0xE7, 0x9F, 0xFF, 0xDF, 
+	0xFF, 0xFE, 0xFF, 0xE7, 0xF7, 0xBF, 0xFF, 0xDF, 0xFC, 0x00, 0x00, 0x33, 0x00, 0x03, 0xFF, 0xDF, 
+	0xFF, 0xFE, 0xFF, 0xF9, 0xFD, 0xFF, 0xFF, 0xDF, 0xFF, 0xFE, 0xFF, 0xFB, 0xFD, 0xFF, 0xFF, 0xDF, 
+	0xFF, 0x00, 0x00, 0xFF, 0x80, 0x07, 0x80, 0x00, 0x0F, 0xFF, 0xFF, 0xFF, 0x9F, 0xF7, 0xFF, 0x9F, 
+	0xFF, 0xFF, 0xFF, 0xE3, 0x9F, 0xF7, 0xFF, 0x8F, 0xFF, 0x00, 0x01, 0xFB, 0x80, 0x07, 0xFF, 0x8F, 
+	0xFF, 0x3E, 0xFD, 0xFB, 0x9F, 0xF7, 0xFF, 0xAF, 0xFF, 0x3E, 0xFD, 0xFB, 0x9F, 0xF7, 0xFF, 0x27, 
+	0xFF, 0x3E, 0xFD, 0xFB, 0x80, 0x07, 0xFF, 0x77, 0xFF, 0x3E, 0xFD, 0xFB, 0x9F, 0xF7, 0xFE, 0x73, 
+	0xFF, 0x00, 0x01, 0xFB, 0x9F, 0xF7, 0xFC, 0xF9, 0xFF, 0x7F, 0xFD, 0xFB, 0x80, 0x07, 0xF9, 0xFC, 
+	0xFE, 0x7F, 0xFF, 0xFB, 0x9F, 0xF7, 0xF3, 0xFE, 0x7E, 0x7F, 0xFF, 0xF1, 0xFF, 0xFF, 0xCF, 0xFF, 
+	0x1C, 0xFF, 0xFF, 0xE6, 0xFF, 0xFF, 0x9F, 0xFF, 0xC5, 0xFF, 0xFF, 0xEF, 0x00, 0x01, 0xFF, 0xFF, 
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+TBitmap_Head* xpBitHead1 = (TBitmap_Head*)xBitmapdata1;
+
+CS_FRAME(xChildFrame4, NULL, 300, 480, 5, 90, 0xFF00, xChildFrame4_ChildTable);
+
+TCsUI_BaseObjectTable xFrame1_ChildTable[]={&xChildFrame1.Obj, &xChildFrame2.Obj, &xChildFrame3.Obj, &xChildFrame4.Obj, &xBitmap1.Obj};
+
+CS_FRAME(xFrame1, NULL, 0, 480, 0, 320, 0x5500, xFrame1_ChildTable);
 
 static char string_buf[50];
 //static uint32_t InitCount = INIT_TOTAL_COUNT;
@@ -36,52 +64,12 @@ void static UI_Init(void)
 	
 	CsUI_Init();
 	
-	xFrame1.BackColor = 0x5500;
-	xFrame1.Parent = NULL;
-	xFrame1.Childs = xFrame1_ChildTable;
-	xFrame1.ChildCount = sizeof(xFrame1_ChildTable) / sizeof(TCsUI_BaseObjectTable);
-	xFrame1.Obj.Rect.Left = 0;
-	xFrame1.Obj.Rect.Right = 480;
-	xFrame1.Obj.Rect.Top = 0;
-	xFrame1.Obj.Rect.Bottom = 320;
-	xFrame1.Obj.Draw = (TCsUI_Draw)TCsUI_Frame_Draw;
+	string_buf[1] = xpBitHead1->bfSize;
 	
-	xChildFrame1.BackColor = 0x3300;
 	xChildFrame1.Parent = &xFrame1;
-	xChildFrame1.Childs = NULL;
-	xChildFrame1.Obj.Rect.Left = 10;
-	xChildFrame1.Obj.Rect.Top = 20;
-	xChildFrame1.Obj.Rect.Right = 30;
-	xChildFrame1.Obj.Rect.Bottom = 40;
-	xChildFrame1.Obj.Draw = (TCsUI_Draw)TCsUI_Frame_Draw;
-	
-	xChildFrame2.BackColor = 0x0000;
 	xChildFrame2.Parent = &xFrame1;
-	xChildFrame2.Childs = NULL;
-	xChildFrame2.Obj.Rect.Left = 100;
-	xChildFrame2.Obj.Rect.Top = 20;
-	xChildFrame2.Obj.Rect.Right = 120;
-	xChildFrame2.Obj.Rect.Bottom = 40;
-	xChildFrame2.Obj.Draw = (TCsUI_Draw)TCsUI_Frame_Draw;
-	
-	xChildFrame3.BackColor = 0xF1FF;
 	xChildFrame3.Parent = &xFrame1;
-	xChildFrame3.Childs = NULL;
-	xChildFrame3.Obj.Rect.Left = 210;
-	xChildFrame3.Obj.Rect.Top = 40;
-	xChildFrame3.Obj.Rect.Right = 330;
-	xChildFrame3.Obj.Rect.Bottom = 80;
-	xChildFrame3.Obj.Draw = (TCsUI_Draw)TCsUI_Frame_Draw;
-	
-	xChildFrame4.BackColor = 0xFF00;
 	xChildFrame4.Parent = &xFrame1;
-	xChildFrame4.Childs = xChildFrame4_ChildTable;
-	xChildFrame4.ChildCount = sizeof(xChildFrame4_ChildTable) / sizeof(TCsUI_BaseObjectTable);
-	xChildFrame4.Obj.Rect.Left = 300;
-	xChildFrame4.Obj.Rect.Top = 5;
-	xChildFrame4.Obj.Rect.Right = 480;
-	xChildFrame4.Obj.Rect.Bottom = 90;
-	xChildFrame4.Obj.Draw = (TCsUI_Draw)TCsUI_Frame_Draw;
 	
 	xLable1.BackColor = 0x0000;
 	xLable1.FrontColor = 0xFFFF;
@@ -94,6 +82,16 @@ void static UI_Init(void)
 	xLable1.Obj.Rect.Bottom = 70;
 	xLable1.Obj.Draw = (TCsUI_Draw)TCsUI_Lable_Draw;
 	
+	xBitmap1.BackColor = 0x0000;
+	xBitmap1.FrontColor = 0xFF00;
+	xBitmap1.Parent = &xChildFrame1;
+	xBitmap1.pBmp = xpBitHead1;
+	xBitmap1.Obj.Rect.Left = 100;
+	xBitmap1.Obj.Rect.Top = 200;
+	xBitmap1.Obj.Rect.Right = 300;
+	xBitmap1.Obj.Rect.Bottom = 300;
+	xBitmap1.Obj.Draw = (TCsUI_Draw)TCsUI_Bitmap_Draw;
+	
 	UI_ShowStartupLogo();
 	
 	xFrame1.Obj.Draw(&xFrame1);
@@ -104,6 +102,7 @@ void static UI_Init(void)
 
 void UI_MainShow(void)
 {
+	return;
 	CslLCD_FillRect(100,100,400,200, 0x10f0);
 	CslLCD_FillRect(100,100,400,200, ~0x10f0);
 	CslLCD_FillRect(100,100,400,200, 0x10f0);
@@ -144,66 +143,12 @@ void vTask_UI( void *pvParameters )
 	int xx,yy;
 	int xx0,yy0;
 	srand(9999);
-	xx0 = 80 * cos(i * 3.1415 / 180);
-	yy0 = 100 * sin(i * 3.1415 / 180);
-	while(1)
-	{
-		i+=0.01;
-		xx = 80 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx0, 200 + yy0, 0);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0xfff1);
-		xx0 = xx;
-		yy0 = yy;
-	}
-	for(i=0;i<45;i++)
-	{
-		xx = 100 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0x1111);
-	}
-	for(i=45;i<90;i++)
-	{
-		xx = 100 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0x2222);
-	}
-	for(i=90;i<135;i++)
-	{
-		xx = 100 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0x3333);
-	}
-	for(i=135;i<180;i++)
-	{
-		xx = 100 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0x4444);
-	}
-	for(i=180;i<225;i++)
-	{
-		xx = 100 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0x5555);
-	}
-	for(i=225;i<270;i++)
-	{
-		xx = 100 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0x6666);
-	}
-	for(i=270;i<315;i++)
-	{
-		xx = 100 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0x7777);
-	}
-	for(i=315;i<360;i++)
-	{
-		xx = 100 * cos(i * 3.1415 / 180);
-		yy = 100 * sin(i * 3.1415 / 180);
-		CsUI_DrawLine(200,200, 200 + xx, 200 + yy, 0x8888);
-	}
+	//xx0 = 80 * cos(i * 3.1415 / 180);
+	//yy0 = 100 * sin(i * 3.1415 / 180);
+	xx = 0;
+	yy = 0;
+	xx0 = sizeof(TBitmap_Head);
+	yy0 = 0;
 	
 	while(1)
 	{
