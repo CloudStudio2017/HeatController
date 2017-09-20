@@ -1,8 +1,7 @@
 #include "CsUI_Font.h"
 
 
-TCsUI_Font CsUI_Font_ASCII_1218={.XSize=12, .YSize=18, .pFontMatrixData = CsUI_FontData_ASCII_1218};
-
+const TCsUI_Font CsUI_Font_ASCII_1218={.XSize=12, .YSize=18, .pFontMatrixData = CsUI_FontData_ASCII_1218};
 
 unsigned char CsUI_FontData_ASCII_1218[]=
 {

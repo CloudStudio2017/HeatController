@@ -6,6 +6,8 @@
 ** Author : Cloud
 ** Orgnaztion : Cloud Studio
 ** Version : V0.0.1
+**
+** 2D Graphic code is from uGUI (C)Achim Doble, 2015
 */
 
 #include "CsUI_Config.h"
@@ -33,7 +35,7 @@ typedef struct TCsUI_Rect
 }TCsUI_Rect;
 
 /* Font define */
-typedef struct TCsUI_Font
+typedef struct
 {
 	TCsUI_TypeBase XSize;
 	TCsUI_TypeBase YSize;
@@ -71,7 +73,7 @@ typedef struct TCsUI_Frame
 }TCsUI_Frame;
 
 /* Lable */
-typedef struct TCsUI_Lable
+typedef struct
 {
 	TCsUI_BaseObject Obj;
 	struct TCsUI_Frame* Parent;
@@ -114,6 +116,9 @@ typedef struct TCsUI_Bitmap
 
 
 /* Functions */
+extern void CsUI_DrawCircle(TCsUI_TypeBase x0, TCsUI_TypeBase y0, TCsUI_TypeBase r, TCsUI_Color Color);
+extern void CsUI_FillCircle(TCsUI_TypeBase x0, TCsUI_TypeBase y0, TCsUI_TypeBase r, TCsUI_Color Color);
+extern void CsUI_DrawArc(TCsUI_TypeBase x0, TCsUI_TypeBase y0, TCsUI_TypeBase r, TCsUI_TypeBase s, TCsUI_Color Color);
 extern void CsUI_DrawLine(TCsUI_TypeBase x1, TCsUI_TypeBase y1, TCsUI_TypeBase x2, TCsUI_TypeBase y2, TCsUI_Color Color);
 
 extern TCsUI_TypeBase CsUI_Init(void);
@@ -130,7 +135,7 @@ extern TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self);
 
 /* Object define macros */
 #define CS_FRAME(ObjName, xParent, L, R, T, B, xBackColor, xChilds) \
-  TCsUI_Frame ObjName ={    \
+  TCsUI_Frame ObjName ={     \
 		.BackColor = xBackColor, \
 		.Parent = xParent,       \
 		.Childs = xChilds,       \
@@ -140,9 +145,33 @@ extern TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self);
 		.Obj.Rect.Top = T,      \
 		.Obj.Rect.Bottom = B,   \
 		.Obj.Draw = (TCsUI_Draw)TCsUI_Frame_Draw \
-	};
+	}
 
+#define CS_LABLE(ObjName, xParent, L, R, T, B, xFrontColor, xBackColor, xText, xFont) \
+	TCsUI_Lable ObjName ={       \
+		.FrontColor = xFrontColor, \
+		.BackColor = xBackColor,   \
+		.Parent = xParent,         \
+		.Text = xText,             \
+		.Font = xFont,             \
+		.Obj.Rect.Left = L,        \
+		.Obj.Rect.Right = R,       \
+		.Obj.Rect.Top = T,         \
+		.Obj.Rect.Bottom = B,      \
+		.Obj.Draw = (TCsUI_Draw)TCsUI_Lable_Draw \
+	}
 
+#define CS_BITMAP(ObjName, xParent, L, R, T, B, xFrontColor, xBackColor, xpBmp) \
+	TCsUI_Bitmap ObjName ={        \
+		.FrontColor = xFrontColor,   \
+		.BackColor = xBackColor,     \
+		.pBmp = (TBitmap_Head*)xpBmp, \
+		.Obj.Rect.Left = L,          \
+		.Obj.Rect.Right = R,         \
+		.Obj.Rect.Top = T,           \
+		.Obj.Rect.Bottom = B,        \
+		.Obj.Draw = (TCsUI_Draw)TCsUI_Bitmap_Draw \
+	}
 
 
 #endif

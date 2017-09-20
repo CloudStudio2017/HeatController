@@ -13,11 +13,7 @@ CS_FRAME(xChildFrame1, NULL, 10, 30, 20, 40, 0x3300, NULL);
 CS_FRAME(xChildFrame2, NULL, 100, 120, 20, 40, 0x0000, NULL);
 CS_FRAME(xChildFrame3, NULL, 210, 330, 40, 80, 0xF1FF, NULL);
 
-TCsUI_Lable xLable1;
 TCsUI_Bitmap xBitmap1;
-
-
-TCsUI_BaseObjectTable xChildFrame4_ChildTable[]={&xLable1.Obj};
 
 volatile const unsigned char xBitmapdata1[] ={
 	0x42, 0x4D, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3E, 0x00, 0x00, 0x00, 0x28, 0x00, 
@@ -38,7 +34,11 @@ volatile const unsigned char xBitmapdata1[] ={
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
 };
 
-TBitmap_Head* xpBitHead1 = (TBitmap_Head*)xBitmapdata1;
+CS_BITMAP(xBitmap1, NULL, 100, 200, 200, 300, 0xFF00, 0x00, xBitmapdata1);
+
+CS_LABLE(xLable1, NULL, 50, 100, 50, 70, 0xFFFF, 0x0000 ,"ABCD12345", NULL);
+
+TCsUI_BaseObjectTable xChildFrame4_ChildTable[]={&xLable1.Obj};
 
 CS_FRAME(xChildFrame4, NULL, 300, 480, 5, 90, 0xFF00, xChildFrame4_ChildTable);
 
@@ -63,34 +63,16 @@ void static UI_Init(void)
 //	uint32_t Qr;
 	
 	CsUI_Init();
-	
-	string_buf[1] = xpBitHead1->bfSize;
-	
+		
 	xChildFrame1.Parent = &xFrame1;
 	xChildFrame2.Parent = &xFrame1;
 	xChildFrame3.Parent = &xFrame1;
 	xChildFrame4.Parent = &xFrame1;
 	
-	xLable1.BackColor = 0x0000;
-	xLable1.FrontColor = 0xFFFF;
 	xLable1.Parent = &xChildFrame4;
-	xLable1.Text = "ABCD99213";
 	xLable1.Font = CsUI_Font_ASCII_1218;
-	xLable1.Obj.Rect.Left = 50;
-	xLable1.Obj.Rect.Top = 50;
-	xLable1.Obj.Rect.Right = 100;
-	xLable1.Obj.Rect.Bottom = 70;
-	xLable1.Obj.Draw = (TCsUI_Draw)TCsUI_Lable_Draw;
 	
-	xBitmap1.BackColor = 0x0000;
-	xBitmap1.FrontColor = 0xFF00;
 	xBitmap1.Parent = &xChildFrame1;
-	xBitmap1.pBmp = xpBitHead1;
-	xBitmap1.Obj.Rect.Left = 100;
-	xBitmap1.Obj.Rect.Top = 200;
-	xBitmap1.Obj.Rect.Right = 300;
-	xBitmap1.Obj.Rect.Bottom = 300;
-	xBitmap1.Obj.Draw = (TCsUI_Draw)TCsUI_Bitmap_Draw;
 	
 	UI_ShowStartupLogo();
 	
@@ -149,6 +131,15 @@ void vTask_UI( void *pvParameters )
 	yy = 0;
 	xx0 = sizeof(TBitmap_Head);
 	yy0 = 0;
+	
+	while(1)
+	{
+		xx = rand() % 200;//480;
+		yy = rand() % 20;//320;
+		CsUI_DrawCircle(200, 200, xx, rand() % 65536);
+		xx0 = xx;
+		yy0 = yy;
+	}
 	
 	while(1)
 	{

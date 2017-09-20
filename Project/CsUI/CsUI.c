@@ -9,78 +9,161 @@ TCsUI_TypeBase CsUI_Init(void)
 	return 0;
 }
 
+/* 2D Graphic code */
+
+void CsUI_DrawCircle(TCsUI_TypeBase x0, TCsUI_TypeBase y0, TCsUI_TypeBase r, TCsUI_Color Color)
+{
+	int x,y,xd,yd,e;
+
+	if ( r<=0 ) return;
+
+	xd = 1 - (r << 1);
+	yd = 0;
+	e = 0;
+	x = r;
+	y = 0;
+
+	while ( x >= y )
+	{
+		CsUI_SetPixel(x0 - x, y0 + y, Color);
+		CsUI_SetPixel(x0 - x, y0 - y, Color);
+		CsUI_SetPixel(x0 + x, y0 + y, Color);
+		CsUI_SetPixel(x0 + x, y0 - y, Color);
+		CsUI_SetPixel(x0 - y, y0 + x, Color);
+		CsUI_SetPixel(x0 - y, y0 - x, Color);
+		CsUI_SetPixel(x0 + y, y0 + x, Color);
+		CsUI_SetPixel(x0 + y, y0 - x, Color);
+
+		y++;
+		e += yd;
+		yd += 2;
+		if ( ((e << 1) + xd) > 0 )
+		{
+			x--;
+			e += xd;
+			xd += 2;
+		}
+	}
+}
+
+void CsUI_FillCircle(TCsUI_TypeBase x0, TCsUI_TypeBase y0, TCsUI_TypeBase r, TCsUI_Color Color)
+{
+   int  x,y,xd;
+
+   if ( r<=0 ) return;
+
+   xd = 3 - (r << 1);
+   x = 0;
+   y = r;
+
+   while ( x <= y )
+   {
+     if( y > 0 )
+     {
+        CsUI_DrawLine(x0 - x, y0 - y,x0 - x, y0 + y, Color);
+        CsUI_DrawLine(x0 + x, y0 - y,x0 + x, y0 + y, Color);
+     }
+     if( x > 0 )
+     {
+        CsUI_DrawLine(x0 - y, y0 - x,x0 - y, y0 + x, Color);
+        CsUI_DrawLine(x0 + y, y0 - x,x0 + y, y0 + x, Color);
+     }
+     if ( xd < 0 )
+     {
+        xd += (x << 2) + 6;
+     }
+     else
+     {
+        xd += ((x - y) << 2) + 10;
+        y--;
+     }
+     x++;
+   }
+   CsUI_DrawCircle(x0, y0, r,Color);
+}
+
+void CsUI_DrawArc(TCsUI_TypeBase x0, TCsUI_TypeBase y0, TCsUI_TypeBase r, TCsUI_TypeBase s, TCsUI_Color Color)
+{
+	int x,y,xd,yd,e;
+	
+	if ( r<=0 ) return;
+
+   xd = 1 - (r << 1);
+   yd = 0;
+   e = 0;
+   x = r;
+   y = 0;
+
+	while ( x >= y )
+	{
+		// Q1
+		if ( s & 0x01 ) CsUI_SetPixel(x0 + x, y0 - y, Color);
+		if ( s & 0x02 ) CsUI_SetPixel(x0 + y, y0 - x, Color);
+		// Q2
+		if ( s & 0x04 ) CsUI_SetPixel(x0 - y, y0 - x, Color);
+		if ( s & 0x08 ) CsUI_SetPixel(x0 - x, y0 - y, Color);
+		// Q3
+		if ( s & 0x10 ) CsUI_SetPixel(x0 - x, y0 + y, Color);
+		if ( s & 0x20 ) CsUI_SetPixel(x0 - y, y0 + x, Color);
+		// Q4
+		if ( s & 0x40 ) CsUI_SetPixel(x0 + y, y0 + x, Color);
+		if ( s & 0x80 ) CsUI_SetPixel(x0 + x, y0 + y, Color);
+		y++;
+		e += yd;
+		yd += 2;
+		if ( ((e << 1) + xd) > 0 )
+		{
+			x--;
+			e += xd;
+			xd += 2;
+		}
+	}
+}
+
 void CsUI_DrawLine(TCsUI_TypeBase x1, TCsUI_TypeBase y1, TCsUI_TypeBase x2, TCsUI_TypeBase y2, TCsUI_Color Color)
 {
-	int x,y,dx,dy,e;
-	int ydir,xdir;
-	unsigned int i;
-	
+	int n, dx, dy, sgndx, sgndy, dxabs, dyabs, x, y, drawx, drawy;
+
+	/* Is hardware acceleration available? */
+
 	dx = x2 - x1;
 	dy = y2 - y1;
-	
-	if((dx < 0 && dy < 0) || (dy < -dx))
+	dxabs = (dx>0)?dx:-dx;
+	dyabs = (dy>0)?dy:-dy;
+	sgndx = (dx>0)?1:-1;
+	sgndy = (dy>0)?1:-1;
+	x = dyabs >> 1;
+	y = dxabs >> 1;
+	drawx = x1;
+	drawy = y1;
+
+	CsUI_SetPixel(drawx, drawy, Color);
+	if( dxabs >= dyabs )
 	{
-		x = x1;
-		x1 = x2;
-		x2 = x;
-		y = y1;
-		y1 = y2;
-		y2 = y;
-		dx = -dx;
-		dy = -dy;
-	}
-	if(dx == 0)
-	{
-		for(i=y1;i<=y2;i++)
-			CsUI_SetPixel(x1, i, Color);
-		return;
-	}
-	else if(dy == 0)
-	{
-		for(i=x1;i<=x2;i++)
-			CsUI_SetPixel(i, y1, Color);
-		return;
-	}
-	
-	e = -dx;
-	x = x1;
-	y = y1;
-	
-	if(dy > 0)
-		ydir = 1;
-	else if(dy < 0)
-		ydir = -1;
-	if(dx > 0)
-		xdir = 1;
-	else if(dx < 0)
-		xdir = -1;
-	
-	if(dx >= (ydir * dy))
-	{
-		for(i=0;i<=dx;i++)
+		for( n=0; n<dxabs; n++ )
 		{
-			CsUI_SetPixel(x, y, Color);
-			x++;
-			e = e + 2 * (dy * ydir);
-			if(e>=0)
+			y += dyabs;
+			if( y >= dxabs )
 			{
-				y += ydir;
-				e = e - 2 * dx;
+				y -= dxabs;
+				drawy += sgndy;
 			}
+			drawx += sgndx;
+			CsUI_SetPixel(drawx, drawy, Color);
 		}
 	}
 	else
 	{
-		for(i=0;i<=dy;i++)
+		for( n=0; n<dyabs; n++ )
 		{
-			CsUI_SetPixel(x, y, Color);
-			y++;
-			e = e + 2 * (dx * xdir);
-			if(e>=0)
+			x += dxabs;
+			if( x >= dyabs )
 			{
-				x += xdir;
-				e = e - 2 * dy;
+				x -= dyabs;
+				drawx += sgndx;
 			}
+			drawy += sgndy;
+			CsUI_SetPixel(drawx, drawy, Color);
 		}
 	}
 }
