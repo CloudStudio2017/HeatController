@@ -1,7 +1,9 @@
 #include "CsUI.h"
 #include "CsUI_Font.h"
+#include "FlashControl.h"
 
-
+#define CSUI_BUFFER_MAX 256
+static unsigned short CsUI_Buffer[CSUI_BUFFER_MAX / 2];
 
 TCsUI_TypeBase CsUI_Init(void)
 {
@@ -125,7 +127,41 @@ void CsUI_DrawLine(TCsUI_TypeBase x1, TCsUI_TypeBase y1, TCsUI_TypeBase x2, TCsU
 	int n, dx, dy, sgndx, sgndy, dxabs, dyabs, x, y, drawx, drawy;
 
 	/* Is hardware acceleration available? */
-
+	#if 1
+	if(x1 == x2)
+	{
+		if(y1 < y2)
+		{
+			CsUI_BlockBegin(x1, y1, x1, y2);
+			for(n=0;n<=y2-y1;n++)
+				CsUI_BlockWriteData(Color);
+		}
+		else
+		{
+			CsUI_BlockBegin(x1, y1, x1, y2);
+			for(n=0;n<=y1-y2;n++)
+				CsUI_BlockWriteData(Color);
+		}
+		CsUI_BlockEnd();
+	}
+	else if(y1 == y2)
+	{
+		if(x1 < x2)
+		{
+			CsUI_BlockBegin(x1, y1, x1, y2);
+			for(n=0;n<=x2-x1;n++)
+				CsUI_BlockWriteData(Color);
+		}
+		else
+		{
+			CsUI_BlockBegin(x1, y1, x1, y2);
+			for(n=0;n<=x1-x2;n++)
+				CsUI_BlockWriteData(Color);
+		}
+		CsUI_BlockEnd();
+	}
+	#endif
+	
 	dx = x2 - x1;
 	dy = y2 - y1;
 	dxabs = (dx>0)?dx:-dx;
@@ -279,7 +315,6 @@ void CsUI_DrawBitmap_Bits(TCsUI_TypeBase Left, TCsUI_TypeBase Top, TCsUI_TypeBas
 
 TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self)
 {
-	TCsUI_TypeBase x,y;
 	TCsUI_TypeBase XSize, YSize;
 	TCsUI_Frame* pParent;
 	TCsUI_Rect AbsRect;
@@ -344,6 +379,9 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 	TCsUI_Rect AbsRect;
 	TCsUI_TypeBase Width;
 	TCsUI_TypeBase Height;
+	int bmpWidth;
+	int bmpHeight;
+	int i;
 	unsigned char* pBitData;
 	TCsUI_BitDrawMode tmpMode;
 	
@@ -362,15 +400,18 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 	AbsRect.Right = AbsRect.Left + Width;
 	AbsRect.Bottom = AbsRect.Top + Height;
 	
-	AbsRect.Right = AbsRect.Left + Self->pBmp->biWidth;
-	AbsRect.Bottom = AbsRect.Top + Self->pBmp->biHeight;
+	bmpWidth = Self->pBmp->biWidth;
+	bmpHeight = Self->pBmp->biHeight;
+	if(bmpHeight < 0)	bmpHeight = -bmpHeight;
+	AbsRect.Right = AbsRect.Left + bmpWidth;
+	AbsRect.Bottom = AbsRect.Top + bmpHeight;
 	
 	/* Draw Background */
-	CsUI_FillRect(AbsRect.Left,
-	              AbsRect.Top,
-	              AbsRect.Right,
-	              AbsRect.Bottom,
-                Self->BackColor);
+	//CsUI_FillRect(AbsRect.Left,
+	//              AbsRect.Top,
+	//              AbsRect.Right,
+	//              AbsRect.Bottom,
+  //              Self->BackColor);
 	/* Get bitmap data*/
 	pBitData = (unsigned char*)((unsigned int)(Self->pBmp) + (unsigned int)(Self->pBmp->bfOffBits));
 	switch(Self->pBmp->biBitCount)
@@ -383,6 +424,14 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 		case 4:
 		case 8:
 		case 16:
+			CsUI_BlockBegin(AbsRect.Left, AbsRect.Top, AbsRect.Right -1, AbsRect.Bottom -1);
+			for(i=0;i<bmpWidth * bmpHeight;i++)
+			{
+				CsUI_BlockWriteData(*(unsigned short*)pBitData);
+				pBitData+=2;
+			}
+			CsUI_BlockEnd();
+			break;
 		case 24:
 		case 32:
 			break;
@@ -391,6 +440,89 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 	return 0;
 }
 
+TCsUI_TypeBase TCsUI_Bitmap_Draw_Ext(TCsUI_Bitmap* Self)
+{
+	TCsUI_Frame* pParent;
+	TCsUI_Rect AbsRect;
+	TCsUI_TypeBase Width;
+	TCsUI_TypeBase Height;
+	int bmpWidth;
+	int bmpHeight;
+	int i,j;
+	unsigned int pAddr;
+	TCsUI_BitDrawMode tmpMode;
+	
+	AbsRect.Left = Self->Obj.Rect.Left;
+	AbsRect.Top = Self->Obj.Rect.Top;
+	Width = Self->Obj.Rect.Right - AbsRect.Left;
+	Height = Self->Obj.Rect.Bottom - AbsRect.Top;
+	
+	pParent = Self->Parent;
+	while(pParent != NULL)
+	{
+		AbsRect.Left += pParent->Obj.Rect.Left;
+		AbsRect.Top += pParent->Obj.Rect.Top;
+		pParent = pParent->Parent;
+	}
+	AbsRect.Right = AbsRect.Left + Width;
+	AbsRect.Bottom = AbsRect.Top + Height;
+	
+	TBitmap_Head tmpHead;
+	
+	FlashControl_Read((uint8_t*)&tmpHead, 0x0, sizeof(tmpHead));
+	
+	bmpWidth = tmpHead.biWidth;
+	bmpHeight = tmpHead.biHeight;
+	if(bmpHeight < 0)	bmpHeight = -bmpHeight;
+	AbsRect.Right = AbsRect.Left + bmpWidth;
+	AbsRect.Bottom = AbsRect.Top + bmpHeight;
+	
+	/* Draw Background */
+	//CsUI_FillRect(AbsRect.Left,
+	//              AbsRect.Top,
+	//              AbsRect.Right,
+	//              AbsRect.Bottom,
+  //              Self->BackColor);
+	/* Get bitmap data*/
+	pAddr = tmpHead.bfOffBits + 0x0;
+	switch(Self->pBmp->biBitCount)
+	{
+		case 1:
+			//tmpMode.xDir = 1;
+		  //tmpMode.yDir = 0;
+			//CsUI_DrawBitmap_Bits(AbsRect.Left, AbsRect.Top, AbsRect.Right - AbsRect.Left, AbsRect.Bottom - AbsRect.Top, pBitData, tmpMode, Self->FrontColor, Self->BackColor);
+			break;
+		case 4:
+		case 8:
+		case 16:
+			CsUI_BlockBegin(AbsRect.Left, AbsRect.Top, AbsRect.Right -1, AbsRect.Bottom -1);
+			i = bmpWidth * bmpHeight * 2;
+			while(i > 0)
+			{
+				if(i > CSUI_BUFFER_MAX)
+				{
+					FlashControl_Read((uint8_t*)CsUI_Buffer, bmpWidth * bmpHeight * 2 - i + pAddr, CSUI_BUFFER_MAX);
+					for(j=0;j<CSUI_BUFFER_MAX/2;j++)
+						CsUI_BlockWriteData(CsUI_Buffer[j]);
+					i -= CSUI_BUFFER_MAX;
+				}
+				else
+				{
+					FlashControl_Read((uint8_t*)CsUI_Buffer, bmpWidth * bmpHeight * 2 - i + pAddr, i);
+					for(j=0;j<i/2;j++)
+						CsUI_BlockWriteData(CsUI_Buffer[j]);
+					i = 0;
+				}
+			}
+			CsUI_BlockEnd();
+			break;
+		case 24:
+		case 32:
+			break;
+	}
+	
+	return 0;
+}
 
 
 

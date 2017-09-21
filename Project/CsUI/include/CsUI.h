@@ -125,7 +125,7 @@ extern TCsUI_TypeBase CsUI_Init(void);
 extern TCsUI_TypeBase TCsUI_Frame_Draw(TCsUI_Frame* Self);
 extern TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self);
 extern TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self);
-
+extern TCsUI_TypeBase TCsUI_Bitmap_Draw_Ext(TCsUI_Bitmap* Self);
 
 
 
