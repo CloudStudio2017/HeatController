@@ -281,6 +281,10 @@ void CsUI_DrawBitmap_Bits(TCsUI_TypeBase Left, TCsUI_TypeBase Top, TCsUI_TypeBas
 					CsUI_BlockWriteData(FrontColor);
 			}
 			pDataBits++;
+			if(Mode.x4BAlgin && (Width % 32))
+			{
+				pDataBits += (24 + x - (Width % 32)) / 8;
+			}
 		}
 	}
 	else
@@ -308,6 +312,10 @@ void CsUI_DrawBitmap_Bits(TCsUI_TypeBase Left, TCsUI_TypeBase Top, TCsUI_TypeBas
 					CsUI_BlockWriteData(FrontColor);
 			}
 			pDataBits++;
+			if(Mode.x4BAlgin && (Width % 32))
+			{
+				pDataBits += (24 + x - (Width % 32)) / 8;
+			}
 		}
 	}
 	CsUI_BlockEnd();
@@ -365,6 +373,7 @@ TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self)
 		
 		tmpMode.xDir = 0;
 		tmpMode.yDir = 0;
+		tmpMode.x4BAlgin = 0;
 		CsUI_DrawBitmap_Bits(AbsRect.Left + CharOffset, AbsRect.Top, XSize, YSize, pData, tmpMode, Color2, Color1);
 		pChar++;
 		CharOffset += XSize;
@@ -419,6 +428,7 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 		case 1:
 			tmpMode.xDir = 1;
 		  tmpMode.yDir = 0;
+			tmpMode.x4BAlgin = 1;
 			CsUI_DrawBitmap_Bits(AbsRect.Left, AbsRect.Top, AbsRect.Right - AbsRect.Left, AbsRect.Bottom - AbsRect.Top, pBitData, tmpMode, Self->FrontColor, Self->BackColor);
 			break;
 		case 4:

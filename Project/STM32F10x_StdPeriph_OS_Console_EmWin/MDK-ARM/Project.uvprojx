@@ -749,6 +749,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\CsUI\CsUI_Font.c</FilePath>
             </File>
+            <File>
+              <FileName>ui_source_bitmap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CsUI\ui_source_bitmap.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

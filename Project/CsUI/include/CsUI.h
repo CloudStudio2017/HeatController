@@ -45,8 +45,9 @@ typedef struct
 /* Bit draw mode define */
 typedef struct TCsUI_BitDrawMode
 {
-	unsigned char xDir : 1;   //0:Left to right 1:Right to left
-	unsigned char yDir : 1;   //0:Top to bottom 1:Bottom to Top
+	unsigned char xDir : 1;        //0:Left to right 1:Right to left
+	unsigned char yDir : 1;        //0:Top to bottom 1:Bottom to Top
+	unsigned char x4BAlgin : 1;    //1:4Byte Align in Line
 }TCsUI_BitDrawMode;
 
 
