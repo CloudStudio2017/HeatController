@@ -283,7 +283,7 @@ void CslLCD_FillRect(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t y
 	uint32_t i;
 	
 	BlockWrite(xStart, xEnd, yStart, yEnd);
-	for(i=0;i<(xEnd-xStart+2)*(yEnd-yStart+2);i++)
+	for(i=0;i<(xEnd-xStart+1)*(yEnd-yStart+1);i++)
 	{
 		CSL_LCD_WriteData(Color);
 	}

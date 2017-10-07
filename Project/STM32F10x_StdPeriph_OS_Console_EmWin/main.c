@@ -59,7 +59,7 @@ int main(void)
 	volatile uint32_t i = 0;
   /* Add your application code here
      */
-	//CslRTC_Init();
+	CslRTC_Init();
 	
 	InitQueue = xQueueCreate( 1, sizeof(uint32_t));
 	FlashQueue = xQueueCreate( 2, sizeof(uint32_t));

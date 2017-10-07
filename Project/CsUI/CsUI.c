@@ -208,17 +208,15 @@ void CsUI_DrawLine(TCsUI_TypeBase x1, TCsUI_TypeBase y1, TCsUI_TypeBase x2, TCsU
 
 TCsUI_TypeBase TCsUI_Frame_Draw(TCsUI_Frame* Self)
 {
-	TCsUI_BaseObjectTable pChild;
+	//TCsUI_BaseObjectTable pChild;
 	TCsUI_Frame* pParent;
 	TCsUI_Rect AbsRect;
-	TCsUI_TypeBase Width;
-	TCsUI_TypeBase Height;
 	TCsUI_TypeBase i;
 		
 	AbsRect.Left = Self->Obj.Rect.Left;
 	AbsRect.Top = Self->Obj.Rect.Top;
-	Width = Self->Obj.Rect.Right - AbsRect.Left;
-	Height = Self->Obj.Rect.Bottom - AbsRect.Top;
+	AbsRect.Width = Self->Obj.Rect.Width;
+	AbsRect.Height = Self->Obj.Rect.Height;
 	
 	pParent = Self->Parent;
 	while(pParent != NULL)
@@ -227,13 +225,11 @@ TCsUI_TypeBase TCsUI_Frame_Draw(TCsUI_Frame* Self)
 		AbsRect.Top += pParent->Obj.Rect.Top;
 		pParent = pParent->Parent;
 	}
-	AbsRect.Right = AbsRect.Left + Width;
-	AbsRect.Bottom = AbsRect.Top + Height;
 	
 	CsUI_FillRect(AbsRect.Left,
 	              AbsRect.Top,
-	              AbsRect.Right,
-	              AbsRect.Bottom,
+	              AbsRect.Left + AbsRect.Width,
+	              AbsRect.Top + AbsRect.Height,
                 Self->BackColor);
 	if(Self->Childs != NULL)
 	{
@@ -326,20 +322,18 @@ TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self)
 	TCsUI_TypeBase XSize, YSize;
 	TCsUI_Frame* pParent;
 	TCsUI_Rect AbsRect;
-	TCsUI_TypeBase Width;
-	TCsUI_TypeBase Height;
 	TCsUI_Color Color1,Color2;
 	const char* pChar;
 	unsigned int OffsetBase;
 	unsigned int CharOffset = 0;
 	unsigned char* pData;
-	unsigned int i;
+//	unsigned int i;
 	TCsUI_BitDrawMode tmpMode;
 	
 	AbsRect.Left = Self->Obj.Rect.Left;
 	AbsRect.Top = Self->Obj.Rect.Top;
-	Width = Self->Obj.Rect.Right - AbsRect.Left;
-	Height = Self->Obj.Rect.Bottom - AbsRect.Top;
+	AbsRect.Width = Self->Obj.Rect.Width;
+	AbsRect.Height = Self->Obj.Rect.Height;
 	
 	pParent = Self->Parent;
 	while(pParent != NULL)
@@ -348,8 +342,6 @@ TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self)
 		AbsRect.Top += pParent->Obj.Rect.Top;
 		pParent = pParent->Parent;
 	}
-	AbsRect.Right = AbsRect.Left + Width;
-	AbsRect.Bottom = AbsRect.Top + Height;
 	
 	XSize = Self->Font.XSize;
 	YSize = Self->Font.YSize;
@@ -361,8 +353,8 @@ TCsUI_TypeBase TCsUI_Lable_Draw(TCsUI_Lable* Self)
 	/* Draw Background */
 	CsUI_FillRect(AbsRect.Left,
 	              AbsRect.Top,
-	              AbsRect.Right,
-	              AbsRect.Bottom,
+	              AbsRect.Left + AbsRect.Width,
+	              AbsRect.Top + AbsRect.Height,
                 Self->BackColor);
 	
 	pChar = Self->Text;
@@ -386,8 +378,6 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 {
 	TCsUI_Frame* pParent;
 	TCsUI_Rect AbsRect;
-	TCsUI_TypeBase Width;
-	TCsUI_TypeBase Height;
 	int bmpWidth;
 	int bmpHeight;
 	int i;
@@ -396,8 +386,8 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 	
 	AbsRect.Left = Self->Obj.Rect.Left;
 	AbsRect.Top = Self->Obj.Rect.Top;
-	Width = Self->Obj.Rect.Right - AbsRect.Left;
-	Height = Self->Obj.Rect.Bottom - AbsRect.Top;
+	AbsRect.Width = Self->Obj.Rect.Width;
+	AbsRect.Height = Self->Obj.Rect.Height;
 	
 	pParent = Self->Parent;
 	while(pParent != NULL)
@@ -406,14 +396,12 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 		AbsRect.Top += pParent->Obj.Rect.Top;
 		pParent = pParent->Parent;
 	}
-	AbsRect.Right = AbsRect.Left + Width;
-	AbsRect.Bottom = AbsRect.Top + Height;
 	
 	bmpWidth = Self->pBmp->biWidth;
 	bmpHeight = Self->pBmp->biHeight;
 	if(bmpHeight < 0)	bmpHeight = -bmpHeight;
-	AbsRect.Right = AbsRect.Left + bmpWidth;
-	AbsRect.Bottom = AbsRect.Top + bmpHeight;
+	AbsRect.Width = bmpWidth;
+	AbsRect.Height =bmpHeight;
 	
 	/* Draw Background */
 	//CsUI_FillRect(AbsRect.Left,
@@ -429,12 +417,12 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw(TCsUI_Bitmap* Self)
 			tmpMode.xDir = 1;
 		  tmpMode.yDir = 0;
 			tmpMode.x4BAlgin = 1;
-			CsUI_DrawBitmap_Bits(AbsRect.Left, AbsRect.Top, AbsRect.Right - AbsRect.Left, AbsRect.Bottom - AbsRect.Top, pBitData, tmpMode, Self->FrontColor, Self->BackColor);
+			CsUI_DrawBitmap_Bits(AbsRect.Left, AbsRect.Top, AbsRect.Width, AbsRect.Height, pBitData, tmpMode, Self->FrontColor, Self->BackColor);
 			break;
 		case 4:
 		case 8:
 		case 16:
-			CsUI_BlockBegin(AbsRect.Left, AbsRect.Top, AbsRect.Right -1, AbsRect.Bottom -1);
+			CsUI_BlockBegin(AbsRect.Left, AbsRect.Top, AbsRect.Left + AbsRect.Width -1, AbsRect.Top + AbsRect.Height -1);
 			for(i=0;i<bmpWidth * bmpHeight;i++)
 			{
 				CsUI_BlockWriteData(*(unsigned short*)pBitData);
@@ -454,8 +442,6 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw_Ext(TCsUI_Bitmap* Self)
 {
 	TCsUI_Frame* pParent;
 	TCsUI_Rect AbsRect;
-	TCsUI_TypeBase Width;
-	TCsUI_TypeBase Height;
 	int bmpWidth;
 	int bmpHeight;
 	int i,j;
@@ -464,8 +450,8 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw_Ext(TCsUI_Bitmap* Self)
 	
 	AbsRect.Left = Self->Obj.Rect.Left;
 	AbsRect.Top = Self->Obj.Rect.Top;
-	Width = Self->Obj.Rect.Right - AbsRect.Left;
-	Height = Self->Obj.Rect.Bottom - AbsRect.Top;
+	AbsRect.Width = Self->Obj.Rect.Width;
+	AbsRect.Height = Self->Obj.Rect.Height;
 	
 	pParent = Self->Parent;
 	while(pParent != NULL)
@@ -474,8 +460,6 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw_Ext(TCsUI_Bitmap* Self)
 		AbsRect.Top += pParent->Obj.Rect.Top;
 		pParent = pParent->Parent;
 	}
-	AbsRect.Right = AbsRect.Left + Width;
-	AbsRect.Bottom = AbsRect.Top + Height;
 	
 	TBitmap_Head tmpHead;
 	
@@ -484,8 +468,8 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw_Ext(TCsUI_Bitmap* Self)
 	bmpWidth = tmpHead.biWidth;
 	bmpHeight = tmpHead.biHeight;
 	if(bmpHeight < 0)	bmpHeight = -bmpHeight;
-	AbsRect.Right = AbsRect.Left + bmpWidth;
-	AbsRect.Bottom = AbsRect.Top + bmpHeight;
+	AbsRect.Width = bmpWidth;
+	AbsRect.Height = bmpHeight;
 	
 	/* Draw Background */
 	//CsUI_FillRect(AbsRect.Left,
@@ -505,7 +489,7 @@ TCsUI_TypeBase TCsUI_Bitmap_Draw_Ext(TCsUI_Bitmap* Self)
 		case 4:
 		case 8:
 		case 16:
-			CsUI_BlockBegin(AbsRect.Left, AbsRect.Top, AbsRect.Right -1, AbsRect.Bottom -1);
+			CsUI_BlockBegin(AbsRect.Left, AbsRect.Top, AbsRect.Left + AbsRect.Width -1, AbsRect.Top + AbsRect.Height -1);
 			i = bmpWidth * bmpHeight * 2;
 			while(i > 0)
 			{

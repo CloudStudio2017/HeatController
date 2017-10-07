@@ -18,6 +18,23 @@ typedef unsigned short TCsUI_PointBase;
 typedef unsigned int TCsUI_TypeBase;
 typedef unsigned short TCsUI_Color;           //565 support only
 
+/* Color Map */
+#define CSUI_GREEN                  0x07E0
+#define CSUI_RED                    0xF800
+#define CSUI_WHITE                  0xFFFF
+#define CSUI_BLUE                   0x001F
+#define CSUI_YELLOW                 0xFFF0
+#define CSUI_ORANGE                 0xFC00
+#define CSUI_LIGHTBLUE              0x07FF
+#define CSUI_LIGHTGREEN             0x87E0
+#define CSUI_DARKBLUE               0x0210
+#define CSUI_DARKGREEN              0x0400
+#define CSUI_LIGHTRED               0xF810
+#define CSUI_DARKRED                0x8000
+#define CSUI_PINK                   0xFC18
+#define CSUI_BLACK                  0x0000
+
+
 /* Point define */
 typedef struct TCsUI_Point
 {
@@ -30,8 +47,8 @@ typedef struct TCsUI_Rect
 {
 	TCsUI_PointBase Left;
 	TCsUI_PointBase Top;
-	TCsUI_PointBase Right;
-	TCsUI_PointBase Bottom;
+	TCsUI_PointBase Width;
+	TCsUI_PointBase Height;
 }TCsUI_Rect;
 
 /* Font define */
@@ -135,42 +152,42 @@ extern TCsUI_TypeBase TCsUI_Bitmap_Draw_Ext(TCsUI_Bitmap* Self);
 
 
 /* Object define macros */
-#define CS_FRAME(ObjName, xParent, L, R, T, B, xBackColor, xChilds) \
-  TCsUI_Frame ObjName ={     \
-		.BackColor = xBackColor, \
-		.Parent = xParent,       \
-		.Childs = xChilds,       \
+#define CS_FRAME(ObjName, xParent, xLeft, xTop, xWidth, xHeight, xBackColor, xChilds) \
+  TCsUI_Frame ObjName ={        \
+		.BackColor = xBackColor,    \
+		.Parent = xParent,          \
+		.Childs = xChilds,          \
 		.ChildCount = sizeof(xChilds) / sizeof(TCsUI_BaseObjectTable), \
-		.Obj.Rect.Left = L,     \
-		.Obj.Rect.Right = R,    \
-		.Obj.Rect.Top = T,      \
-		.Obj.Rect.Bottom = B,   \
+		.Obj.Rect.Left = xLeft,     \
+		.Obj.Rect.Top = xTop,       \
+		.Obj.Rect.Width = xWidth,   \
+		.Obj.Rect.Height = xHeight, \
 		.Obj.Draw = (TCsUI_Draw)TCsUI_Frame_Draw \
 	}
 
-#define CS_LABLE(ObjName, xParent, L, R, T, B, xFrontColor, xBackColor, xText, xFont) \
-	TCsUI_Lable ObjName ={       \
-		.FrontColor = xFrontColor, \
-		.BackColor = xBackColor,   \
-		.Parent = xParent,         \
-		.Text = xText,             \
-		.Font = xFont,             \
-		.Obj.Rect.Left = L,        \
-		.Obj.Rect.Right = R,       \
-		.Obj.Rect.Top = T,         \
-		.Obj.Rect.Bottom = B,      \
+#define CS_LABLE(ObjName, xParent, xLeft, xTop, xWidth, xHeight, xFrontColor, xBackColor, xText, xFont) \
+	TCsUI_Lable ObjName ={        \
+		.FrontColor = xFrontColor,  \
+		.BackColor = xBackColor,    \
+		.Parent = xParent,          \
+		.Text = xText,              \
+		.Font = xFont,              \
+		.Obj.Rect.Left = xLeft,     \
+		.Obj.Rect.Top = xTop,       \
+		.Obj.Rect.Width = xWidth,   \
+		.Obj.Rect.Height = xHeight, \
 		.Obj.Draw = (TCsUI_Draw)TCsUI_Lable_Draw \
 	}
 
-#define CS_BITMAP(ObjName, xParent, L, R, T, B, xFrontColor, xBackColor, xpBmp) \
-	TCsUI_Bitmap ObjName ={        \
-		.FrontColor = xFrontColor,   \
-		.BackColor = xBackColor,     \
-		.pBmp = (TBitmap_Head*)xpBmp, \
-		.Obj.Rect.Left = L,          \
-		.Obj.Rect.Right = R,         \
-		.Obj.Rect.Top = T,           \
-		.Obj.Rect.Bottom = B,        \
+#define CS_BITMAP(ObjName, xParent, xLeft, xTop, xWidth, xHeight, xFrontColor, xBackColor, xpBmp) \
+	TCsUI_Bitmap ObjName ={          \
+		.FrontColor = xFrontColor,     \
+		.BackColor = xBackColor,       \
+		.pBmp = (TBitmap_Head*)xpBmp,  \
+		.Obj.Rect.Left = xLeft,        \
+		.Obj.Rect.Top = xTop,          \
+		.Obj.Rect.Width = xWidth,      \
+		.Obj.Rect.Height = xHeight,    \
 		.Obj.Draw = (TCsUI_Draw)TCsUI_Bitmap_Draw \
 	}
 
