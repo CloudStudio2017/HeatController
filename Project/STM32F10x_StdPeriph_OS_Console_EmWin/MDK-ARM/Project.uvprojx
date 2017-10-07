@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F10X_HD</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Libraries\FreeRTOS\Source\include;..\..\..\Libraries\FreeRTOS\Source\portable\RVDS\ARM_CM3;..\..\Driver\inc;..\..\Console_Cmds\include;..\..\..\Libraries\emWin\Include;..\GUI;..\GUI_Frames;..\Tasks;..\..\Xmodem</IncludePath>
+              <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Libraries\FreeRTOS\Source\include;..\..\..\Libraries\FreeRTOS\Source\portable\RVDS\ARM_CM3;..\..\Driver\inc;..\..\Console_Cmds\include;..\Tasks;..\..\Xmodem;..\..\CsUI\include;..\CsUI</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -687,76 +687,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>emWin</GroupName>
-          <Files>
-            <File>
-              <FileName>GUI_CM3_L.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\..\..\Libraries\emWin\Lib\ARM\GUI_CM3_L.lib</FilePath>
-            </File>
-            <File>
-              <FileName>GUIConf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\GUIConf.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUIConf.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\GUI\GUIConf.h</FilePath>
-            </File>
-            <File>
-              <FileName>GUIDRV_Template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\GUIDRV_Template.c</FilePath>
-            </File>
-            <File>
-              <FileName>LCDConf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\LCDConf.c</FilePath>
-            </File>
-            <File>
-              <FileName>GUI_X_FreeRTOS.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI\GUI_X_FreeRTOS.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>UI</GroupName>
-          <Files>
-            <File>
-              <FileName>Frames.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\GUI_Frames\Frames.h</FilePath>
-            </File>
-            <File>
-              <FileName>Window_MainDLG.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\Window_MainDLG.c</FilePath>
-            </File>
-            <File>
-              <FileName>UI_Sources.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\UI_Sources.c</FilePath>
-            </File>
-            <File>
-              <FileName>Window_ConfigDLG.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\Window_ConfigDLG.c</FilePath>
-            </File>
-            <File>
-              <FileName>CNFonts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\CNFonts.c</FilePath>
-            </File>
-            <File>
-              <FileName>CNFonts_StartupLog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\GUI_Frames\CNFonts_StartupLog.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Tasks</GroupName>
           <Files>
             <File>
@@ -803,6 +733,41 @@
               <FileName>crc16.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Xmodem\crc16.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CsUI</GroupName>
+          <Files>
+            <File>
+              <FileName>CsUI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CsUI\CsUI.c</FilePath>
+            </File>
+            <File>
+              <FileName>CsUI_Font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\CsUI\CsUI_Font.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui_source_bitmap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CsUI\ui_source_bitmap.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui_FrmMain.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CsUI\ui_FrmMain.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui_FrmConfig1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CsUI\ui_FrmConfig1.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui_FrmConfig2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CsUI\ui_FrmConfig2.c</FilePath>
             </File>
           </Files>
         </Group>

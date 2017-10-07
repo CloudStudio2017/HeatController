@@ -17,7 +17,7 @@ void myLed_Init(void)
 	uint8_t i;
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	
-	for(i=0;i<8;i++)
+	for(i=0;i<MYLED_SUPPORT_MAX;i++)
 	{
 		RCC_APB2PeriphClockCmd(GPIO2RCC(myLed_LedList[i].LedGPIO), ENABLE);
 		
