@@ -161,7 +161,12 @@ uint8_t MyButton_UnReg(uint8_t RegButtonIndex)
 	return 0;
 }
 
-
+uint8_t MyButton_ReLinkCallBack(unsigned char RegButtonIndex, MyButton_CBType CBFunc)
+{
+	myButton_ButtonList[RegButtonIndex].CallBackFunc = CBFunc;
+	
+	return 0;
+}
 
 
 

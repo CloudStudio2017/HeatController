@@ -66,6 +66,7 @@ extern void MyButton_UpdateStatus(void);
 extern uint8_t MyButton_Init(void);
 extern uint8_t MyButton_Reg(uint8_t RegButtonIndex, MyButton_RegType* RegButton);
 extern uint8_t MyButton_UnReg(uint8_t RegButtonIndex);
+extern uint8_t MyButton_ReLinkCallBack(unsigned char RegButtonIndex, MyButton_CBType CBFunc);
 extern void MyButton_Process(void);
 
 
