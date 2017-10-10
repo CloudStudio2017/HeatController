@@ -358,7 +358,8 @@ uint8_t HCS_SM_Startup(uint8_t param)
 		return 0;
 	}
 	vTaskDelay(1000);
-	HCS_Struct.Status = HCS_STATUS_PREBLOW;
+	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
+		HCS_Struct.Status = HCS_STATUS_PREBLOW;
 	
 	return 0;
 }
@@ -394,7 +395,8 @@ uint8_t HCS_SM_PreBlowing(uint8_t param)
 		vTaskDelay((tmpParams[0] - tmpParams[1]) * 1000);
 		_AirBlower_Off_();
 	}
-	HCS_Struct.Status = HCS_STATUS_WARMEDUP;    //进入预热状态
+	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
+		HCS_Struct.Status = HCS_STATUS_WARMEDUP;    //进入预热状态
 	
 	return 0;
 }
@@ -414,7 +416,8 @@ uint8_t HCS_SM_WarmedUp(uint8_t param)
 	_LeadFan_Off_();
 	_FireUp_On_();
 	vTaskDelay(HCS_Struct.Params[HCS_PARAM_YRSJ] * 1000);
-	HCS_Struct.Status = HCS_STATUS_PREMATERIAL;  //进入预料状态
+	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
+		HCS_Struct.Status = HCS_STATUS_PREMATERIAL;  //进入预料状态
 	return 0;
 }
 
@@ -432,7 +435,8 @@ uint8_t HCS_SM_PreMaterial(uint8_t param)
 	_MaterialMachine_On_();
 	vTaskDelay(HCS_Struct.Params[HCS_PARAM_YLSJ] * 1000);
 	_MaterialMachine_Off_();
-	HCS_Struct.Status = HCS_STATUS_FIREUP;    //进入点火状态
+	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
+		HCS_Struct.Status = HCS_STATUS_FIREUP;    //进入点火状态
 	return 0;
 }
 
@@ -502,7 +506,8 @@ uint8_t HCS_SM_FireUp(uint8_t param)
 		//
 		return 0xFF;
 	}
-	HCS_Struct.Status = HCS_STATUS_RUNNING;     //进入运行模式
+	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
+		HCS_Struct.Status = HCS_STATUS_RUNNING;     //进入运行模式
 	return 0;
 }
 
@@ -521,7 +526,8 @@ uint8_t HCS_SM_Running(uint8_t param)
 	HCS_Struct.WaterTemp = HCS_GetTemp(1);
 	if(HCS_Struct.WaterTemp >= HCS_Struct.Params[HCS_PARAM_BHWD])
 	{
-		HCS_Struct.Status = HCS_STATUS_FIREPROTECT;  //进入保火模式
+		if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
+			HCS_Struct.Status = HCS_STATUS_FIREPROTECT;  //进入保火模式
 	}
 	
 	_AirBlower_On_();
@@ -550,7 +556,8 @@ uint8_t HCS_SM_FireProtection(uint8_t param)
 	HCS_Struct.WaterTemp = HCS_GetTemp(1);
 	if(HCS_Struct.WaterTemp <= HCS_Struct.Params[HCS_PARAM_KJWD])
 	{
-		HCS_Struct.Status = HCS_STATUS_RUNNING;      //回到运行模式
+		if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
+			HCS_Struct.Status = HCS_STATUS_RUNNING;      //回到运行模式
 	}
 	
 	_AirBlower_On_();

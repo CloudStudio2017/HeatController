@@ -3,7 +3,7 @@
 #include "myButton.h"
 #include "myLed.h"
 #include "HeatControlSys.h"
-
+#include "sysParams.h"
 
 
 static void Control_LowLevel_Init(void)
@@ -30,6 +30,8 @@ void vTask_Control( void *pvParameters )
 	
 	Is_Init = CONTROL_INIT_DONE;
 	//xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
+	
+	SysParam_LoadFromFlash();
 	
 	while(1)
 	{

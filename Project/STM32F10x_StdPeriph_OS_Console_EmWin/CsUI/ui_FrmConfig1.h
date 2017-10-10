@@ -3,7 +3,7 @@
 
 #include "CsUI.h"
 #include "Task_UI.h"
-
+#include "ui_source_bitmap.h"
 
 
 extern void ui_FrmConfig1_Init(void);

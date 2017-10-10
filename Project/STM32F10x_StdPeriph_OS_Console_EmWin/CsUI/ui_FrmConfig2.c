@@ -1,4 +1,5 @@
 #include "ui_FrmConfig2.h"
+#include "sysParams.h"
 
 
 CS_FRAME(FrmConfig2, NULL, 0, 0, 480, 320, CSUI_BLACK, NULL);

@@ -21,6 +21,18 @@ extern const unsigned char xBmpData_Yunxing[];
 extern const unsigned char xBmpData_Tingzhi[];
 extern const unsigned char xBmpData_Zhengchang[];
 
+extern const unsigned char xBmpData_Baohuosongliao[];
+extern const unsigned char xBmpData_Baohuotingliao[];
+extern const unsigned char xBmpData_Baohuowendu[];
+extern const unsigned char xBmpData_Dianhuoshijian[];
+extern const unsigned char xBmpData_Dinshigunaji[];
+extern const unsigned char xBmpData_Dinshikaiji[];
+extern const unsigned char xBmpData_Gufenghouchui[];
+extern const unsigned char xBmpData_Jinliaoshijian[];
+extern const unsigned char xBmpData_Kaijiwendu[];
+extern const unsigned char xBmpData_Tingliaoshijian[];
+extern const unsigned char xBmpData_Yinfenghouchui[];
+extern const unsigned char xBmpData_Yuliaoshijian[];
 
 extern const unsigned char xBitmapdata1[];
 extern const unsigned char xBitmapdata2[];
