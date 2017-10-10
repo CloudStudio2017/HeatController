@@ -659,6 +659,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Driver\src\FlashControl.c</FilePath>
             </File>
+            <File>
+              <FileName>max6675.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\max6675.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
