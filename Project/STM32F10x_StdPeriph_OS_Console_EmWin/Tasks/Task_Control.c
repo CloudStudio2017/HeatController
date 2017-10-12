@@ -31,8 +31,6 @@ void vTask_Control( void *pvParameters )
 	Is_Init = CONTROL_INIT_DONE;
 	//xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
 	
-	SysParam_LoadFromFlash();
-	
 	while(1)
 	{
 		switch(HCS_Struct.Status)

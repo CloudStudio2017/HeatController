@@ -3,10 +3,13 @@
 #include "myBeep.h"
 #include "FreeRTOS.h"
 #include "Task.h"
+#include "PT100.h"
+#include "MAX6675.h"
 
-volatile uint16_t ADCConvertedValue[3];
-
-volatile HCS_TypeDef HCS_Struct;
+volatile HCS_TypeDef HCS_Struct = 
+{
+	.pParams = &SysParam
+};
 
 
 static void HCS_IO_Init(void)
@@ -46,76 +49,33 @@ static void HCS_IO_Init(void)
 #endif
 }
 
-#define ADC1_DR_Address    ((uint32_t)0x4001244C)
-
-static void HCS_ADC_Init(void)
+static void HCS_Sensor_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct;
-	ADC_InitTypeDef ADC_InitStruct;
-	DMA_InitTypeDef DMA_InitStruct;
-	
-	RCC_ADCCLKConfig(RCC_PCLK2_Div2);
-	
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOA, ENABLE);
-	
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
-  GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStruct);
-	
-	DMA_DeInit(DMA1_Channel1);
-  DMA_InitStruct.DMA_PeripheralBaseAddr = ADC1_DR_Address;
-  DMA_InitStruct.DMA_MemoryBaseAddr     = (uint32_t)&ADCConvertedValue;
-  DMA_InitStruct.DMA_DIR                = DMA_DIR_PeripheralSRC;
-  DMA_InitStruct.DMA_BufferSize         = 3;
-  DMA_InitStruct.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
-  DMA_InitStruct.DMA_MemoryInc          = DMA_MemoryInc_Enable;
-  DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-  DMA_InitStruct.DMA_MemoryDataSize     = DMA_MemoryDataSize_HalfWord;
-  DMA_InitStruct.DMA_Mode               = DMA_Mode_Circular;
-  DMA_InitStruct.DMA_Priority           = DMA_Priority_High;
-  DMA_InitStruct.DMA_M2M                = DMA_M2M_Disable;
-  DMA_Init(DMA1_Channel1, &DMA_InitStruct);
-	
-	
-	ADC_InitStruct.ADC_Mode               = ADC_Mode_Independent;
-  ADC_InitStruct.ADC_ScanConvMode       = ENABLE;
-  ADC_InitStruct.ADC_ContinuousConvMode = ENABLE;
-  ADC_InitStruct.ADC_ExternalTrigConv   = ADC_ExternalTrigConv_None;
-  ADC_InitStruct.ADC_DataAlign          = ADC_DataAlign_Right;
-  ADC_InitStruct.ADC_NbrOfChannel       = 3;
-  ADC_Init(ADC1, &ADC_InitStruct);
-	
-	ADC_Cmd(ADC1, ENABLE);
-	
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 2, ADC_SampleTime_55Cycles5);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 3, ADC_SampleTime_55Cycles5);
-	
-	ADC_ResetCalibration(ADC1);
-	while(ADC_GetResetCalibrationStatus(ADC1));
-  ADC_StartCalibration(ADC1);
-  while(ADC_GetCalibrationStatus(ADC1));
-	
-	DMA_Cmd(DMA1_Channel1, ENABLE);
-	
-	ADC_DMACmd(ADC1, ENABLE);
-	
-  ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+	PT100_Init();
+	MAX6675_Init();
 }
 
 static int16_t HCS_GetTemp(uint8_t Channel)
 {
 	float tmpTemp;
+	unsigned short tmpK;
+	unsigned char tmpRet;
 	
 	switch(Channel)
 	{
 		case 0:
-			tmpTemp = (600.0 / 4096.0) * ADCConvertedValue[0];    //K型电偶
+			tmpRet = MAX6675_GetTemp(&tmpK);
+			if(tmpRet == MAX6675_NOERR)
+			{
+				tmpTemp = tmpK;
+			}
+			else
+			{
+				return -3000;
+			}
 			break;
 		case 1:
-			tmpTemp = (150.0 / 4096.0) * ADCConvertedValue[1];   //PT100电偶
+			tmpTemp = PT100_GetTempValue();
 			break;
 		default:
 			return -3000;
@@ -135,7 +95,7 @@ uint8_t HCS_FireUpCheck(void)
 {
 	//检测是否点火成功
 	HCS_Struct.StoveTemp = HCS_GetTemp(0);
-	if(HCS_Struct.StoveTemp >= HCS_Struct.Params[HCS_PARAM_DHYZ])
+	if(HCS_Struct.StoveTemp >= HCS_Struct.pParams->Dianhuoyuzhi)
 	{
 		return 0x00;
 	}
@@ -153,7 +113,7 @@ uint8_t HCS_AntiFreeze(void)
 	_WaterPump_On_();
 	
 	HCS_Struct.WaterTemp = HCS_GetTemp(1);
-	if(HCS_Struct.WaterTemp >= HCS_Struct.Params[HCS_PARAM_TBWD])
+	//if(HCS_Struct.WaterTemp >= HCS_Struct.Params[HCS_PARAM_TBWD])
 	{
 		//TODO
 	}
@@ -215,7 +175,7 @@ void inline HCS_MaterialLowIndicationReset(void)
 uint8_t HCS_GetStoveOverHeat(void)
 {
 	HCS_Struct.StoveTemp =HCS_GetTemp(0);
-	if(HCS_Struct.StoveTemp > HCS_Struct.Params[HCS_PARAM_BJWD])
+	if(HCS_Struct.StoveTemp > 800)
 	{
 		return 1;
 	}
@@ -248,44 +208,13 @@ uint8_t HCS_CheckSysError(void)
 
 void HCS_Init(void)
 {
-	HCS_Struct.Status = HCS_STATUS_POWEROFF;
+	HCS_Struct.Status = HCS_STATUS_STANDBY;
 	
 	HCS_IO_Init();
-	HCS_ADC_Init();
+	HCS_Sensor_Init();
 	
 	//Load Params
-	HCS_Struct.Params[HCS_PARAM_GFQC] = 2;           //鼓风前吹
-	HCS_Struct.Params[HCS_PARAM_YFQC] = 1;           //引风前吹
-	HCS_Struct.Params[HCS_PARAM_YLSJ] = 2;           //预料时间
-	HCS_Struct.Params[HCS_PARAM_YRSJ] = 3;           //预热时间
-	HCS_Struct.Params[HCS_PARAM_DHSJ] = 3;           //点火时间
-	HCS_Struct.Params[HCS_PARAM_JLSJ] = 2;           //进料时间
-	HCS_Struct.Params[HCS_PARAM_TLSJ] = 2;           //停料时间
-	HCS_Struct.Params[HCS_PARAM_GFHC] = 2;           //鼓风后吹
-	HCS_Struct.Params[HCS_PARAM_YFHC] = 2;           //引风后吹
-	HCS_Struct.Params[HCS_PARAM_BHSL] = 2;           //保火送料
-	HCS_Struct.Params[HCS_PARAM_BHTL] = 2;           //保火停料
-	HCS_Struct.Params[HCS_PARAM_KJWD] = 30;          //开机温度
-	HCS_Struct.Params[HCS_PARAM_TJWD] = 95;          //停机温度
-	HCS_Struct.Params[HCS_PARAM_BHWD] = 90;          //保火温度
-	HCS_Struct.Params[HCS_PARAM_KBWD] = 80;          //开泵温度
-	HCS_Struct.Params[HCS_PARAM_TBWD] = 98;          //停泵温度
-	HCS_Struct.Params[HCS_PARAM_DSKJ] = 0;           //定时开机
-	HCS_Struct.Params[HCS_PARAM_DSGJ] = 0;           //定时关机
-	
-	HCS_Struct.Params[HCS_PARAM_DHYZ] = 20;          //点火阈值
-	HCS_Struct.Params[HCS_PARAM_DHJG] = 4;           //点火间隔
-	HCS_Struct.Params[HCS_PARAM_YFZH] = 3;           //引风滞后
-	HCS_Struct.Params[HCS_PARAM_GFZH] = 3;           //鼓风滞后
-	HCS_Struct.Params[HCS_PARAM_DHYF] = 2;           //点火引风
-	HCS_Struct.Params[HCS_PARAM_DHGF] = 2;           //点火鼓风
-	HCS_Struct.Params[HCS_PARAM_SLZH] = 2;           //送料滞后
-	HCS_Struct.Params[HCS_PARAM_BJWD] = 600;         //报警温度
-	HCS_Struct.Params[HCS_PARAM_FDWD] = 5;           //防冻温度
-	HCS_Struct.Params[HCS_PARAM_ZCYF] = 4;           //正常引风
-	HCS_Struct.Params[HCS_PARAM_ZCGF] = 4;           //正常鼓风
-	HCS_Struct.Params[HCS_PARAM_BHYF] = 4;           //保火引风
-	HCS_Struct.Params[HCS_PARAM_BHGF] = 4;           //保火鼓风
+	SysParam_LoadFromFlash();
 }
 
 //待机状态
@@ -343,7 +272,7 @@ uint8_t HCS_SM_Startup(uint8_t param)
 	//开机时：水温：1.低于‘停机温度’开机，前吹，预料，预热，点火，运行，保火。2.高于‘停机温度’，进入‘暂停’，当水泵把水温循环出去降到‘开机温度’以下，自动开机进入前吹，预料，预热，点火，运行，保火
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;
+		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		
 		return 0;
 	}
@@ -351,13 +280,13 @@ uint8_t HCS_SM_Startup(uint8_t param)
 	HCS_Struct.WaterLow = HCS_GetWaterLow();
 	HCS_Struct.StoveTemp = HCS_GetTemp(0);
 	HCS_Struct.WaterTemp = HCS_GetTemp(1);
-	
-	if(HCS_Struct.WaterTemp > HCS_Struct.Params[HCS_PARAM_BJWD])
+
+	if(HCS_Struct.WaterTemp > 100)
 	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;
+		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		return 0;
 	}
-	vTaskDelay(1000);
+	//vTaskDelay(1000);
 	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 		HCS_Struct.Status = HCS_STATUS_PREBLOW;
 	
@@ -373,14 +302,14 @@ uint8_t HCS_SM_PreBlowing(uint8_t param)
 	//参数：鼓风前吹，引风前吹  单位:秒
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;
+		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		return 0;
 	}
 	
 	_AirBlower_On_();
 	_LeadFan_On_();
-	tmpParams[0] = HCS_Struct.Params[HCS_PARAM_GFQC];
-	tmpParams[1] = HCS_Struct.Params[HCS_PARAM_YFQC];
+	tmpParams[0] = HCS_Struct.pParams->Gufengqianchui;
+	tmpParams[1] = HCS_Struct.pParams->Yinfengqianchui;
 	if(tmpParams[1] > tmpParams[0])
 	{
 		vTaskDelay(tmpParams[0] * 1000);
@@ -404,18 +333,35 @@ uint8_t HCS_SM_PreBlowing(uint8_t param)
 //预热状态
 uint8_t HCS_SM_WarmedUp(uint8_t param)
 {
+	uint16_t tmpParams[2];
+	
 	//在点火前不吹风，让点火器单独运行，只启动点火
 	//参数：预热时间  单位：秒
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;	
+		HCS_Struct.Status = HCS_STATUS_STANDBY;	
 		return 0;
 	}
 	
 	_AirBlower_Off_();
 	_LeadFan_Off_();
 	_FireUp_On_();
-	vTaskDelay(HCS_Struct.Params[HCS_PARAM_YRSJ] * 1000);
+	tmpParams[0] = HCS_Struct.pParams->Yinfengzhihou;
+	tmpParams[1] = HCS_Struct.pParams->Gufengzhihou;
+	if(tmpParams[1] > tmpParams[0])
+	{
+		vTaskDelay(tmpParams[0] * 1000);
+		_LeadFan_On_();
+		vTaskDelay((tmpParams[1] - tmpParams[0]) * 1000);
+		_AirBlower_On_();
+	}
+	else
+	{
+		vTaskDelay(tmpParams[1] * 1000);
+		_AirBlower_On_();
+		vTaskDelay((tmpParams[0] - tmpParams[1]) * 1000);
+		_LeadFan_On_();
+	}
 	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 		HCS_Struct.Status = HCS_STATUS_PREMATERIAL;  //进入预料状态
 	return 0;
@@ -428,13 +374,13 @@ uint8_t HCS_SM_PreMaterial(uint8_t param)
 	//参数：预料时间  单位：秒
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;
+		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		return 0;
 	}
 	
 	_MaterialMachine_On_();
-	vTaskDelay(HCS_Struct.Params[HCS_PARAM_YLSJ] * 1000);
-	_MaterialMachine_Off_();
+	vTaskDelay(HCS_Struct.pParams->Yuliaoshijian * 1000);
+	//_MaterialMachine_Off_();
 	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 		HCS_Struct.Status = HCS_STATUS_FIREUP;    //进入点火状态
 	return 0;
@@ -452,9 +398,10 @@ uint8_t HCS_SM_FireUp(uint8_t param)
 	//引风，鼓风度数可调 在‘点火状态’开始后滞后开启；料机在‘点火状态’结束后滞后开启
 	//参数：点火时间，引风滞后，鼓风滞后，料机滞后 单位：秒; 点火阀值 单位：摄氏度；点火间隔 单位：分钟；点火引风，点火鼓风 单位:  %
 	
-	
 	_FireUp_On_();
-	i = HCS_Struct.Params[HCS_PARAM_DHSJ] * 10;
+	_LeadFan_On_();
+	_AirBlower_On_();
+	i = HCS_Struct.pParams->Dianhuoshijian * 10;
 	do
 	{
 		vTaskDelay(100);
@@ -465,15 +412,14 @@ uint8_t HCS_SM_FireUp(uint8_t param)
 			break;
 		}
 	}while(i>0);
-	if((HCS_Struct.Params[HCS_PARAM_DHYZ] != 0xFFFF) && 
-		 (IsFire == 0))
+	if((HCS_Struct.pParams->Dianhuoyuzhi != (short)0xFFFF) && (IsFire == 0))
 	{
 		//有点火阈值需要 则在来一次
 		MyBeep_Beep(1);
 		vTaskDelay(200);
 		MyBeep_Beep(0);
 		
-		i = HCS_Struct.Params[HCS_PARAM_DHSJ] * 10;
+		i = HCS_Struct.pParams->Dianhuoshijian * 10;
 		do
 		{
 			vTaskDelay(100);
@@ -518,13 +464,13 @@ uint8_t HCS_SM_Running(uint8_t param)
 	//参数：进料时间，停料时间 单位：秒
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;
+		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		
 		return 0;
 	}
 	
 	HCS_Struct.WaterTemp = HCS_GetTemp(1);
-	if(HCS_Struct.WaterTemp >= HCS_Struct.Params[HCS_PARAM_BHWD])
+	if(HCS_Struct.WaterTemp >= HCS_Struct.pParams->Baohuowendu)
 	{
 		if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 			HCS_Struct.Status = HCS_STATUS_FIREPROTECT;  //进入保火模式
@@ -534,9 +480,9 @@ uint8_t HCS_SM_Running(uint8_t param)
 	_LeadFan_On_();
 	_FireUp_On_();
 	_MaterialMachine_On_();
-	vTaskDelay(HCS_Struct.Params[HCS_PARAM_JLSJ] * 1000);
+	vTaskDelay(HCS_Struct.pParams->Jinliaoshijian * 1000);
 	_MaterialMachine_Off_();
-	vTaskDelay(HCS_Struct.Params[HCS_PARAM_TLSJ] * 1000);
+	vTaskDelay(HCS_Struct.pParams->Tingliaoshijian * 1000);
 	
 	return 0;
 }
@@ -548,13 +494,13 @@ uint8_t HCS_SM_FireProtection(uint8_t param)
 	//温度重新下降到开机温度重新进入运行状态，一直循环到关机状态
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;
+		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		
 		return 0;
 	}
 	
 	HCS_Struct.WaterTemp = HCS_GetTemp(1);
-	if(HCS_Struct.WaterTemp <= HCS_Struct.Params[HCS_PARAM_KJWD])
+	if(HCS_Struct.WaterTemp <= HCS_Struct.pParams->Baohuowendu)
 	{
 		if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 			HCS_Struct.Status = HCS_STATUS_RUNNING;      //回到运行模式
@@ -564,9 +510,9 @@ uint8_t HCS_SM_FireProtection(uint8_t param)
 	_LeadFan_On_();
 	_FireUp_Off_();
 	_MaterialMachine_On_();
-	vTaskDelay(HCS_Struct.Params[HCS_PARAM_BHSL] * 1000);
+	vTaskDelay(HCS_Struct.pParams->Baohuosongliao * 1000);
 	_MaterialMachine_Off_();
-	vTaskDelay(HCS_Struct.Params[HCS_PARAM_BHTL] * 1000);
+	vTaskDelay(HCS_Struct.pParams->Baohuotingliao * 1000);
 	
 	return 0;
 }
@@ -579,7 +525,7 @@ uint8_t HCS_SM_Suspend(uint8_t param)
 	//参数：鼓风后吹，引风后吹 单位：秒，开机温度，停机温度 单位：摄氏度
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;
+		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		
 		return 0;
 	}
@@ -590,6 +536,8 @@ uint8_t HCS_SM_Suspend(uint8_t param)
 //关闭状态
 uint8_t HCS_SM_PowerOff(uint8_t param)
 {
+	uint16_t tmpParams[2];
+	
 	//按开关键关闭，锅炉关闭，料机、点火关闭，鼓风、引风在后吹延时完成后停止，再次进入待机界面
 	//参数：鼓风后吹，引风后吹  单位：秒
 	//关闭状态下才触发防冻功能
@@ -598,10 +546,22 @@ uint8_t HCS_SM_PowerOff(uint8_t param)
 	_WaterPump_Off_();
 	_MaterialMachine_Off_();
 	
-	vTaskDelay(HCS_Struct.Params[HCS_PARAM_GFHC]);
-	_AirBlower_Off_();
-	vTaskDelay(HCS_Struct.Params[HCS_PARAM_YFHC]);
-	_LeadFan_Off_();
+	tmpParams[0] = HCS_Struct.pParams->Gufenghouchui;
+	tmpParams[1] = HCS_Struct.pParams->Yinfenghouchui;
+	if(HCS_Struct.pParams->Gufenghouchui > HCS_Struct.pParams->Yinfenghouchui)
+	{
+		vTaskDelay(HCS_Struct.pParams->Yinfenghouchui * 1000);
+		_LeadFan_Off_();
+		vTaskDelay((HCS_Struct.pParams->Gufenghouchui - HCS_Struct.pParams->Yinfenghouchui) * 1000);
+		_AirBlower_Off_();
+	}
+	else
+	{
+		vTaskDelay(HCS_Struct.pParams->Gufenghouchui * 1000);
+		_AirBlower_Off_();
+		vTaskDelay((HCS_Struct.pParams->Yinfenghouchui - HCS_Struct.pParams->Gufenghouchui) * 1000);
+		_LeadFan_Off_();
+	}
 	
 	//等待开启
 	while(1)

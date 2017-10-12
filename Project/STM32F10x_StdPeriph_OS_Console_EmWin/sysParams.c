@@ -6,30 +6,30 @@ SysParam_TypeDef SysParam;
 
 void SysParam_LoadFromFlash(void)
 {
-	SysParam.Yuliaoshijian = 100;
-	SysParam.Dianhuoshijian = 100;
-	SysParam.Jinliaoshijian = 100;
-	SysParam.Tingliaoshijian = 100;
-	SysParam.Baohuosongliao = 100;
-	SysParam.Baohuotingliao = 100;
-	SysParam.Kaijiwendu = 100;
-	SysParam.Baohuowendu = 400;
-	SysParam.Gufenghouchui = 100;
-	SysParam.Dinshikaiji = 100;
-	SysParam.Dinshiguanji = 100;
+	SysParam.Yuliaoshijian      = 2;
+	SysParam.Dianhuoshijian     = 3;
+	SysParam.Jinliaoshijian     = 2;
+	SysParam.Tingliaoshijian    = 2;
+	SysParam.Baohuosongliao     = 2;
+	SysParam.Baohuotingliao     = 2;
+	SysParam.Kaijiwendu         = 80;
+	SysParam.Baohuowendu        = 90;
+	SysParam.Gufenghouchui      = 2;
+	SysParam.Dinshikaiji        = 12*60 + 0;
+	SysParam.Dinshiguanji       = 12*60 + 30;
 	
-	SysParam.Gufengqianchui = 100;
-	SysParam.Yinfengqianchui = 100;
-	SysParam.Dianhuoyuzhi = 100;
-	SysParam.Yinfengzhihou = 100;
-	SysParam.Gufengzhihou = 100;
-	SysParam.Songliaozhihou = 100;
-	SysParam.Dianhuoyinfeng = 100;
-	SysParam.Dianhuogufeng = 100;
-	SysParam.Zhengchangyinfeng = 100;
-	SysParam.Zhengchanggufeng = 100;
-	SysParam.Baohuoyinfeng = 100;
-	SysParam.Baohuogufeng = 100;
+	SysParam.Gufengqianchui     = 2;
+	SysParam.Yinfengqianchui    = 2;
+	SysParam.Dianhuoyuzhi       = 20;
+	SysParam.Yinfengzhihou      = 2;
+	SysParam.Gufengzhihou       = 2;
+	SysParam.Songliaozhihou     = 2;
+	SysParam.Dianhuoyinfeng     = 50;
+	SysParam.Dianhuogufeng      = 50;
+	SysParam.Zhengchangyinfeng  = 50;
+	SysParam.Zhengchanggufeng   = 50;
+	SysParam.Baohuoyinfeng      = 50;
+	SysParam.Baohuogufeng       = 50;
 }
 
 void SysParam_SaveToFlash(void)

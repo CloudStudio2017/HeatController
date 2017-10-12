@@ -3,6 +3,7 @@
 
 #include "stm32f10x.h"
 #include "board.h"
+#include "sysParams.h"
 
 #define HCS_IO_INPUT   volatile uint8_t
 #define HCS_IO_OUTPUT  volatile uint8_t
@@ -150,7 +151,8 @@ typedef struct// HCS_TypeDef
 	
 	uint16_t TempBeforeFire;
 	
-	uint16_t Params[HCS_PARAM_MAX];
+	SysParam_TypeDef* pParams;
+	//uint16_t Params[HCS_PARAM_MAX];
 }HCS_TypeDef;
 
 extern volatile HCS_TypeDef HCS_Struct;

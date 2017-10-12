@@ -664,6 +664,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\Driver\src\max6675.c</FilePath>
             </File>
+            <File>
+              <FileName>PT100.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\PT100.c</FilePath>
+            </File>
+            <File>
+              <FileName>cslADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\cslADC.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

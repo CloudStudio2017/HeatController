@@ -1,20 +1,19 @@
 #ifndef __MAX6675_H__
 #define __MAX6675_H__
 
+#include "cslCommon.h"
 #include "stm32f10x.h"
+#include "board.h"
 
 
-#define MAX6675_SCK_RCC    RCC_APB2Periph_GPIOA
-#define MAX6675_SCK_GPIO   GPIOA
-#define MAX6675_SCK_PIN    GPIO_Pin_1
+#define MAX6675_SCK_GPIO   _MAX6675_SCK_GPIO
+#define MAX6675_SCK_PIN    _MAX6675_SCK_PIN
 
-#define MAX6675_CS_RCC     RCC_APB2Periph_GPIOA
-#define MAX6675_CS_GPIO    GPIOA
-#define MAX6675_CS_PIN     GPIO_Pin_2
+#define MAX6675_CS_GPIO    _MAX6675_CS_GPIO
+#define MAX6675_CS_PIN     _MAX6675_CS_PIN
 
-#define MAX6675_SO_RCC     RCC_APB2Periph_GPIOA
-#define MAX6675_SO_GPIO    GPIOA
-#define MAX6675_SO_PIN     GPIO_Pin_3
+#define MAX6675_SO_GPIO    _MAX6675_SO_GPIO
+#define MAX6675_SO_PIN     _MAX6675_SO_PIN
 
 #define MAX6675_SCK_1      GPIO_SetBits(MAX6675_SCK_GPIO, MAX6675_SCK_PIN)
 #define MAX6675_SCK_0      GPIO_ResetBits(MAX6675_SCK_GPIO, MAX6675_SCK_PIN)

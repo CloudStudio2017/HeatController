@@ -67,7 +67,6 @@
 	
 	#define _LCD_BLK_GPIO             GPIOA
 	#define _LCD_BLK_PIN              GPIO_Pin_15
-
 #elif BOARD_TYPE == TEST_BOARD_V1
 	#define _BUTTON_UP_GPIO           GPIOB
 	#define _BUTTON_UP_PIN            GPIO_Pin_11
@@ -105,7 +104,33 @@
 
 	#define _FLASH_WP_GPIO            GPIOB
 	#define _FLASH_WP_PIN             GPIO_Pin_0
-
+	#define _FLASH_CLK_GPIO           GPIOA
+	#define _FLASH_CLK_PIN            GPIO_Pin_5
+	#define _FLASH_MOSI_GPIO          GPIOA
+	#define _FLASH_MOSI_PIN           GPIO_Pin_7
+	#define _FLASH_MISO_GPIO          GPIOA
+	#define _FLASH_MISO_PIN           GPIO_Pin_6
+	#define _FLASH_CS_GPIO            GPIOA
+	#define _FLASH_CS_PIN             GPIO_Pin_4
+	
+	#define _UART1_TX_GPIO            GPIOA
+	#define _UART1_TX_PIN             GPIO_Pin_9
+	#define _UART1_RX_GPIO            GPIOA
+	#define _UART1_RX_PIN             GPIO_Pin_10
+	
+	#define _ADC_CH1_GPIO             GPIOA
+	#define _ADC_CH1_PIN              GPIO_Pin_1
+	#define _ADC_CH2_GPIO             GPIOA
+	#define _ADC_CH2_PIN              GPIO_Pin_2
+	#define _ADC_CH3_GPIO             GPIOA
+	#define _ADC_CH3_PIN              GPIO_Pin_3
+	
+	#define _MAX6675_SCK_GPIO         GPIOA
+	#define _MAX6675_SCK_PIN          GPIO_Pin_11
+	#define _MAX6675_CS_GPIO          GPIOA
+	#define _MAX6675_CS_PIN           GPIO_Pin_12
+	#define _MAX6675_SO_GPIO          GPIOA
+	#define _MAX6675_SO_PIN           GPIO_Pin_15
 #endif
 
 
