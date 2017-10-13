@@ -149,8 +149,9 @@ void CslLCD_Init(void)
 	CSL_LCD_WriteData(0x80);
 	
 	CSL_LCD_WriteComm(0x36);
-	CSL_LCD_WriteData(0x68);
+	//CSL_LCD_WriteData(0x68);
 	//CSL_LCD_WriteData(0x48);
+	CSL_LCD_WriteData(0x28);
 	
 	CSL_LCD_WriteComm(0x3A);//Interface Mode Control
 	CSL_LCD_WriteData(0x55);
@@ -189,7 +190,7 @@ void CslLCD_Init(void)
 	CslLCD_BLK(1);
 }
 
-void BlockWrite(unsigned int Xstart,unsigned int Xend,unsigned int Ystart,unsigned int Yend)
+void BlockWrite(unsigned int Xstart, unsigned int Xend, unsigned int Ystart, unsigned int Yend)
 {
 	CSL_LCD_WriteComm(0x2a);
 	CSL_LCD_WriteData(Xstart>>8);
@@ -282,7 +283,7 @@ void CslLCD_FillRect(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t y
 	uint32_t i;
 	
 	BlockWrite(xStart, xEnd, yStart, yEnd);
-	for(i=0;i<(xEnd-xStart+2)*(yEnd-yStart+2);i++)
+	for(i=0;i<(xEnd-xStart+1)*(yEnd-yStart+1);i++)
 	{
 		CSL_LCD_WriteData(Color);
 	}

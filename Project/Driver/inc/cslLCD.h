@@ -12,7 +12,8 @@
 #define CSL_LCD_WriteData(x)  CSL_LCD_RAM = x
 
 extern void CslLCD_Init(void);
-extern void PutPixel(unsigned int x,unsigned int y,unsigned int color);
+extern void SetPixel(unsigned int x,unsigned int y,unsigned int color);
+extern void BlockWrite(unsigned int Xstart,unsigned int Xend,unsigned int Ystart,unsigned int Yend);
 extern void CslLCD_Clear(uint16_t BackColor);
 extern void CslLCD_FillRect(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t yEnd, uint16_t Color);
 

@@ -6,12 +6,33 @@
 #include "HeatControlSys.h"
 #include "board.h"
 
-#include "Frames.h"
-
-static uint32_t Is_Init=0;
-
+//static uint32_t Is_Init=0;
+extern volatile uint8_t UI_Index;
 
 void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState)
+{
+	if(BtnState == BUTTON_STATUS_RELEASE)
+	{
+		switch(HCS_Struct.Status)
+		{
+			case HCS_STATUS_STANDBY:
+				HCS_Struct.Status = HCS_STATUS_STARTUP;
+				break;
+			case HCS_STATUS_STARTUP:
+			case HCS_STATUS_PREBLOW:
+			case HCS_STATUS_PREMATERIAL:
+			case HCS_STATUS_WARMEDUP:
+			case HCS_STATUS_FIREUP:
+			case HCS_STATUS_RUNNING:
+			case HCS_STATUS_FIREPROTECT:
+				HCS_Struct.Status = HCS_STATUS_STANDBY;
+				//TODO:发送消息现在进入关机
+				break;
+		}
+	}
+}
+
+void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
 {
 	if(BtnState == BUTTON_STATUS_RELEASE)
 	{
@@ -26,38 +47,10 @@ void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState)
 			case HCS_STATUS_RUNNING:
 			case HCS_STATUS_FIREPROTECT:
 				HCS_Struct.Status = HCS_STATUS_POWEROFF;
-				//TODO:发送消息现在进入关机
-				break;
-			case HCS_STATUS_POWEROFF:
-				HCS_Struct.Status = HCS_STATUS_STANDBY;
-				//TODO:发送消息现在进入开机初始化
-				break;
-		}
-	}
-}
-
-void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
-{
-	if(BtnState == BUTTON_STATUS_RELEASE)
-	{
-		switch(HCS_Struct.Status)
-		{
-			case HCS_STATUS_STANDBY:
-				HCS_Struct.Status = HCS_STATUS_STARTUP;
-				//TODO:发送消息现在启动
-				break;
-			case HCS_STATUS_STARTUP:
-			case HCS_STATUS_PREBLOW:
-			case HCS_STATUS_PREMATERIAL:
-			case HCS_STATUS_WARMEDUP:
-			case HCS_STATUS_FIREUP:
-			case HCS_STATUS_RUNNING:
-			case HCS_STATUS_FIREPROTECT:
-				//HCS_Struct.Status = HCS_STATUS_POWEROFF;
 				//TODO:发送消息
 				break;
 			case HCS_STATUS_POWEROFF:
-				//HCS_Struct.Status = HCS_STATUS_STANDBY;
+				HCS_Struct.Status = HCS_STATUS_STANDBY;
 				//TODO:发送消息
 				break;
 		}
@@ -66,6 +59,8 @@ void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
 
 void KB_TestSwitch(uint8_t BtnHandle, uint8_t BtnState)
 {
+	static uint8_t xx = 0;
+	
 	if(BtnState == BUTTON_STATUS_PRESS)
 	{
 		MyBeep_Beep(1);
@@ -73,6 +68,11 @@ void KB_TestSwitch(uint8_t BtnHandle, uint8_t BtnState)
 	if(BtnState == BUTTON_STATUS_RELEASE)
 	{
 		MyBeep_Beep(0);
+	}
+	if(BtnState == BUTTON_STATUS_HOLD)
+	{
+		MyBeep_Beep(xx);
+		xx = 1 - xx;
 	}
 }
 
@@ -83,7 +83,9 @@ void KB_SetSwitch(uint8_t BtnHandle, uint8_t BtnState)
 		//设置界面切换
 		if(BtnState == BUTTON_STATUS_RELEASE)
 		{
-			UI_Mode = !UI_Mode;
+			//UI_Mode = !UI_Mode;
+			UI_Index++;
+			UI_Index %= 3;
 		}
 	}
 }
@@ -174,8 +176,8 @@ void vTask_KeyBoard( void *pvParameters )
 	
 	MyBeep_Init();
 	
-	Is_Init = KEYBOARD_INIT_DONE;
-	xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
+//	Is_Init = KEYBOARD_INIT_DONE;
+	//xQueueSendToBack(InitQueue, &Is_Init, portMAX_DELAY);
 	
 	while(1)
 	{

@@ -24,9 +24,9 @@
 	#define RCC_APB1Periph_I2C1              ((uint32_t)0x00200000)
 #define RCC_APB1Periph_I2C2              ((uint32_t)0x00400000)
 #define RCC_APB1Periph_I2C3              ((uint32_t)0x00800000)
-	
-	
-	
+
+
+
 
 #ifndef I2C2RCC
 	#define I2C2RCC(I2Cx)     ( (uint32_t)RCC_APB1Periph_I2C1 << (((uint32_t)(I2Cx) - APB1PERIPH_BASE - 0x5000) >> 11)  )
