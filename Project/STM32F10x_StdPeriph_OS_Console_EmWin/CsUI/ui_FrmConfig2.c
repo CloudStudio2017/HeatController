@@ -128,7 +128,7 @@ void ui_FrmConfig2_Process(void)
 	
 	while(1)
 	{
-		if(UI_Index != 1)
+		if(UI_Index != 2)
 		{
 			return;
 		}
