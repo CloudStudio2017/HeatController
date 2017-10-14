@@ -66,7 +66,7 @@ TCsUI_BaseObjectTable FrmConfig1_ChildTbl[]={
 	
 	};
 
-CS_FRAME(FrmConfig1, NULL, 0, 0, 480, 320, CSUI_RED, FrmConfig1_ChildTbl);
+CS_FRAME(FrmConfig1, NULL, 0, 0, 480, 320, CSUI_BLACK, FrmConfig1_ChildTbl);
 
 #define CONFIG1_CURSOR_MAX         (11)
 volatile static uint8_t ui_FrmConfig1_Cursor = 0;
