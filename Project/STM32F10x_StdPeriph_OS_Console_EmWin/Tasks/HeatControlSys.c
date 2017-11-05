@@ -1,10 +1,23 @@
 #include "HeatControlSys.h"
-#include "myLed.h"
 #include "myBeep.h"
 #include "FreeRTOS.h"
 #include "Task.h"
-#include "PT100.h"
-#include "MAX6675.h"
+#include "Task_Monitor.h"
+
+CslIOCtrl_Device_Level_TypeDef Device_Liaoji = {.ActiveLevel = 1, .Res = 0};
+CslIOCtrl_Device_Level_TypeDef Device_Yinfeng = {.ActiveLevel = 1, .Res = 0};
+CslIOCtrl_Device_Level_TypeDef Device_Gufeng = {.ActiveLevel = 1, .Res = 0};
+CslIOCtrl_Device_Level_TypeDef Device_Dianhuo = {.ActiveLevel = 1, .Res = 0};
+CslIOCtrl_Device_Level_TypeDef Device_Shuiwei = {.ActiveLevel = 1, .Res = 0};
+CslIOCtrl_Device_Level_TypeDef Device_Queliao = {.ActiveLevel = 1, .Res = 0};
+
+CslIOCtrl_RegTypeDef IO_Liaoji = {.Device.AsLevel = &Device_Liaoji};
+CslIOCtrl_RegTypeDef IO_Yinfeng = {.Device.AsLevel = &Device_Yinfeng};
+CslIOCtrl_RegTypeDef IO_Gufeng = {.Device.AsLevel = &Device_Gufeng};
+CslIOCtrl_RegTypeDef IO_Dianhuo = {.Device.AsLevel = &Device_Dianhuo};
+CslIOCtrl_RegTypeDef IO_Shuiwei = {.Device.AsLevel = &Device_Shuiwei};
+CslIOCtrl_RegTypeDef IO_Queliao = {.Device.AsLevel = &Device_Queliao};
+
 
 volatile HCS_TypeDef HCS_Struct = 
 {
@@ -49,53 +62,22 @@ static void HCS_IO_Init(void)
 #endif
 }
 
-static void HCS_Sensor_Init(void)
+static void HCS_Monitor_Init(void)
 {
-	PT100_Init();
-	MAX6675_Init();
-}
-
-static int16_t HCS_GetTemp(uint8_t Channel)
-{
-	float tmpTemp;
-	unsigned short tmpK;
-	unsigned char tmpRet;
-	
-	switch(Channel)
-	{
-		case 0:
-			tmpRet = MAX6675_GetTemp(&tmpK);
-			if(tmpRet == MAX6675_NOERR)
-			{
-				tmpTemp = tmpK;
-			}
-			else
-			{
-				return -3000;
-			}
-			break;
-		case 1:
-			tmpTemp = PT100_GetTempValue();
-			break;
-		default:
-			return -3000;
-	}
-	
-	return (int16_t)tmpTemp;
+	vTask_Monitor_Init();
 }
 
 //用于记录点火前的温度
 void HCS_FireUpStore(void)
 {
-	HCS_Struct.TempBeforeFire = HCS_GetTemp(0);
+	HCS_Struct.TempBeforeFire = HCS_Struct.StoveTemp.Value;
 }
 
 //判断点火是否成功
 uint8_t HCS_FireUpCheck(void)
 {
 	//检测是否点火成功
-	HCS_Struct.StoveTemp = HCS_GetTemp(0);
-	if(HCS_Struct.StoveTemp >= HCS_Struct.pParams->Dianhuoyuzhi)
+	if(HCS_Struct.StoveTemp.Value >= HCS_Struct.pParams->Dianhuoyuzhi)
 	{
 		return 0x00;
 	}
@@ -110,28 +92,14 @@ uint8_t HCS_AntiFreeze(void)
 {
 	//炉内水温低于5℃，进入防冻功能，循环泵自动开启防止结冰
 	
-	_WaterPump_On_();
+	//_WaterPump_On_();
 	
-	HCS_Struct.WaterTemp = HCS_GetTemp(1);
 	//if(HCS_Struct.WaterTemp >= HCS_Struct.Params[HCS_PARAM_TBWD])
 	{
 		//TODO
 	}
 	
 	return 0;
-}
-
-//检测水位低信号
-uint16_t HCS_GetWaterLow(void)
-{
-	if(GPIO_ReadInputDataBit(GPIOE, GPIO_Pin_0) != RESET)
-	{
-		return 1;  //Water is low
-	}
-	else
-	{
-		return 0;
-	}
 }
 
 //提示加水
@@ -146,19 +114,6 @@ void inline HCS_WaterLowIndicationReset(void)
 //	myLed_Off(LED5);
 }
 
-//检测加料信号
-uint16_t HCS_GetMaterialLow(void)
-{
-	if(GPIO_ReadInputDataBit(GPIOE, GPIO_Pin_1) != RESET)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
 //提示加料
 void inline HCS_MaterialLowIndicationSet(void)
 {
@@ -171,36 +126,26 @@ void inline HCS_MaterialLowIndicationReset(void)
 //	myLed_Off(LED6);
 }
 
-//检测炉温
-uint8_t HCS_GetStoveOverHeat(void)
-{
-	HCS_Struct.StoveTemp =HCS_GetTemp(0);
-	if(HCS_Struct.StoveTemp > 800)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
 uint8_t HCS_CheckSysError(void)
 {
 	//水位从‘开启’到‘关闭’如果出现缺水就报警并进入‘关闭状态’（水位开关量常闭变为开）
 	//炉温从‘开启’到‘关闭’如果出现过热就报警并进入‘关闭状态（炉温超过设定值）
 	//缺料从‘开启’到‘关闭’如果出现缺料就报警并进入‘关闭状态（缺料开关量常闭变为开，有的客户没有炉温功能，这个开关量设为过热报警，和缺料接一起）
-	if(HCS_GetWaterLow())
+	//if(HCS_GetWaterLow())
+	//{
+	//	return 0xFF;
+	//}
+	if(HCS_Struct.MaterialLow)
 	{
 		return 0xFF;
 	}
-	if(HCS_GetMaterialLow())
+	if(HCS_Struct.StoveTemp.Flag != 0)
 	{
-		return 0xFF;
+		return 0xFF;    //Exit when stove temperature is not normal
 	}
-	if(HCS_GetStoveOverHeat())
+	if(HCS_Struct.StoveTemp.Value > 800)
 	{
-		return 0xFF;
+		return 0xFF;    //Exit when stove temperature is overheat
 	}
 	
 	return 0;
@@ -211,7 +156,7 @@ void HCS_Init(void)
 	HCS_Struct.Status = HCS_STATUS_STANDBY;
 	
 	HCS_IO_Init();
-	HCS_Sensor_Init();
+	HCS_Monitor_Init();
 	
 	//Load Params
 	SysParam_LoadFromFlash();
@@ -226,29 +171,26 @@ uint8_t HCS_SM_Standby(uint8_t param)
 	//液晶屏亮着，没有按开关按键开启，可触发水泵防冻功能，不启动水泵循环水功能
 	//参数：防冻温度 单位：摄氏度
 	
-	HCS_Struct.WaterLow = HCS_GetWaterLow();
-	HCS_Struct.MaterialLow = HCS_GetMaterialLow();
-	HCS_Struct.StoveTemp = HCS_GetTemp(0);
-	HCS_Struct.WaterTemp = HCS_GetTemp(1);
+	//HCS_Struct.WaterLow = HCS_GetWaterLow();
 	
-	_WaterPump_Off_();   //不启动水泵循环功能
+	//_WaterPump_Off_();   //不启动水泵循环功能
 	_AirBlower_Off_();
 	_FireUp_Off_();
 	_MaterialMachine_Off_();
 	_LeadFan_Off_();
 	
-	if(HCS_Struct.WaterLow)
-	{
-		//提示加水
-		HCS_WaterLowIndicationSet();
-		//等待加水完成
-		while(HCS_Struct.WaterLow)
-		{
-			HCS_Struct.WaterLow = HCS_GetWaterLow();
-		}
-		
-		HCS_WaterLowIndicationReset();
-	}
+	//if(HCS_Struct.WaterLow)
+	//{
+	//	//提示加水
+	//	HCS_WaterLowIndicationSet();
+	//	//等待加水完成
+	//	while(HCS_Struct.WaterLow)
+	//	{
+	//		HCS_Struct.WaterLow = HCS_GetWaterLow();
+	//	}
+	//	
+	//	HCS_WaterLowIndicationReset();
+	//}
 	if(HCS_Struct.MaterialLow)
 	{
 		//提示加料
@@ -270,23 +212,41 @@ uint8_t HCS_SM_Startup(uint8_t param)
 	//水泵运行模式：水泵是根据水温独立运行，它是循环泵，把锅炉热水循环出去使用，高温开泵，低温停泵（例如：水泵高于开泵温度70度，开泵；低于停泵温度50度，停泵），水泵在按开关键时就开始工作，暂停或关闭时继续工作，直到停泵，或者按‘电源’键时停止。在暂停待机状态（液晶屏亮着没有进入运行状态）触发‘防冻’功能
 	//锅炉运行模式：开启-前吹—预热—预料—点火—运行—保火—暂停—关闭
 	//开机时：水温：1.低于‘停机温度’开机，前吹，预料，预热，点火，运行，保火。2.高于‘停机温度’，进入‘暂停’，当水泵把水温循环出去降到‘开机温度’以下，自动开机进入前吹，预料，预热，点火，运行，保火
+	uint8_t i;
+	
 	if(HCS_CheckSysError())
 	{
+		for(i=0;i<3;i++)
+		{
+			MyBeep_Beep(1);
+			vTaskDelay(50);
+			MyBeep_Beep(0);
+			vTaskDelay(50);
+		}
 		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		
 		return 0;
 	}
 	
-	HCS_Struct.WaterLow = HCS_GetWaterLow();
-	HCS_Struct.StoveTemp = HCS_GetTemp(0);
-	HCS_Struct.WaterTemp = HCS_GetTemp(1);
-
-	if(HCS_Struct.WaterTemp > 100)
+	/* Beep 1s to start normal */
+	MyBeep_Beep(1);
+	vTaskDelay(500);
+	MyBeep_Beep(0);
+	
+	/* wait until temperature down to level */
+	if(HCS_Struct.WaterTemp.Value > HCS_Struct.pParams->Baohuowendu)
 	{
 		HCS_Struct.Status = HCS_STATUS_STANDBY;
-		return 0;
+		//现在高于开机温度，需要等待温度降低
+		while(HCS_Struct.WaterTemp.Value > HCS_Struct.pParams->Kaijiwendu)
+		{
+			if(HCS_Struct.Status == HCS_STATUS_POWEROFF)
+			{
+				return 0;
+			}
+		}
+		HCS_Struct.Status = HCS_STATUS_PREBLOW;
 	}
-	//vTaskDelay(1000);
 	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 		HCS_Struct.Status = HCS_STATUS_PREBLOW;
 	
@@ -469,8 +429,7 @@ uint8_t HCS_SM_Running(uint8_t param)
 		return 0;
 	}
 	
-	HCS_Struct.WaterTemp = HCS_GetTemp(1);
-	if(HCS_Struct.WaterTemp >= HCS_Struct.pParams->Baohuowendu)
+	if(HCS_Struct.WaterTemp.Value >= HCS_Struct.pParams->Baohuowendu)
 	{
 		if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 			HCS_Struct.Status = HCS_STATUS_FIREPROTECT;  //进入保火模式
@@ -499,8 +458,7 @@ uint8_t HCS_SM_FireProtection(uint8_t param)
 		return 0;
 	}
 	
-	HCS_Struct.WaterTemp = HCS_GetTemp(1);
-	if(HCS_Struct.WaterTemp <= HCS_Struct.pParams->Baohuowendu)
+	if(HCS_Struct.WaterTemp.Value <= HCS_Struct.pParams->Baohuowendu)
 	{
 		if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 			HCS_Struct.Status = HCS_STATUS_RUNNING;      //回到运行模式
@@ -543,7 +501,7 @@ uint8_t HCS_SM_PowerOff(uint8_t param)
 	//关闭状态下才触发防冻功能
 	
 	_FireUp_Off_();
-	_WaterPump_Off_();
+	//_WaterPump_Off_();
 	_MaterialMachine_Off_();
 	
 	tmpParams[0] = HCS_Struct.pParams->Gufenghouchui;

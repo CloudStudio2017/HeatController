@@ -22,33 +22,36 @@ static char ui_FrmConfig2_Str_Zhengchanggufeng[]  = "100";
 static char ui_FrmConfig2_Str_Baohuoyinfeng[]     = "100";
 static char ui_FrmConfig2_Str_Baohuogufeng[]      = "100";
 
-CS_BITMAP(Bmp_Cfg_GufengqianchuiTitle,       NULL, 10, 10, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Gufengqianchui);
-CS_LABLE(Lable_Cfg_GufengqianchuiValue,      NULL,150, 15, 10, 10, CSUI_WHITE, CSUI_BLACK, ui_FrmConfig2_Str_Gufengqianchui, NULL);
-CS_BITMAP(Bmp_Cfg_YinfengqianchuiTitle,      NULL, 10, 40, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Yinfengqianchui);
-CS_LABLE(Lable_Cfg_YinfengqianchuiValue,     NULL,150, 45, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Yinfengqianchui, NULL);
-CS_BITMAP(Bmp_Cfg_DianhuoyuzhiTitle,         NULL, 10, 70, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Dianhuoyuzhi);
-CS_LABLE(Lable_Cfg_DianhuoyuzhiValue,        NULL,150, 75, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Dianhuoyuzhi, NULL);
-CS_BITMAP(Bmp_Cfg_YinfengzhihouTitle,        NULL, 10,100, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Yinfengzhihou);
-CS_LABLE(Lable_Cfg_YinfengzhihouValue,       NULL,150,105, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Yinfengzhihou, NULL);
-CS_BITMAP(Bmp_Cfg_GufengzhihouTitle,         NULL, 10,130, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Gufengzhihou);
-CS_LABLE(Lable_Cfg_GufengzhihhouValue,       NULL,150,135, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Gufengzhihou, NULL);
-CS_BITMAP(Bmp_Cfg_SongliaozhihouTitle,       NULL, 10,160, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Songliaozhihou);
-CS_LABLE(Lable_Cfg_SongliaozhihouValue,      NULL,150,165, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Songliaozhihou, NULL);
+CS_BITMAP(Bmp_Cfg_Title2,                     NULL, 150, 10,  10, 10, CSUI_WHITE, CSUI_BLACK, xBitmapXitongshezhi);
 
-CS_BITMAP(Bmp_Cfg_DianhuoyinfengTitle,       NULL,250, 10, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Dianhuoyinfeng);
-CS_LABLE(Lable_Cfg_DianhuoyinfengValue,      NULL,390, 15, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Dianhuoyinfeng, NULL);
-CS_BITMAP(Bmp_Cfg_DianhuogufengTitle,        NULL,250, 40, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Dianhuogufeng);
-CS_LABLE(Lable_Cfg_DianhuogufengValue,       NULL,390, 45, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Dianhuogufeng, NULL);
-CS_BITMAP(Bmp_Cfg_ZhengchangyinfengTitle,    NU-LL,250, 70, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Zhengchangyinfeng);
-CS_LABLE(Lable_Cfg_ZhengchangyinfengValue,   NULL,390, 75, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Zhengchangyinfeng, NULL);
-CS_BITMAP(Bmp_Cfg_ZhengchanggufengTitle,     NULL,250,100, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Zhengchanggufeng);
-CS_LABLE(Lable_Cfg_ZhengchanggufengValue,    NULL,390,105, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Zhengchanggufeng, NULL);
-CS_BITMAP(Bmp_Cfg_BaohuoyinfengTitle,        NULL,250,130, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Baohuoyinfeng);
-CS_LABLE(Lable_Cfg_BaohuoyinfengValue,       NULL,390,135, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Baohuoyinfeng, NULL);
-CS_BITMAP(Bmp_Cfg_BaohuogufengTitle,         NULL,250,160, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Baohuogufeng);
-CS_LABLE(Lable_Cfg_BaohuogufengValue,        NULL,390,165, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Baohuogufeng, NULL);
+CS_BITMAP(Bmp_Cfg_GufengqianchuiTitle,       NULL, 10, 10+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Gufengqianchui);
+CS_LABLE(Lable_Cfg_GufengqianchuiValue,      NULL,150, 15+60, 10, 10, CSUI_WHITE, CSUI_BLACK, ui_FrmConfig2_Str_Gufengqianchui, NULL);
+CS_BITMAP(Bmp_Cfg_YinfengqianchuiTitle,      NULL, 10, 40+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Yinfengqianchui);
+CS_LABLE(Lable_Cfg_YinfengqianchuiValue,     NULL,150, 45+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Yinfengqianchui, NULL);
+CS_BITMAP(Bmp_Cfg_DianhuoyuzhiTitle,         NULL, 10, 70+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Dianhuoyuzhi);
+CS_LABLE(Lable_Cfg_DianhuoyuzhiValue,        NULL,150, 75+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Dianhuoyuzhi, NULL);
+CS_BITMAP(Bmp_Cfg_YinfengzhihouTitle,        NULL, 10,100+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Yinfengzhihou);
+CS_LABLE(Lable_Cfg_YinfengzhihouValue,       NULL,150,105+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Yinfengzhihou, NULL);
+CS_BITMAP(Bmp_Cfg_GufengzhihouTitle,         NULL, 10,130+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Gufengzhihou);
+CS_LABLE(Lable_Cfg_GufengzhihhouValue,       NULL,150,135+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Gufengzhihou, NULL);
+CS_BITMAP(Bmp_Cfg_SongliaozhihouTitle,       NULL, 10,160+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Songliaozhihou);
+CS_LABLE(Lable_Cfg_SongliaozhihouValue,      NULL,150,165+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Songliaozhihou, NULL);
+
+CS_BITMAP(Bmp_Cfg_DianhuoyinfengTitle,       NULL,250, 10+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Dianhuoyinfeng);
+CS_LABLE(Lable_Cfg_DianhuoyinfengValue,      NULL,390, 15+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Dianhuoyinfeng, NULL);
+CS_BITMAP(Bmp_Cfg_DianhuogufengTitle,        NULL,250, 40+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Dianhuogufeng);
+CS_LABLE(Lable_Cfg_DianhuogufengValue,       NULL,390, 45+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Dianhuogufeng, NULL);
+CS_BITMAP(Bmp_Cfg_ZhengchangyinfengTitle,    NU-LL,250, 70+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Zhengchangyinfeng);
+CS_LABLE(Lable_Cfg_ZhengchangyinfengValue,   NULL,390, 75+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Zhengchangyinfeng, NULL);
+CS_BITMAP(Bmp_Cfg_ZhengchanggufengTitle,     NULL,250,100+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Zhengchanggufeng);
+CS_LABLE(Lable_Cfg_ZhengchanggufengValue,    NULL,390,105+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Zhengchanggufeng, NULL);
+CS_BITMAP(Bmp_Cfg_BaohuoyinfengTitle,        NULL,250,130+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Baohuoyinfeng);
+CS_LABLE(Lable_Cfg_BaohuoyinfengValue,       NULL,390,135+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Baohuoyinfeng, NULL);
+CS_BITMAP(Bmp_Cfg_BaohuogufengTitle,         NULL,250,160+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Baohuogufeng);
+CS_LABLE(Lable_Cfg_BaohuogufengValue,        NULL,390,165+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Baohuogufeng, NULL);
 
 TCsUI_BaseObjectTable FrmConfig2_ChildTbl[]={
+	&Bmp_Cfg_Title2.Obj,
 	&Bmp_Cfg_GufengqianchuiTitle.Obj, &Lable_Cfg_GufengqianchuiValue.Obj,
 	&Bmp_Cfg_YinfengqianchuiTitle.Obj, &Lable_Cfg_YinfengqianchuiValue.Obj,
 	&Bmp_Cfg_DianhuoyuzhiTitle.Obj, &Lable_Cfg_DianhuoyuzhiValue.Obj,

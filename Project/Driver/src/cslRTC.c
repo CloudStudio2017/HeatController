@@ -217,11 +217,11 @@ void CslRTC_Init(void)
   RTC_WaitForLastTask();
 	
 	InitDate.Year = 2017;
-	InitDate.Month = 7;
-	InitDate.Date = 9;
+	InitDate.Month = 10;
+	InitDate.Date = 25;
 	
-	InitTime.Hou = 00;
-	InitTime.Min = 33;
+	InitTime.Hou = 03;
+	InitTime.Min = 22;
 	InitTime.Sec = 00;
 	
 	CslRTC_SetDate(&InitDate);

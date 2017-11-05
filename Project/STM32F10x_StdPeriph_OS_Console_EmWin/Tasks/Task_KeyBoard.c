@@ -1,8 +1,8 @@
 #include "stm32f10x.h"
 #include "Task_KeyBoard.h"
 #include "myButton.h"
-#include "myLed.h"
 #include "myBeep.h"
+#include "cslLCD.h"
 #include "HeatControlSys.h"
 #include "board.h"
 
@@ -28,6 +28,8 @@ void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState)
 				HCS_Struct.Status = HCS_STATUS_STANDBY;
 				//TODO:发送消息现在进入关机
 				break;
+			case HCS_STATUS_POWEROFF:
+				break;
 		}
 	}
 }
@@ -48,10 +50,16 @@ void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
 			case HCS_STATUS_FIREPROTECT:
 				HCS_Struct.Status = HCS_STATUS_POWEROFF;
 				//TODO:发送消息
+				CsLCD_DisplayControl(1);
+				CslLCD_BLK(0);
+				UI_Index = 0;
 				break;
 			case HCS_STATUS_POWEROFF:
 				HCS_Struct.Status = HCS_STATUS_STANDBY;
 				//TODO:发送消息
+				CsLCD_DisplayControl(0);
+				CslLCD_BLK(1);
+				UI_Index = 0;
 				break;
 		}
 	}
@@ -64,10 +72,12 @@ void KB_TestSwitch(uint8_t BtnHandle, uint8_t BtnState)
 	if(BtnState == BUTTON_STATUS_PRESS)
 	{
 		MyBeep_Beep(1);
+		CsLCD_DisplayControl(1);
 	}
 	if(BtnState == BUTTON_STATUS_RELEASE)
 	{
 		MyBeep_Beep(0);
+		CsLCD_DisplayControl(0);
 	}
 	if(BtnState == BUTTON_STATUS_HOLD)
 	{

@@ -40,6 +40,12 @@ void CslLCD_lowlevel_Init(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE, ENABLE);
 #if BOARD_TYPE == RELEASE_BOARD_V1
 	RCC_APB2PeriphClockCmd(GPIO2RCC(_LCD_BLK_GPIO), ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStruct.GPIO_Pin = _LCD_BLK_PIN;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(_LCD_BLK_GPIO, &GPIO_InitStruct);
 #endif
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
 	
@@ -149,9 +155,8 @@ void CslLCD_Init(void)
 	CSL_LCD_WriteData(0x80);
 	
 	CSL_LCD_WriteComm(0x36);
-	//CSL_LCD_WriteData(0x68);
-	//CSL_LCD_WriteData(0x48);
-	CSL_LCD_WriteData(0x28);
+	CSL_LCD_WriteData(0x28);    //Test board
+	//CSL_LCD_WriteData(0xE8);  //Release board
 	
 	CSL_LCD_WriteComm(0x3A);//Interface Mode Control
 	CSL_LCD_WriteData(0x55);
@@ -286,5 +291,19 @@ void CslLCD_FillRect(uint16_t xStart, uint16_t yStart, uint16_t xEnd, uint16_t y
 	for(i=0;i<(xEnd-xStart+1)*(yEnd-yStart+1);i++)
 	{
 		CSL_LCD_WriteData(Color);
+	}
+}
+
+void CsLCD_DisplayControl(uint8_t Mode)
+{
+	volatile uint32_t i;
+	
+	if(Mode)
+	{
+		CSL_LCD_WriteComm(0x28);
+	}
+	else
+	{
+		CSL_LCD_WriteComm(0x29);
 	}
 }

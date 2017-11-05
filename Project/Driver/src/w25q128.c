@@ -30,12 +30,12 @@
 
 static inline void flash_CS_HIGH(void)
 {
-	GPIO_SetBits(GPIOA, GPIO_Pin_4);
+	GPIO_SetBits(_FLASH_CS_GPIO, _FLASH_CS_PIN);
 }
 
 static inline void flash_CS_LOW(void)
 {
-	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+	GPIO_ResetBits(_FLASH_CS_GPIO, _FLASH_CS_PIN);
 }
 
 static inline void flash_WP_HIGH(void)
@@ -57,19 +57,19 @@ static void flash_spi_LowlevelInit(void)
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	//CLK
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5;
-	GPIO_Init(GPIOA, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin = _FLASH_CLK_PIN;
+	GPIO_Init(_FLASH_CLK_GPIO, &GPIO_InitStruct);
 	//MOSI
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_7;
-	GPIO_Init(GPIOA, &GPIO_InitStruct);
+	GPIO_InitStruct.GPIO_Pin = _FLASH_MOSI_PIN;
+	GPIO_Init(_FLASH_MOSI_GPIO, &GPIO_InitStruct);
 	//MISO
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6;
+	GPIO_InitStruct.GPIO_Pin = _FLASH_MISO_PIN;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_OD;
-	GPIO_Init(GPIOA, &GPIO_InitStruct);
+	GPIO_Init(_FLASH_MISO_GPIO, &GPIO_InitStruct);
 	//CS
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStruct.GPIO_Pin = _FLASH_CS_PIN;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStruct);
+	GPIO_Init(_FLASH_CS_GPIO, &GPIO_InitStruct);
 	//WP
 	GPIO_InitStruct.GPIO_Pin = _FLASH_WP_PIN;
 	GPIO_Init(_FLASH_WP_GPIO, &GPIO_InitStruct);

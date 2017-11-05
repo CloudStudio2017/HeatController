@@ -3,6 +3,7 @@
 
 #include "stm32f10x.h"
 #include "board.h"
+#include "cslIOCtrl.h"
 #include "sysParams.h"
 
 #define HCS_IO_INPUT   volatile uint8_t
@@ -12,8 +13,6 @@
 	
 
 #if BOARD_TYPE == RELEASE_BOARD_V1
-	#define _WaterPumpOn_             myLed_On(0)
-	#define _WaterPumpOff_            myLed_Off(0)
 	#define _MaterialMachineOn_       myLed_On(1)
 	#define _MaterialMachineOff_      myLed_Off(1)
 	#define _FireUpOn_                myLed_On(2)
@@ -23,16 +22,14 @@
 	#define _LeadFanOn_               myLed_On(5)
 	#define _LeadFanOff_              myLed_On(5)
 #elif BOARD_TYPE == TEST_BOARD_V1
-	#define _WaterPumpOn_             myLed_On(0)
-	#define _WaterPumpOff_            myLed_Off(0)
-	#define _MaterialMachineOn_       myLed_On(1)
-	#define _MaterialMachineOff_      myLed_Off(1)
-	#define _FireUpOn_                myLed_On(2)
-	#define _FireUpOff_               myLed_Off(2)
-	#define _AirBlowerOn_             myLed_On(3)
-	#define _AirBlowerOff_            myLed_On(3)
-	#define _LeadFanOn_               myLed_On(4)
-	#define _LeadFanOff_              myLed_On(4)
+	#define _MaterialMachineOn_       CslIOCtrl_SetLevelOut(&IO_Liaoji, 1);
+	#define _MaterialMachineOff_      CslIOCtrl_SetLevelOut(&IO_Liaoji, 0);
+	#define _FireUpOn_                CslIOCtrl_SetLevelOut(&IO_Dianhuo, 1);
+	#define _FireUpOff_               CslIOCtrl_SetLevelOut(&IO_Dianhuo, 0);
+	#define _AirBlowerOn_             CslIOCtrl_SetLevelOut(&IO_Gufeng, 1);
+	#define _AirBlowerOff_            CslIOCtrl_SetLevelOut(&IO_Gufeng, 0);
+	#define _LeadFanOn_               CslIOCtrl_SetLevelOut(&IO_Yinfeng, 1);
+	#define _LeadFanOff_              CslIOCtrl_SetLevelOut(&IO_Yinfeng, 0);
 #endif
 
 /*  ¿ªÆô/¹Ø±Õ Ë®±Ã  */
@@ -133,13 +130,19 @@ typedef enum
 	HCS_PARAM_MAX,
 }HCS_PARAM_enum;
 
+typedef struct
+{
+	float   Value;
+	uint8_t Flag;          //0:NoErr 1:TooHigh 2:TooLow 3:SensorOffLine
+}HCS_Temperature;
+
 typedef struct// HCS_TypeDef
 {
 	HCS_IO_INPUT WaterLow;
 	HCS_IO_INPUT MaterialLow;
 	HCS_IO_INPUT WaterHot;
-	HCS_VA_INPUT WaterTemp;
-	HCS_VA_INPUT StoveTemp;
+	HCS_Temperature WaterTemp;
+	HCS_Temperature StoveTemp;
 	
 	HCS_IO_OUTPUT WaterPump;
 	HCS_IO_OUTPUT MaterialMachine;

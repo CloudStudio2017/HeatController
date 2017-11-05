@@ -1,5 +1,5 @@
 #include "sysParams.h"
-
+#include "FlashControl.h"
 
 SysParam_TypeDef SysParam;
 
