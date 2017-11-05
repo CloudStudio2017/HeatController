@@ -2,6 +2,7 @@
 #include "myButton.h"
 #include "sysParams.h"
 #include "stdio.h"
+#include "myBeep.h"
 
 #define CONFIG2_KEY_SET_INDEX    2
 #define CONFIG2_KEY_UP_INDEX     3
@@ -325,12 +326,18 @@ void ui_FrmConfig2_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 				//Enter the second config frame
 				HoldSave = 0;
 				UI_Index = 0;
+				MyBeep_Beep(1);
+				vTaskDelay(50);
+				MyBeep_Beep(0);
 				MyButton_ReLinkCallBack(CONFIG2_KEY_SET_INDEX, NULL);
 			}
 			else
 			{
 				//Return to main frame
 				UI_Index = 1;
+				MyBeep_Beep(1);
+				vTaskDelay(200);
+				MyBeep_Beep(0);
 			}
 			break;
 		case BUTTON_STATUS_HOLD:

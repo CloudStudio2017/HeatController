@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "myButton.h"
 #include "HeatControlSys.h"
+#include "myBeep.h"
 
 #define MAIN_KEY_SET_INDEX    2
 #define MAIN_KEY_UP_INDEX     3
@@ -304,6 +305,9 @@ void ui_FrmMain_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 {
 	if(BtnState == BUTTON_STATUS_RELEASE)
 	{
+		MyBeep_Beep(1);
+		vTaskDelay(100);
+		MyBeep_Beep(0);
 		UI_Index = 1;
 	}
 }
