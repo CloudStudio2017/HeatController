@@ -118,7 +118,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -155,18 +154,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>28</LineNumber>
+          <LineNumber>15</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134241420</Address>
+          <Address>134225106</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\Tasks\Task_Monitor.c</Filename>
+          <Filename>..\..\Driver\src\cslRTC.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\STM32F103VCT6\../Tasks/Task_Monitor.c\28</Expression>
+          <Expression>\\STM32F103VCT6\../../Driver/src/cslRTC.c\15</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -189,6 +188,11 @@
           <count>3</count>
           <WinNumber>1</WinNumber>
           <ItemText>CslADC_Value,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>tmpDate,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -1063,7 +1067,7 @@
 
   <Group>
     <GroupName>Tasks</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

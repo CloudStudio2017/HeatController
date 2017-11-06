@@ -3,6 +3,7 @@
 #include "sysParams.h"
 #include "stdio.h"
 #include "myBeep.h"
+#include "cslRTC.h"
 
 #define CONFIG1_KEY_SET_INDEX    2
 #define CONFIG1_KEY_UP_INDEX     3
@@ -22,6 +23,12 @@ static char ui_FrmConfig1_Str_Gufenghouchui[]   = "00:00";
 static char ui_FrmConfig1_Str_Yinfenghouchui[]  = "00:00";
 static char ui_FrmConfig1_Str_Dinshikaiji[]     = "00:00";
 static char ui_FrmConfig1_Str_Dinshiguanji[]    = "00:00";
+
+static char ui_FrmConfig1_Str_Year[]            = "2017";
+static char ui_FrmConfig1_Str_Month[]           = "11";
+static char ui_FrmConfig1_Str_Date[]            = "11";
+static char ui_FrmConfig1_Str_Hour[]            = "00";
+static char ui_FrmConfig1_Str_Minute[]          = "00";
 
 CS_BITMAP(Bmp_Cfg_Title1,                     NULL, 150, 10,  10, 10, CSUI_WHITE, CSUI_BLACK, xBitmapXitongshezhi);
 
@@ -52,6 +59,17 @@ CS_LABLE(Lable_Cfg_DinshikaijiValue,         NULL,390,135+60, 10, 10, CSUI_BLUE,
 CS_BITMAP(Bmp_Cfg_DinshiguanjiTitle,         NULL,250,160+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Dinshigunaji);
 CS_LABLE(Lable_Cfg_DinshiguanjiValue,        NULL,390,165+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig1_Str_Dinshiguanji, NULL);
 
+CS_LABLE(Lable_Cfg_YearValue,                NULL, 80,255,10,10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig1_Str_Year, NULL);
+CS_BITMAP(Bmp_Cfg_YearTitile,                NULL,130,250,10,10, CSUI_BLUE, CSUI_BLACK, xBmpData_Nian);
+CS_LABLE(Lable_Cfg_MonthValue,               NULL,165,255,10,10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig1_Str_Month, NULL);
+CS_BITMAP(Bmp_Cfg_MonthTitile,               NULL,190,250,10,10, CSUI_BLUE, CSUI_BLACK, xBmpData_Yue);
+CS_LABLE(Lable_Cfg_DateValue,                NULL,225,255,10,10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig1_Str_Date, NULL);
+CS_BITMAP(Bmp_Cfg_DateTitile,                NULL,250,250,10,10, CSUI_BLUE, CSUI_BLACK, xBmpData_Ri);
+CS_LABLE(Lable_Cfg_HourValue,                NULL,285,255,10,10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig1_Str_Hour, NULL);
+CS_BITMAP(Bmp_Cfg_HourTitile,                NULL,310,250,10,10, CSUI_BLUE, CSUI_BLACK, xBmpData_Shi);
+CS_LABLE(Lable_Cfg_MinuteValue,              NULL,345,255,10,10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig1_Str_Minute, NULL);
+CS_BITMAP(Bmp_Cfg_MinuteTitile,              NULL,370,250,10,10, CSUI_BLUE, CSUI_BLACK, xBmpData_Fen);
+
 TCsUI_BaseObjectTable FrmConfig1_ChildTbl[]={
 	&Bmp_Cfg_Title1.Obj,
 	&Bmp_Cfg_YuliaoshijianTitle.Obj, &Lable_Cfg_YuliaoshijianValue.Obj,
@@ -68,11 +86,17 @@ TCsUI_BaseObjectTable FrmConfig1_ChildTbl[]={
 	&Bmp_Cfg_DinshikaijiTitle.Obj, &Lable_Cfg_DinshikaijiValue.Obj,
 	&Bmp_Cfg_DinshiguanjiTitle.Obj, &Lable_Cfg_DinshiguanjiValue.Obj,
 	
+	&Bmp_Cfg_YearTitile.Obj, &Lable_Cfg_YearValue.Obj,
+	&Bmp_Cfg_MonthTitile.Obj, &Lable_Cfg_MonthValue.Obj,
+	&Bmp_Cfg_DateTitile.Obj, &Lable_Cfg_DateValue.Obj,
+	&Bmp_Cfg_HourTitile.Obj, &Lable_Cfg_HourValue.Obj,
+	&Bmp_Cfg_MinuteTitile.Obj, &Lable_Cfg_MinuteValue.Obj,
+	
 	};
 
 CS_FRAME(FrmConfig1, NULL, 0, 0, 480, 320, CSUI_BLACK, FrmConfig1_ChildTbl);
 
-#define CONFIG1_CURSOR_MAX         (11)
+#define CONFIG1_CURSOR_MAX         (16)
 volatile static uint8_t ui_FrmConfig1_Cursor = 0;
 volatile static uint8_t ui_FrmConfig1_EditUpdateFlag = 0;
 
@@ -98,6 +122,11 @@ void ui_FrmConfig1_Init(void)
 	Lable_Cfg_YinfenghouchuiValue.Font = CsUI_Font_ASCII_1218;
 	Lable_Cfg_DinshikaijiValue.Font = CsUI_Font_ASCII_1218;
 	Lable_Cfg_DinshiguanjiValue.Font = CsUI_Font_ASCII_1218;
+	Lable_Cfg_YearValue.Font = CsUI_Font_ASCII_1218;
+	Lable_Cfg_MonthValue.Font = CsUI_Font_ASCII_1218;
+	Lable_Cfg_DateValue.Font = CsUI_Font_ASCII_1218;
+	Lable_Cfg_HourValue.Font = CsUI_Font_ASCII_1218;
+	Lable_Cfg_MinuteValue.Font = CsUI_Font_ASCII_1218;
 }
 
 void ui_FrmConfig1_ShowFrame(void)
@@ -123,6 +152,11 @@ void ui_FrmConfig1_Process(void)
 	ui_FrmConfig1_UpdateEdit(9, 0);
 	ui_FrmConfig1_UpdateEdit(10, 0);
 	ui_FrmConfig1_UpdateEdit(11, 0);
+	ui_FrmConfig1_UpdateEdit(12, 0);
+	ui_FrmConfig1_UpdateEdit(13, 0);
+	ui_FrmConfig1_UpdateEdit(14, 0);
+	ui_FrmConfig1_UpdateEdit(15, 0);
+	ui_FrmConfig1_UpdateEdit(16, 0);
 	ui_FrmConfig1_SelectEdit(ui_FrmConfig1_Cursor);
 	
 	MyButton_ReLinkCallBack(CONFIG1_KEY_SET_INDEX, ui_FrmConfig1_KeyProcess_Set);
@@ -164,6 +198,11 @@ void ui_FrmConfig1_SelectEdit(uint8_t Cursor)
 	Lable_Cfg_YinfenghouchuiValue.FrontColor = CSUI_BLUE;
 	Lable_Cfg_DinshikaijiValue.FrontColor = CSUI_BLUE;
 	Lable_Cfg_DinshiguanjiValue.FrontColor = CSUI_BLUE;
+	Lable_Cfg_YearValue.FrontColor = CSUI_BLUE;
+	Lable_Cfg_MonthValue.FrontColor = CSUI_BLUE;
+	Lable_Cfg_DateValue.FrontColor = CSUI_BLUE;
+	Lable_Cfg_HourValue.FrontColor = CSUI_BLUE;
+	Lable_Cfg_MinuteValue.FrontColor = CSUI_BLUE;
 	switch(Cursor)
 	{
 		case 0: Lable_Cfg_YuliaoshijianValue.FrontColor = CSUI_WHITE; break;
@@ -178,6 +217,11 @@ void ui_FrmConfig1_SelectEdit(uint8_t Cursor)
 		case 9: Lable_Cfg_YinfenghouchuiValue.FrontColor = CSUI_WHITE; break;
 		case 10: Lable_Cfg_DinshikaijiValue.FrontColor = CSUI_WHITE; break;
 		case 11: Lable_Cfg_DinshiguanjiValue.FrontColor = CSUI_WHITE; break;
+		case 12: Lable_Cfg_YearValue.FrontColor = CSUI_WHITE; break;
+		case 13: Lable_Cfg_MonthValue.FrontColor = CSUI_WHITE; break;
+		case 14: Lable_Cfg_DateValue.FrontColor = CSUI_WHITE; break;
+		case 15: Lable_Cfg_HourValue.FrontColor = CSUI_WHITE; break;
+		case 16: Lable_Cfg_MinuteValue.FrontColor = CSUI_WHITE; break;
 	}
 	
 	Lable_Cfg_YuliaoshijianValue.Obj.Draw(&Lable_Cfg_YuliaoshijianValue);
@@ -192,60 +236,143 @@ void ui_FrmConfig1_SelectEdit(uint8_t Cursor)
 	Lable_Cfg_YinfenghouchuiValue.Obj.Draw(&Lable_Cfg_YinfenghouchuiValue);
 	Lable_Cfg_DinshikaijiValue.Obj.Draw(&Lable_Cfg_DinshikaijiValue);
 	Lable_Cfg_DinshiguanjiValue.Obj.Draw(&Lable_Cfg_DinshiguanjiValue);
+	Lable_Cfg_YearValue.Obj.Draw(&Lable_Cfg_YearValue);
+	Lable_Cfg_MonthValue.Obj.Draw(&Lable_Cfg_MonthValue);
+	Lable_Cfg_DateValue.Obj.Draw(&Lable_Cfg_DateValue);
+	Lable_Cfg_HourValue.Obj.Draw(&Lable_Cfg_HourValue);
+	Lable_Cfg_MinuteValue.Obj.Draw(&Lable_Cfg_MinuteValue);
 }
 
 void ui_FrmConfig1_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 {
-	switch(Cursor)
+	uint8_t tmpTimeData;
+	CslRTC_Date tmpDate;
+	CslRTC_Time tmpTime;
+	
+	if(IncValue != 0)
 	{
-		case 0:
-			SysParam.Yuliaoshijian += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Yuliaoshijian);
-			break;
-		case 1:
-			SysParam.Dianhuoshijian += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Dianhuoshijian);
-			break;
-		case 2:
-			SysParam.Jinliaoshijian += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Jinliaoshijian);
-			break;
-		case 3:
-			SysParam.Tingliaoshijian += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Tingliaoshijian);
-			break;
-		case 4:
-			SysParam.Baohuosongliao += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Baohuosongliao);
-			break;
-		case 5:
-			SysParam.Baohuotingliao += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Baohuotingliao);
-			break;
-		case 6:
-			SysParam.Kaijiwendu += IncValue;
-			SysParam_ValueLimitTemp16(&SysParam.Kaijiwendu);
-			break;
-		case 7:
-			SysParam.Baohuowendu += IncValue;
-			SysParam_ValueLimitTemp16(&SysParam.Baohuowendu);
-			break;
-		case 8:
-			SysParam.Gufenghouchui += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Gufenghouchui);
-			break;
-		case 9:
-			SysParam.Yinfenghouchui += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Yinfenghouchui);
-			break;
-		case 10:
-			SysParam.Dinshikaiji += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Dinshikaiji);
-			break;
-		case 11:
-			SysParam.Dinshiguanji += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Dinshiguanji);
-			break;
+		switch(Cursor)
+		{
+			case 0:
+				SysParam.Yuliaoshijian += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Yuliaoshijian);
+				break;
+			case 1:
+				SysParam.Dianhuoshijian += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Dianhuoshijian);
+				break;
+			case 2:
+				SysParam.Jinliaoshijian += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Jinliaoshijian);
+				break;
+			case 3:
+				SysParam.Tingliaoshijian += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Tingliaoshijian);
+				break;
+			case 4:
+				SysParam.Baohuosongliao += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Baohuosongliao);
+				break;
+			case 5:
+				SysParam.Baohuotingliao += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Baohuotingliao);
+				break;
+			case 6:
+				SysParam.Kaijiwendu += IncValue;
+				SysParam_ValueLimitTemp16(&SysParam.Kaijiwendu);
+				break;
+			case 7:
+				SysParam.Baohuowendu += IncValue;
+				SysParam_ValueLimitTemp16(&SysParam.Baohuowendu);
+				break;
+			case 8:
+				SysParam.Gufenghouchui += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Gufenghouchui);
+				break;
+			case 9:
+				SysParam.Yinfenghouchui += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Yinfenghouchui);
+				break;
+			case 10:
+				SysParam.Dinshikaiji += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Dinshikaiji);
+				break;
+			case 11:
+				SysParam.Dinshiguanji += IncValue;
+				SysParam_ValueLimitTime16(&SysParam.Dinshiguanji);
+				break;
+			case 12:
+				CslRTC_GetDate(&tmpDate);
+				tmpDate.Year += IncValue;
+				if(tmpDate.Year > 2050)
+					tmpDate.Year = 2000;
+				if(tmpDate.Year < 2000)
+					tmpDate.Year = 2050;
+				CslRTC_SetDate(&tmpDate);
+				break;
+			case 13:
+				CslRTC_GetDate(&tmpDate);
+				tmpDate.Month += IncValue;
+				if(tmpDate.Month > 12)
+					tmpDate.Month = 1;
+				if(tmpDate.Month < 1)
+					tmpDate.Month = 12;
+				CslRTC_SetDate(&tmpDate);
+				break;
+			case 14:
+				CslRTC_GetDate(&tmpDate);
+				tmpDate.Date += IncValue;
+				switch(tmpDate.Month)
+				{
+					case 1:
+					case 3:
+					case 5:
+					case 7:
+					case 8:
+					case 10:
+					case 12:
+						if(tmpDate.Date > 31)
+							tmpDate.Date = 1;
+						if(tmpDate.Date < 1)
+							tmpDate.Date = 31;
+						break;
+					case 2:
+						if(tmpDate.Date > 28)
+							tmpDate.Date = 1;
+						if(tmpDate.Date < 1)
+							tmpDate.Date = 28;
+						break;
+					case 4:
+					case 6:
+					case 9:
+					case 11:
+						if(tmpDate.Date > 30)
+							tmpDate.Date = 1;
+						if(tmpDate.Date < 1)
+							tmpDate.Date = 30;
+						break;
+				}
+				CslRTC_SetDate(&tmpDate);
+				break;
+			case 15:
+				CslRTC_GetTime(&tmpTime);
+				tmpTime.Hou += IncValue;
+				if(tmpTime.Hou > 200)
+					tmpTime.Hou = 23;
+				if(tmpTime.Hou > 23)
+					tmpTime.Hou = 0;
+				CslRTC_SetTime(&tmpTime);
+				break;
+			case 16:
+				CslRTC_GetTime(&tmpTime);
+				tmpTime.Min += IncValue;
+				if(tmpTime.Min > 200)
+					tmpTime.Min = 59;
+				if(tmpTime.Min > 59)
+					tmpTime.Min = 0;
+				CslRTC_SetTime(&tmpTime);
+				break;
+		}
 	}
 	switch(Cursor)
 	{
@@ -261,6 +388,11 @@ void ui_FrmConfig1_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 		case 9: sprintf(ui_FrmConfig1_Str_Yinfenghouchui, "%02d:%02d", SysParam.Yinfenghouchui / 60, SysParam.Yinfenghouchui % 60);	break;
 		case 10: sprintf(ui_FrmConfig1_Str_Dinshikaiji, "%02d:%02d", SysParam.Dinshikaiji / 60, SysParam.Dinshikaiji % 60);	break;
 		case 11: sprintf(ui_FrmConfig1_Str_Dinshiguanji, "%02d:%02d", SysParam.Dinshiguanji / 60, SysParam.Dinshiguanji % 60);	break;
+		case 12: CslRTC_GetDate(&tmpDate); sprintf(ui_FrmConfig1_Str_Year, "%4d", tmpDate.Year); break;
+		case 13: CslRTC_GetDate(&tmpDate); sprintf(ui_FrmConfig1_Str_Month, "%2d", tmpDate.Month); break;
+		case 14: CslRTC_GetDate(&tmpDate); sprintf(ui_FrmConfig1_Str_Date, "%2d", tmpDate.Date); break;
+		case 15: CslRTC_GetTime(&tmpTime); sprintf(ui_FrmConfig1_Str_Hour, "%02d", tmpTime.Hou); break;
+		case 16: CslRTC_GetTime(&tmpTime); sprintf(ui_FrmConfig1_Str_Minute, "%02d", tmpTime.Min); break;
 	}
 }
 

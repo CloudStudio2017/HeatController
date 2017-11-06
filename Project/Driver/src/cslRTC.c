@@ -34,7 +34,7 @@ void CslRTC_Sec2Date(uint32_t sec, CslRTC_Date* pDate)
 	{
 		pDayMap = _mDays;
 	}
-	while(tmpDate > pDayMap[MM - 1])
+	while(tmpDate >= pDayMap[MM - 1])
 	{
 		tmpDate -= pDayMap[MM - 1];
 		MM++;

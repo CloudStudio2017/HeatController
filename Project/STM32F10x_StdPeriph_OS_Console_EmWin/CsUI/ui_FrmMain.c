@@ -57,7 +57,7 @@ CS_FRAME(FrmMain, NULL, 0, 0, 480, 320, CSUI_DARKBLUE, FrmMain_ChildTbl);
 
 static CslRTC_Time xTime;
 static CslRTC_Date xDate;
-
+	
 void ui_FrmMain_UpdateOutputStatus(void);
 void ui_FrmMain_UpdateStatus(void);
 void ui_FrmMain_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState);
@@ -89,13 +89,13 @@ void ui_FrmMain_ShowFrame(void)
 	FrmMain.Obj.Draw(&FrmMain);
 }
 
-void ui_FrmMain_UpdateTime(void)
+void ui_FrmMain_UpdateTime(uint8_t ForceUpdateFlag)
 {
 	static uint8_t LastSec = 60;
 	static uint8_t LastDate = 32;
 	
 	CslRTC_GetTime(&xTime);
-	if(xTime.Sec != LastSec)
+	if((xTime.Sec != LastSec) || ForceUpdateFlag)
 	{
 		LastSec = xTime.Sec;
 		if(LastSec % 2)
@@ -108,14 +108,14 @@ void ui_FrmMain_UpdateTime(void)
 			str_time[2] = ':';
 			Lable_Time.Obj.Draw(&Lable_Time);
 		}
-		if(LastSec == 0)
+		if((LastSec == 0) || ForceUpdateFlag)
 		{
 			//Update time string
 			sprintf(str_time, "%02d:%02d", xTime.Hou, xTime.Min);
 			Lable_Time.Obj.Draw(&Lable_Time);
 			
 			CslRTC_GetDate(&xDate);
-			if(xDate.Date !=  LastDate)
+			if((xDate.Date !=  LastDate) || ForceUpdateFlag)
 			{
 				//Update date string
 				LastDate = xDate.Date;
@@ -193,6 +193,8 @@ void ui_FrmMain_Process(void)
 	MyButton_ReLinkCallBack(MAIN_KEY_DOWN_INDEX, NULL);
 	MyButton_ReLinkCallBack(MAIN_KEY_LEFT_INDEX, NULL);
 	MyButton_ReLinkCallBack(MAIN_KEY_RIGHT_INDEX, NULL);
+
+	ui_FrmMain_UpdateTime(1);     //Force update date time
 	
 	while(1)
 	{
@@ -200,7 +202,7 @@ void ui_FrmMain_Process(void)
 		{
 			return;
 		}
-		ui_FrmMain_UpdateTime();
+		ui_FrmMain_UpdateTime(0);
 		ui_FrmMain_UpdateStatus();
 		ui_FrmMain_UpdateOutputStatus();
 		ui_FrmMain_UpdateParam();

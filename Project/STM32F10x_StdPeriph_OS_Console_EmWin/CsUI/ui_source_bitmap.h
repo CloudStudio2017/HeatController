@@ -50,6 +50,12 @@ extern const unsigned char xBmpData_Zhengchanggufeng[];
 extern const unsigned char xBmpData_Baohuoyinfeng[];
 extern const unsigned char xBmpData_Baohuogufeng[];
 
+extern const unsigned char xBmpData_Nian[];
+extern const unsigned char xBmpData_Yue[];
+extern const unsigned char xBmpData_Ri[];
+extern const unsigned char xBmpData_Shi[];
+extern const unsigned char xBmpData_Fen[];
+
 extern const unsigned char xBitmapXitongshezhi[];
 
 extern const unsigned char xBitmapCaption[];
