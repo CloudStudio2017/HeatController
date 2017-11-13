@@ -679,6 +679,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Driver\src\cslPWM.c</FilePath>
             </File>
+            <File>
+              <FileName>SCRControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\SCRControl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

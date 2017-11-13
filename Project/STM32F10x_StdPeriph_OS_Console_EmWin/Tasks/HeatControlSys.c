@@ -5,18 +5,18 @@
 #include "Task_Monitor.h"
 
 CslIOCtrl_Device_Level_TypeDef Device_Liaoji = {.ActiveLevel = 1, .Res = 0};
-CslIOCtrl_Device_Level_TypeDef Device_Yinfeng = {.ActiveLevel = 1, .Res = 0};
-CslIOCtrl_Device_Level_TypeDef Device_Gufeng = {.ActiveLevel = 1, .Res = 0};
 CslIOCtrl_Device_Level_TypeDef Device_Dianhuo = {.ActiveLevel = 1, .Res = 0};
 CslIOCtrl_Device_Level_TypeDef Device_Shuiwei = {.ActiveLevel = 1, .Res = 0};
 CslIOCtrl_Device_Level_TypeDef Device_Queliao = {.ActiveLevel = 1, .Res = 0};
+CslIOCtrl_Device_SCR_TypeDef Device_Yinfeng = {.Channel = 0};
+CslIOCtrl_Device_SCR_TypeDef Device_Gufeng = {.Channel = 1};
 
 CslIOCtrl_RegTypeDef IO_Liaoji = {.Device.AsLevel = &Device_Liaoji};
-CslIOCtrl_RegTypeDef IO_Yinfeng = {.Device.AsLevel = &Device_Yinfeng};
-CslIOCtrl_RegTypeDef IO_Gufeng = {.Device.AsLevel = &Device_Gufeng};
 CslIOCtrl_RegTypeDef IO_Dianhuo = {.Device.AsLevel = &Device_Dianhuo};
 CslIOCtrl_RegTypeDef IO_Shuiwei = {.Device.AsLevel = &Device_Shuiwei};
 CslIOCtrl_RegTypeDef IO_Queliao = {.Device.AsLevel = &Device_Queliao};
+CslIOCtrl_RegTypeDef IO_Yinfeng = {.Device.AsSCR = &Device_Yinfeng};
+CslIOCtrl_RegTypeDef IO_Gufeng = {.Device.AsSCR = &Device_Gufeng};
 
 
 volatile HCS_TypeDef HCS_Struct = 
@@ -156,8 +156,9 @@ void HCS_Init(void)
 	HCS_Struct.Status = HCS_STATUS_STANDBY;
 	
 	HCS_IO_Init();
+	SCRControl_Init();
 	HCS_Monitor_Init();
-	
+
 	//Load Params
 	SysParam_LoadFromFlash();
 }
@@ -213,6 +214,8 @@ uint8_t HCS_SM_Startup(uint8_t param)
 	//锅炉运行模式：开启-前吹—预热—预料—点火—运行—保火—暂停—关闭
 	//开机时：水温：1.低于‘停机温度’开机，前吹，预料，预热，点火，运行，保火。2.高于‘停机温度’，进入‘暂停’，当水泵把水温循环出去降到‘开机温度’以下，自动开机进入前吹，预料，预热，点火，运行，保火
 	uint8_t i;
+	
+	
 	
 	if(HCS_CheckSysError())
 	{

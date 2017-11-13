@@ -15,19 +15,17 @@ extern CslIOCtrl_RegTypeDef IO_Queliao;
 
 static void Control_LowLevel_Init(void)
 {
-	HCS_Init();
-	
 	IO_Liaoji.GPIO = _OUT_L1_GPIO;
 	IO_Liaoji.Pin = _OUT_L1_PIN;
 	IO_Liaoji.IOMode = IOMode_Level_Out;
 	
 	IO_Yinfeng.GPIO = _OUT_L2_GPIO;
 	IO_Yinfeng.Pin = _OUT_L2_PIN;
-	IO_Yinfeng.IOMode = IOMode_Level_Out;
+	IO_Yinfeng.IOMode = IOMode_SCR_Out;
 	
 	IO_Gufeng.GPIO = _OUT_L3_GPIO;
 	IO_Gufeng.Pin = _OUT_L3_PIN;
-	IO_Gufeng.IOMode = IOMode_Level_Out;
+	IO_Gufeng.IOMode = IOMode_SCR_Out;
 	
 	IO_Dianhuo.GPIO = _OUT_L4_GPIO;
 	IO_Dianhuo.Pin = _OUT_L4_PIN;

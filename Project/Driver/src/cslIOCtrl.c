@@ -46,6 +46,10 @@ uint8_t CslIOCtrl_Reg(CslIOCtrl_RegTypeDef* pIO)
 			if(pIO->Device.AsAnalog == NULL)
 				return (uint8_t)-1;
 			break;
+		case IOMode_SCR_Out:
+			if(pIO->Device.AsSCR == NULL)
+				return (uint8_t)-1;
+			break;
 		case IOMode_NULL:
 			return (uint8_t)-1;
 	}
@@ -101,4 +105,13 @@ uint8_t CslIOCtrl_SetPWMOut(CslIOCtrl_RegTypeDef* pIO, uint32_t Duty)
 	return (uint8_t)-1;
 }
 
+uint8_t CslIOCtrl_SetSCROut(CslIOCtrl_RegTypeDef* pIO, uint8_t Duty)
+{
+	if(pIO->IOMode == IOMode_SCR_Out)
+	{
+		SCRControl_SetDuty(Duty, pIO->Device.AsSCR->Channel);
+		return 0x00;
+	}
+	return (uint8_t)-1;
+}
 

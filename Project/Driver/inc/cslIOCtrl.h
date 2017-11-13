@@ -3,6 +3,7 @@
 
 #include "stm32f10x.h"
 #include "cslCommon.h"
+#include "SCRControl.h"
 
 typedef enum
 {
@@ -12,7 +13,8 @@ typedef enum
 	IOMode_PWM_Out,
 	IOMode_PWM_In,
 	IOMode_Analog_Out,
-	IOMode_Analog_In
+	IOMode_Analog_In,
+	IOMode_SCR_Out,
 }CSLIOCtrl_IOEnum;
 
 typedef struct
@@ -35,11 +37,17 @@ typedef struct
 	uint16_t ADC_Channel;
 }CslIOCtrl_Device_Analog_TypeDef;
 
+typedef struct
+{
+	uint8_t Channel;
+}CslIOCtrl_Device_SCR_TypeDef;
+
 typedef union
 {
 	CslIOCtrl_Device_Level_TypeDef*   AsLevel;
 	CslIOCtrl_Device_PWM_TypeDef*     AsPWM;
 	CslIOCtrl_Device_Analog_TypeDef*  AsAnalog;
+	CslIOCtrl_Device_SCR_TypeDef*     AsSCR;
 }CslIOCtrl_Device_TypeDef;
 
 typedef struct
