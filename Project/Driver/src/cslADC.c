@@ -51,7 +51,7 @@ uint8_t CslADC_Init(void)
 	
 	ADC_ResetCalibration(ADC1);
 	while(ADC_GetResetCalibrationStatus(ADC1));
-  ADC_StartCalibration(ADC1);
+	ADC_StartCalibration(ADC1);
   while(ADC_GetCalibrationStatus(ADC1));
 	
 	DMA_Cmd(DMA1_Channel1, ENABLE);

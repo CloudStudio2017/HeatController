@@ -34,7 +34,7 @@ void CslRTC_Sec2Date(uint32_t sec, CslRTC_Date* pDate)
 	{
 		pDayMap = _mDays;
 	}
-	while(tmpDate > pDayMap[MM - 1])
+	while(tmpDate >= pDayMap[MM - 1])
 	{
 		tmpDate -= pDayMap[MM - 1];
 		MM++;
@@ -189,8 +189,7 @@ void CslRTC_Init(void)
   /* Enable LSE */
   RCC_LSEConfig(RCC_LSE_ON);
   /* Wait till LSE is ready */
-  while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET)
-  {}
+  while(RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET);
 
   /* Select LSE as RTC Clock Source */
   RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);
@@ -217,11 +216,11 @@ void CslRTC_Init(void)
   RTC_WaitForLastTask();
 	
 	InitDate.Year = 2017;
-	InitDate.Month = 7;
-	InitDate.Date = 9;
+	InitDate.Month = 10;
+	InitDate.Date = 25;
 	
-	InitTime.Hou = 00;
-	InitTime.Min = 33;
+	InitTime.Hou = 03;
+	InitTime.Min = 22;
 	InitTime.Sec = 00;
 	
 	CslRTC_SetDate(&InitDate);

@@ -5,6 +5,11 @@
 #define B   -5.802E-07 //-5.775e-7
 #define C   -4.2735E-12 //-4.183e-12
 
+#define X100      600    //For   0¡æ
+#define X138_5   3000    //For 100¡æ
+static const float k = 38.5 / (X138_5 - X100);
+static const float b = 100 - k * X100;
+
 float PT100_R2T(float PT100_ResValue)
 {
 	int i;
@@ -48,9 +53,14 @@ uint8_t PT100_Init(void)
 
 float PT100_GetTempValue(void)
 {
+	uint16_t ADCValue;
+	float ResValue;
 	float tmpRet;
+	
+	ADCValue = CslADC_GetADCValue(1);
+	ResValue = k * ADCValue + b;
 
-	tmpRet = PT100_R2T(CslADC_GetADCValue(1));
+	tmpRet = PT100_R2T(ResValue);
 	
 	return tmpRet;
 }

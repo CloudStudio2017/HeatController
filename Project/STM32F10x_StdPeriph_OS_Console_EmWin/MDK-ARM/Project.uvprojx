@@ -640,11 +640,6 @@
               <FilePath>..\..\Driver\src\myButton.c</FilePath>
             </File>
             <File>
-              <FileName>myLed.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Driver\src\myLed.c</FilePath>
-            </File>
-            <File>
               <FileName>myBeep.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Driver\src\myBeep.c</FilePath>
@@ -673,6 +668,21 @@
               <FileName>cslADC.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Driver\src\cslADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>cslIOCtrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\cslIOCtrl.c</FilePath>
+            </File>
+            <File>
+              <FileName>cslPWM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\cslPWM.c</FilePath>
+            </File>
+            <File>
+              <FileName>SCRControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Driver\src\SCRControl.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -739,6 +749,11 @@
               <FileType>1</FileType>
               <FilePath>..\sysParams.c</FilePath>
             </File>
+            <File>
+              <FileName>Task_Monitor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Tasks\Task_Monitor.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -788,6 +803,11 @@
               <FileName>ui_FrmConfig2.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\CsUI\ui_FrmConfig2.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui_FrmTest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CsUI\ui_FrmTest.c</FilePath>
             </File>
           </Files>
         </Group>

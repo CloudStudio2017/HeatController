@@ -4,13 +4,13 @@
 #include "CsUI_Font.h"
 #include "FlashControl.h"
 #include "CslRTC.h"
-#include "HeatControlSys.h"
 #include "Math.h"
 #include "stdlib.h"
 #include "ui_source_bitmap.h"
 #include "ui_FrmMain.h"
 #include "ui_FrmConfig1.h"
 #include "ui_FrmConfig2.h"
+#include "ui_FrmTest.h"
 
 
 static char string_buf[50];
@@ -18,10 +18,14 @@ static char string_buf[50];
 
 volatile uint8_t UI_Index = 0;   //0:Main   1:Config1  2:Config2
 
+CS_BITMAP(Bmp_Caption, NULL, 130, 100, 10, 10, CSUI_BLUE, CSUI_WHITE, xBitmapCaption);
 
 void static UI_ShowStartupLogo(void)
 {
 	/*显示   易暖科技 */
+	CslLCD_FillRect(0,0, 480,320, CSUI_WHITE);
+	Bmp_Caption.Obj.Draw(&Bmp_Caption);
+	vTaskDelay(1500);
 }
 
 void static UI_Init(void)
@@ -42,6 +46,7 @@ void vTask_UI( void *pvParameters )
 	ui_FrmMain_Init();
 	ui_FrmConfig1_Init();
 	ui_FrmConfig2_Init();
+	ui_FrmTest_Init();
 	
 	ui_FrmMain_ShowFrame();
 	
@@ -63,6 +68,9 @@ void vTask_UI( void *pvParameters )
 				case 2:
 					ui_FrmConfig2_ShowFrame();
 					break;
+				case 3:
+					ui_FrmTest_ShowFrame();
+					break;
 			}
 			UI_CurrentIndex = UI_Index;
 		}
@@ -76,6 +84,9 @@ void vTask_UI( void *pvParameters )
 				break;
 			case 2:
 				ui_FrmConfig2_Process();
+				break;
+			case 3:
+				ui_FrmTest_Process();
 				break;
 		}
 	}
