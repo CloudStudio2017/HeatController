@@ -804,6 +804,11 @@
               <FileType>1</FileType>
               <FilePath>..\CsUI\ui_FrmConfig2.c</FilePath>
             </File>
+            <File>
+              <FileName>ui_FrmTest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CsUI\ui_FrmTest.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

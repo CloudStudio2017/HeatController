@@ -10,6 +10,7 @@
 #include "ui_FrmMain.h"
 #include "ui_FrmConfig1.h"
 #include "ui_FrmConfig2.h"
+#include "ui_FrmTest.h"
 
 
 static char string_buf[50];
@@ -45,6 +46,7 @@ void vTask_UI( void *pvParameters )
 	ui_FrmMain_Init();
 	ui_FrmConfig1_Init();
 	ui_FrmConfig2_Init();
+	ui_FrmTest_Init();
 	
 	ui_FrmMain_ShowFrame();
 	
@@ -66,6 +68,9 @@ void vTask_UI( void *pvParameters )
 				case 2:
 					ui_FrmConfig2_ShowFrame();
 					break;
+				case 3:
+					ui_FrmTest_ShowFrame();
+					break;
 			}
 			UI_CurrentIndex = UI_Index;
 		}
@@ -79,6 +84,9 @@ void vTask_UI( void *pvParameters )
 				break;
 			case 2:
 				ui_FrmConfig2_Process();
+				break;
+			case 3:
+				ui_FrmTest_Process();
 				break;
 		}
 	}

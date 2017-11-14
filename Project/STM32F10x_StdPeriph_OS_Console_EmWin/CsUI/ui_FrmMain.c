@@ -5,6 +5,7 @@
 #include "HeatControlSys.h"
 #include "myBeep.h"
 
+#define MAIN_KEY_POWERSWITCH_INDEX 0
 #define MAIN_KEY_SET_INDEX    2
 #define MAIN_KEY_UP_INDEX     3
 #define MAIN_KEY_DOWN_INDEX   4
@@ -61,6 +62,7 @@ static CslRTC_Date xDate;
 void ui_FrmMain_UpdateOutputStatus(void);
 void ui_FrmMain_UpdateStatus(void);
 void ui_FrmMain_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState);
+void ui_FrmMain_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState);
 
 void ui_FrmMain_Init(void)
 {
@@ -184,15 +186,18 @@ void ui_FrmMain_UpdateError(void)
 	}
 }
 
+extern void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState);
+
 void ui_FrmMain_Process(void)
 {
 	static uint32_t iCount = 0;
 	
 	MyButton_ReLinkCallBack(MAIN_KEY_SET_INDEX, ui_FrmMain_KeyProcess_Set);
-	MyButton_ReLinkCallBack(MAIN_KEY_UP_INDEX, NULL);
+	MyButton_ReLinkCallBack(MAIN_KEY_UP_INDEX, ui_FrmMain_KeyProcess_Left);
 	MyButton_ReLinkCallBack(MAIN_KEY_DOWN_INDEX, NULL);
 	MyButton_ReLinkCallBack(MAIN_KEY_LEFT_INDEX, NULL);
 	MyButton_ReLinkCallBack(MAIN_KEY_RIGHT_INDEX, NULL);
+	MyButton_ReLinkCallBack(MAIN_KEY_POWERSWITCH_INDEX, KB_PowerSwitch);
 
 	ui_FrmMain_UpdateTime(1);     //Force update date time
 	
@@ -311,6 +316,19 @@ void ui_FrmMain_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 		vTaskDelay(100);
 		MyBeep_Beep(0);
 		UI_Index = 1;
+		MyButton_ReLinkCallBack(MAIN_KEY_SET_INDEX, NULL);
 	}
 }
 
+void ui_FrmMain_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
+{
+	if(BtnState == BUTTON_STATUS_RELEASE)
+	{
+		/* switch to test form */
+		MyBeep_Beep(1);
+		vTaskDelay(100);
+		MyBeep_Beep(0);
+		UI_Index = 3;
+		MyButton_ReLinkCallBack(MAIN_KEY_LEFT_INDEX, NULL);
+	}
+}

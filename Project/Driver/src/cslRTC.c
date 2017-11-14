@@ -189,8 +189,7 @@ void CslRTC_Init(void)
   /* Enable LSE */
   RCC_LSEConfig(RCC_LSE_ON);
   /* Wait till LSE is ready */
-  while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET)
-  {}
+  while(RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET);
 
   /* Select LSE as RTC Clock Source */
   RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);
