@@ -32,6 +32,17 @@
 	#define _LeadFanOn_               CslIOCtrl_SetSCROut(&IO_Yinfeng, 100)
 	#define _LeadFanOff_              CslIOCtrl_SetSCROut(&IO_Yinfeng, 0)
 	#define _LeadFanSet_(Duty)        CslIOCtrl_SetSCROut(&IO_Yinfeng, Duty)
+#elif BOARD_TYPE == RELEASE_BOARD_V2
+	#define _MaterialMachineOn_       CslIOCtrl_SetLevelOut(&IO_Liaoji, 1)
+	#define _MaterialMachineOff_      CslIOCtrl_SetLevelOut(&IO_Liaoji, 0)
+	#define _FireUpOn_                CslIOCtrl_SetLevelOut(&IO_Dianhuo, 1)
+	#define _FireUpOff_               CslIOCtrl_SetLevelOut(&IO_Dianhuo, 0)
+	#define _AirBlowerOn_             CslIOCtrl_SetSCROut(&IO_Gufeng, 100)
+	#define _AirBlowerOff_            CslIOCtrl_SetSCROut(&IO_Gufeng, 0)
+	#define _AirBlowerSet_(Duty)      CslIOCtrl_SetSCROut(&IO_Gufeng, Duty)
+	#define _LeadFanOn_               CslIOCtrl_SetSCROut(&IO_Yinfeng, 100)
+	#define _LeadFanOff_              CslIOCtrl_SetSCROut(&IO_Yinfeng, 0)
+	#define _LeadFanSet_(Duty)        CslIOCtrl_SetSCROut(&IO_Yinfeng, Duty)
 #endif
 
 /*  ¿ªÆô/¹Ø±Õ Ë®±Ã  */
@@ -92,6 +103,7 @@ typedef enum
 	HCS_STATUS_RUNNING,
 	HCS_STATUS_FIREPROTECT,
 	HCS_STATUS_POWEROFF,
+	HCS_STATUS_TEST,
 }HCS_STATUS_enum;
 
 typedef enum

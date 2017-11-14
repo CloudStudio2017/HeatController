@@ -17,6 +17,7 @@ void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState)
 		{
 			case HCS_STATUS_STANDBY:
 				HCS_Struct.Status = HCS_STATUS_STARTUP;
+				//TODO:发送消息现在开始启动
 				break;
 			case HCS_STATUS_STARTUP:
 			case HCS_STATUS_PREBLOW:
@@ -25,10 +26,12 @@ void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState)
 			case HCS_STATUS_FIREUP:
 			case HCS_STATUS_RUNNING:
 			case HCS_STATUS_FIREPROTECT:
+			case HCS_STATUS_TEST:
 				HCS_Struct.Status = HCS_STATUS_STANDBY;
-				//TODO:发送消息现在进入关机
+				//TODO:发送消息现在进入待机状态
 				break;
 			case HCS_STATUS_POWEROFF:
+				//关机状态不处理
 				break;
 		}
 	}
@@ -48,18 +51,20 @@ void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
 			case HCS_STATUS_FIREUP:
 			case HCS_STATUS_RUNNING:
 			case HCS_STATUS_FIREPROTECT:
+			case HCS_STATUS_TEST:
 				HCS_Struct.Status = HCS_STATUS_POWEROFF;
-				//TODO:发送消息
+				//TODO:发送消息  进入关机状态
 				CsLCD_DisplayControl(1);
 				CslLCD_BLK(0);
 				UI_Index = 0;
 				break;
 			case HCS_STATUS_POWEROFF:
 				HCS_Struct.Status = HCS_STATUS_STANDBY;
-				//TODO:发送消息
+				//TODO:发送消息  进入待机状态
 				CsLCD_DisplayControl(0);
 				CslLCD_BLK(1);
 				UI_Index = 0;
+				break;
 				break;
 		}
 	}

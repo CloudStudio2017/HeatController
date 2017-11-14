@@ -1,22 +1,20 @@
 #include "HeatControlSys.h"
-#include "myBeep.h"
 #include "FreeRTOS.h"
 #include "Task.h"
+#include "myBeep.h"
 #include "Task_Monitor.h"
 
-CslIOCtrl_Device_Level_TypeDef Device_Liaoji = {.ActiveLevel = 1, .Res = 0};
 CslIOCtrl_Device_Level_TypeDef Device_Dianhuo = {.ActiveLevel = 1, .Res = 0};
-CslIOCtrl_Device_Level_TypeDef Device_Shuiwei = {.ActiveLevel = 1, .Res = 0};
-CslIOCtrl_Device_Level_TypeDef Device_Queliao = {.ActiveLevel = 1, .Res = 0};
-CslIOCtrl_Device_SCR_TypeDef Device_Yinfeng = {.Channel = 0};
-CslIOCtrl_Device_SCR_TypeDef Device_Gufeng = {.Channel = 1};
+CslIOCtrl_Device_Level_TypeDef Device_Liaoji = {.ActiveLevel = 1, .Res = 0};
+CslIOCtrl_Device_SCR_TypeDef Device_Gufeng = {.Channel = 0};
+CslIOCtrl_Device_SCR_TypeDef Device_Yinfeng = {.Channel = 1};
+CslIOCtrl_Device_Level_TypeDef Device_Queliao = {.ActiveLevel = 1, .Res = 1};
 
-CslIOCtrl_RegTypeDef IO_Liaoji = {.Device.AsLevel = &Device_Liaoji};
 CslIOCtrl_RegTypeDef IO_Dianhuo = {.Device.AsLevel = &Device_Dianhuo};
-CslIOCtrl_RegTypeDef IO_Shuiwei = {.Device.AsLevel = &Device_Shuiwei};
-CslIOCtrl_RegTypeDef IO_Queliao = {.Device.AsLevel = &Device_Queliao};
-CslIOCtrl_RegTypeDef IO_Yinfeng = {.Device.AsSCR = &Device_Yinfeng};
+CslIOCtrl_RegTypeDef IO_Liaoji = {.Device.AsLevel = &Device_Liaoji};
 CslIOCtrl_RegTypeDef IO_Gufeng = {.Device.AsSCR = &Device_Gufeng};
+CslIOCtrl_RegTypeDef IO_Yinfeng = {.Device.AsSCR = &Device_Yinfeng};
+CslIOCtrl_RegTypeDef IO_Queliao = {.Device.AsLevel = &Device_Queliao};
 
 
 volatile HCS_TypeDef HCS_Struct = 
@@ -532,6 +530,25 @@ uint8_t HCS_SM_PowerOff(uint8_t param)
 			break;
 		}
 		//·À¶³¹¦ÄÜ
+	}
+	
+	return 0;
+}
+
+//Test
+uint8_t HCS_SM_Test(uint8_t param)
+{
+	_FireUp_Off_();
+	_MaterialMachine_Off_();
+	_AirBlower_Off_();
+	_LeadFan_Off_();
+	
+	while(1)
+	{
+		if(HCS_Struct.Status != HCS_STATUS_TEST)
+		{
+			break;
+		}
 	}
 	
 	return 0;

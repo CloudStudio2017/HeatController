@@ -670,9 +670,9 @@
               <FilePath>..\..\Driver\src\cslADC.c</FilePath>
             </File>
             <File>
-              <FileName>cslIOCtrl.c</FileName>
+              <FileName>SCRControl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Driver\src\cslIOCtrl.c</FilePath>
+              <FilePath>..\..\Driver\src\SCRControl.c</FilePath>
             </File>
             <File>
               <FileName>cslPWM.c</FileName>
@@ -680,9 +680,9 @@
               <FilePath>..\..\Driver\src\cslPWM.c</FilePath>
             </File>
             <File>
-              <FileName>SCRControl.c</FileName>
+              <FileName>cslIOCtrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Driver\src\SCRControl.c</FilePath>
+              <FilePath>..\..\Driver\src\cslIOCtrl.c</FilePath>
             </File>
           </Files>
         </Group>
