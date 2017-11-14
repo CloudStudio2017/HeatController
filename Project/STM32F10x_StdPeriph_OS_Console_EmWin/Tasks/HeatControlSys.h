@@ -186,6 +186,7 @@ extern uint8_t HCS_SM_Running(uint8_t param);
 extern uint8_t HCS_SM_FireProtection(uint8_t param);
 extern uint8_t HCS_SM_Suspend(uint8_t param);
 extern uint8_t HCS_SM_PowerOff(uint8_t param);
+extern uint8_t HCS_SM_Test(uint8_t param);
 
 
 

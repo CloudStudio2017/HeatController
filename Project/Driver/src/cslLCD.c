@@ -38,7 +38,7 @@ void CslLCD_lowlevel_Init(void)
 	FSMC_NORSRAMTimingInitTypeDef FSMC_NORSRAMTimingInitStructure;
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE, ENABLE);
-#if BOARD_TYPE == RELEASE_BOARD_V1
+#if BOARD_TYPE != TEST_BOARD_V1
 	RCC_APB2PeriphClockCmd(GPIO2RCC(_LCD_BLK_GPIO), ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);
@@ -91,7 +91,7 @@ void CslLCD_lowlevel_Init(void)
 
 void CslLCD_BLK(unsigned char NewStatus)
 {
-#if BOARD_TYPE == RELEASE_BOARD_V1
+#if BOARD_TYPE != TEST_BOARD_V1
 	if(NewStatus)
 	{
 		GPIO_SetBits(_LCD_BLK_GPIO, _LCD_BLK_PIN);
@@ -155,8 +155,13 @@ void CslLCD_Init(void)
 	CSL_LCD_WriteData(0x80);
 	
 	CSL_LCD_WriteComm(0x36);
+#if BOARD_TYPE == TEST_BOARD_V1
 	CSL_LCD_WriteData(0x28);    //Test board
-	//CSL_LCD_WriteData(0xE8);  //Release board
+#elif BOARD_TYPE == RELEASE_BOARD_V1
+	CSL_LCD_WriteData(0xE8);  //Release board
+#elif BOARD_TYPE == RELEASE_BOARD_V2
+	CSL_LCD_WriteData(0xE8);  //Release board
+#endif
 	
 	CSL_LCD_WriteComm(0x3A);//Interface Mode Control
 	CSL_LCD_WriteData(0x55);

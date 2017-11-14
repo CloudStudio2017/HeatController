@@ -8,7 +8,7 @@
 #define RELEASE_BOARD_V2     0x1002
 
 
-#define BOARD_TYPE  (TEST_BOARD_V1)
+#define BOARD_TYPE  (RELEASE_BOARD_V2)
 
 
 #if BOARD_TYPE == RELEASE_BOARD_V1
@@ -164,45 +164,43 @@
 	#define _MAT_LOW_GPIO             _IN_W2_GPIO
 	#define _MAT_LOW_PIN              _IN_W2_PIN
 #elif BOARD_TYPE == RELEASE_BOARD_V2
-	#define _BUTTON_UP_GPIO           GPIOB
-	#define _BUTTON_UP_PIN            GPIO_Pin_11
-	#define _BUTTON_RIGHT_GPIO        GPIOB
-	#define _BUTTON_RIGHT_PIN         GPIO_Pin_10
+	#define _BUTTON_UP_GPIO           GPIOC
+	#define _BUTTON_UP_PIN            GPIO_Pin_0
+	#define _BUTTON_RIGHT_GPIO        GPIOC
+	#define _BUTTON_RIGHT_PIN         GPIO_Pin_1
 	#define _BUTTON_SET_GPIO          GPIOC
-	#define _BUTTON_SET_PIN           GPIO_Pin_5
+	#define _BUTTON_SET_PIN           GPIO_Pin_2
 	#define _BUTTON_LEFT_GPIO         GPIOC
-	#define _BUTTON_LEFT_PIN          GPIO_Pin_4
+	#define _BUTTON_LEFT_PIN          GPIO_Pin_5
 	#define _BUTTON_DOWN_GPIO         GPIOC
-	#define _BUTTON_DOWN_PIN          GPIO_Pin_3
-	#define _BUTTON_POWER_GPIO        GPIOC
-	#define _BUTTON_POWER_PIN         GPIO_Pin_2
-	#define _BUTTON_SWITCH_GPIO       GPIOC
-	#define _BUTTON_SWITCH_PIN        GPIO_Pin_1
-	#define _BUTTON_RESERVE_GPIO      GPIOC
-	#define _BUTTON_RESERVE_PIN       GPIO_Pin_0
+	#define _BUTTON_DOWN_PIN          GPIO_Pin_4
+	#define _BUTTON_POWER_GPIO        GPIOD
+	#define _BUTTON_POWER_PIN         GPIO_Pin_12
+	#define _BUTTON_SWITCH_GPIO       GPIOD
+	#define _BUTTON_SWITCH_PIN        GPIO_Pin_13
 
-	#define _OUT_RL1_GPIO              GPIOB             //LED1
-	#define _OUT_RL1_PIN               GPIO_Pin_13
-	#define _OUT_RL2_GPIO              GPIOB             //LED2
-	#define _OUT_RL2_PIN               GPIO_Pin_12
-	#define _OUT_RL3_GPIO              GPIOB             //LED3
-	#define _OUT_RL3_PIN               GPIO_Pin_14
+	#define _OUT_RL1_GPIO              GPIOC
+	#define _OUT_RL1_PIN               GPIO_Pin_6
+	#define _OUT_RL2_GPIO              GPIOC
+	#define _OUT_RL2_PIN               GPIO_Pin_7
+	#define _OUT_RL3_GPIO              GPIOC
+	#define _OUT_RL3_PIN               GPIO_Pin_8
 
-	#define _OUT_WP1_GPIO             GPIOC             //LED5
+	#define _OUT_WP1_GPIO             GPIOB
 	#define _OUT_WP1_PIN              GPIO_Pin_6
-	#define _OUT_WP2_GPIO             GPIOC             //LED6
-	#define _OUT_WP2_PIN              GPIO_Pin_7
+	#define _OUT_WP2_GPIO             GPIOB
+	#define _OUT_WP2_PIN              GPIO_Pin_0
 
-	#define _IN_W1_GPIO               GPIOE
-	#define _IN_W1_PIN                GPIO_Pin_0
-	#define _IN_W2_GPIO               GPIOE
-	#define _IN_W2_PIN                GPIO_Pin_1
+	#define _IN_W1_GPIO               GPIOC
+	#define _IN_W1_PIN                GPIO_Pin_5
+	#define _IN_W2_GPIO               GPIOC
+	#define _IN_W2_PIN                GPIO_Pin_4
 	
 	#define _BEEP_GPIO                GPIOC
 	#define _BEEP_PIN                 GPIO_Pin_13
 
-	#define _FLASH_WP_GPIO            GPIOB
-	#define _FLASH_WP_PIN             GPIO_Pin_0
+	#define _FLASH_WP_GPIO            GPIOC
+	#define _FLASH_WP_PIN             GPIO_Pin_3
 	#define _FLASH_CLK_GPIO           GPIOA
 	#define _FLASH_CLK_PIN            GPIO_Pin_5
 	#define _FLASH_MOSI_GPIO          GPIOA
@@ -224,15 +222,21 @@
 	#define _ADC_CH3_GPIO             GPIOA
 	#define _ADC_CH3_PIN              GPIO_Pin_3
 	
-	#define _MAX6675_SCK_GPIO         GPIOA
-	#define _MAX6675_SCK_PIN          GPIO_Pin_11
-	#define _MAX6675_CS_GPIO          GPIOA
+	#define _MAX6675_SCK_GPIO         GPIOB
+	#define _MAX6675_SCK_PIN          GPIO_Pin_13
+	#define _MAX6675_CS_GPIO          GPIOB
 	#define _MAX6675_CS_PIN           GPIO_Pin_12
-	#define _MAX6675_SO_GPIO          GPIOA
-	#define _MAX6675_SO_PIN           GPIO_Pin_15
+	#define _MAX6675_SO_GPIO          GPIOB
+	#define _MAX6675_SO_PIN           GPIO_Pin_14
+	
+	#define _LCD_BLK_GPIO             GPIOC
+	#define _LCD_BLK_PIN              GPIO_Pin_12
 	
 	#define _MAT_LOW_GPIO             _IN_W2_GPIO
 	#define _MAT_LOW_PIN              _IN_W2_PIN
+	
+	#define _SAMP_HZ_IN_GPIO         GPIOC
+	#define _SAMP_HZ_IN_PIN          GPIO_Pin_9
 #endif
 
 

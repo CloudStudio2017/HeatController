@@ -178,10 +178,12 @@ void KeyBoard_Regs(void)
 	btn.ButtonPin = _BUTTON_RIGHT_PIN;
 	MyButton_Reg(6, &btn);
 	
+#if BOARD_TYPE != RELEASE_BOARD_V2
 	btn.CallBackFunc = KB_TestSwitch;
 	btn.ButtonGPIO = _BUTTON_RESERVE_GPIO;
 	btn.ButtonPin = _BUTTON_RESERVE_PIN;
 	MyButton_Reg(7, &btn);
+#endif
 }
 
 void vTask_KeyBoard( void *pvParameters )
