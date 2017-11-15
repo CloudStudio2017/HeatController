@@ -73,6 +73,14 @@ void SysParam_ValueLimitTime16(signed short *pValue)
 		*pValue = 3600-1;
 }
 
+void SysParam_ValueLimit24Hour(signed short *pValue)
+{
+	if(*pValue > 24*60-1)
+		*pValue = 0;
+	if(*pValue < 0)
+		*pValue = 24*-1;
+}
+
 void SysParam_ValueLimitTime8(signed char *pValue)
 {
 }

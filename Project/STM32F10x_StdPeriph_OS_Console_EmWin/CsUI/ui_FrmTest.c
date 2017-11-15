@@ -20,14 +20,6 @@ static char ui_FrmTest_Str_PT100[]     = "Error";
 static char ui_FrmTest_Str_KSensor[]   = "Error";
 static char ui_FrmTest_Str_Queliao[]   = "Yes";
 
-
-extern CslIOCtrl_RegTypeDef IO_Dianhuo;
-extern CslIOCtrl_RegTypeDef IO_Liaoji;
-extern CslIOCtrl_RegTypeDef IO_Gufeng;
-extern CslIOCtrl_RegTypeDef IO_Yinfeng;
-extern CslIOCtrl_RegTypeDef IO_Queliao;
-
-
 CS_BITMAP(Bmp_Test_Title,                    NULL, 150, 10,  10, 10, CSUI_WHITE, CSUI_BLACK, xBitmapXitongshezhi);
 
 CS_BITMAP(Bmp_Test_DianhuoTitle,             NULL, 10, 10+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Dianhuo);

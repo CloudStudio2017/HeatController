@@ -2,9 +2,9 @@
 #define __HEAT_CONTROL_SYS_H__
 
 #include "stm32f10x.h"
+#include "sysParams.h"
 #include "board.h"
 #include "cslIOCtrl.h"
-#include "sysParams.h"
 
 #define HCS_IO_INPUT   volatile uint8_t
 #define HCS_IO_OUTPUT  volatile uint8_t
@@ -173,6 +173,12 @@ typedef struct// HCS_TypeDef
 }HCS_TypeDef;
 
 extern volatile HCS_TypeDef HCS_Struct;
+
+extern CslIOCtrl_RegTypeDef IO_Dianhuo;
+extern CslIOCtrl_RegTypeDef IO_Liaoji;
+extern CslIOCtrl_RegTypeDef IO_Gufeng;
+extern CslIOCtrl_RegTypeDef IO_Yinfeng;
+extern CslIOCtrl_RegTypeDef IO_Queliao;
 
 extern void HCS_Init(void);
 

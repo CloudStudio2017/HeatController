@@ -3,6 +3,9 @@
 #include "Task.h"
 #include "myBeep.h"
 #include "Task_Monitor.h"
+#include "cslRTC.h"
+#include "cslLCD.h"
+
 
 CslIOCtrl_Device_Level_TypeDef Device_Dianhuo = {.ActiveLevel = 1, .Res = 0};
 CslIOCtrl_Device_Level_TypeDef Device_Liaoji = {.ActiveLevel = 1, .Res = 0};
@@ -22,6 +25,7 @@ volatile HCS_TypeDef HCS_Struct =
 	.pParams = &SysParam
 };
 
+static CslRTC_Time HCS_Time;
 
 static void HCS_IO_Init(void)
 {
@@ -530,6 +534,18 @@ uint8_t HCS_SM_PowerOff(uint8_t param)
 			break;
 		}
 		//防冻功能
+		//定时开机
+		CslRTC_GetTime(&HCS_Time);
+		if(HCS_Time.Hou == HCS_Struct.pParams->Dinshikaiji / 60)
+		{
+			if(HCS_Time.Min == HCS_Struct.pParams->Dinshikaiji % 60)
+			{
+				HCS_Struct.Status = HCS_STATUS_STANDBY;
+				CsLCD_DisplayControl(0);
+				CslLCD_BLK(1);
+			}
+		}
+		vTaskDelay(100);
 	}
 	
 	return 0;

@@ -6,13 +6,6 @@
 #include "sysParams.h"
 
 
-extern CslIOCtrl_RegTypeDef IO_Dianhuo;
-extern CslIOCtrl_RegTypeDef IO_Liaoji;
-extern CslIOCtrl_RegTypeDef IO_Gufeng;
-extern CslIOCtrl_RegTypeDef IO_Yinfeng;
-extern CslIOCtrl_RegTypeDef IO_Queliao;
-
-
 static void Control_LowLevel_Init(void)
 {
 	IO_Dianhuo.GPIO = _OUT_RL1_GPIO;

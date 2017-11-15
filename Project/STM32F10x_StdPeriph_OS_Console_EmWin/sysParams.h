@@ -44,6 +44,7 @@ extern SysParam_TypeDef SysParam;
 extern void SysParam_LoadFromFlash(void);
 extern void SysParam_SaveToFlash(void);
 extern void SysParam_ValueLimitTime16(signed short *pValue);
+extern void SysParam_ValueLimit24Hour(signed short *pValue);
 extern void SysParam_ValueLimitTime8(signed char *pValue);
 extern void SysParam_ValueLimitTemp16(signed short *pValue);
 

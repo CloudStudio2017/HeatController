@@ -295,11 +295,11 @@ void ui_FrmConfig1_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 				break;
 			case 10:
 				SysParam.Dinshikaiji += IncValue;
-				SysParam_ValueLimitTime16(&SysParam.Dinshikaiji);
+				SysParam_ValueLimit24Hour(&SysParam.Dinshikaiji);
 				break;
 			case 11:
 				SysParam.Dinshiguanji += IncValue;
-				SysParam_ValueLimitTime16(&SysParam.Dinshiguanji);
+				SysParam_ValueLimit24Hour(&SysParam.Dinshiguanji);
 				break;
 			case 12:
 				CslRTC_GetDate(&tmpDate);
