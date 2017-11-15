@@ -192,9 +192,9 @@
 	#define _OUT_WP2_PIN              GPIO_Pin_0
 
 	#define _IN_W1_GPIO               GPIOC
-	#define _IN_W1_PIN                GPIO_Pin_5
+	#define _IN_W1_PIN                GPIO_Pin_10
 	#define _IN_W2_GPIO               GPIOC
-	#define _IN_W2_PIN                GPIO_Pin_4
+	#define _IN_W2_PIN                GPIO_Pin_11
 	
 	#define _BEEP_GPIO                GPIOC
 	#define _BEEP_PIN                 GPIO_Pin_13
