@@ -335,6 +335,7 @@ void ui_FrmConfig2_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 			{
 				//Return to main frame
 				UI_Index = 1;
+				SysParam_SaveToFlash();
 				MyBeep_Beep(1);
 				vTaskDelay(200);
 				MyBeep_Beep(0);

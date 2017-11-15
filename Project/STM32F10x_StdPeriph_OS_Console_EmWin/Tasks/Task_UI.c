@@ -32,8 +32,6 @@ void static UI_Init(void)
 {
 	CsUI_Init();
 	
-	FlashControl_Init();
-	
 	UI_ShowStartupLogo();
 }
 
