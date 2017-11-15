@@ -1,22 +1,23 @@
 #include "HeatControlSys.h"
-#include "myBeep.h"
 #include "FreeRTOS.h"
 #include "Task.h"
+#include "myBeep.h"
 #include "Task_Monitor.h"
+#include "cslRTC.h"
+#include "cslLCD.h"
 
-CslIOCtrl_Device_Level_TypeDef Device_Liaoji = {.ActiveLevel = 1, .Res = 0};
+
 CslIOCtrl_Device_Level_TypeDef Device_Dianhuo = {.ActiveLevel = 1, .Res = 0};
-CslIOCtrl_Device_Level_TypeDef Device_Shuiwei = {.ActiveLevel = 1, .Res = 0};
-CslIOCtrl_Device_Level_TypeDef Device_Queliao = {.ActiveLevel = 1, .Res = 0};
-CslIOCtrl_Device_SCR_TypeDef Device_Yinfeng = {.Channel = 0};
-CslIOCtrl_Device_SCR_TypeDef Device_Gufeng = {.Channel = 1};
+CslIOCtrl_Device_Level_TypeDef Device_Liaoji = {.ActiveLevel = 1, .Res = 0};
+CslIOCtrl_Device_SCR_TypeDef Device_Gufeng = {.Channel = 0};
+CslIOCtrl_Device_SCR_TypeDef Device_Yinfeng = {.Channel = 1};
+CslIOCtrl_Device_Level_TypeDef Device_Queliao = {.ActiveLevel = 1, .Res = 1};
 
-CslIOCtrl_RegTypeDef IO_Liaoji = {.Device.AsLevel = &Device_Liaoji};
 CslIOCtrl_RegTypeDef IO_Dianhuo = {.Device.AsLevel = &Device_Dianhuo};
-CslIOCtrl_RegTypeDef IO_Shuiwei = {.Device.AsLevel = &Device_Shuiwei};
-CslIOCtrl_RegTypeDef IO_Queliao = {.Device.AsLevel = &Device_Queliao};
-CslIOCtrl_RegTypeDef IO_Yinfeng = {.Device.AsSCR = &Device_Yinfeng};
+CslIOCtrl_RegTypeDef IO_Liaoji = {.Device.AsLevel = &Device_Liaoji};
 CslIOCtrl_RegTypeDef IO_Gufeng = {.Device.AsSCR = &Device_Gufeng};
+CslIOCtrl_RegTypeDef IO_Yinfeng = {.Device.AsSCR = &Device_Yinfeng};
+CslIOCtrl_RegTypeDef IO_Queliao = {.Device.AsLevel = &Device_Queliao};
 
 
 volatile HCS_TypeDef HCS_Struct = 
@@ -24,6 +25,7 @@ volatile HCS_TypeDef HCS_Struct =
 	.pParams = &SysParam
 };
 
+static CslRTC_Time HCS_Time;
 
 static void HCS_IO_Init(void)
 {
@@ -532,6 +534,37 @@ uint8_t HCS_SM_PowerOff(uint8_t param)
 			break;
 		}
 		//防冻功能
+		//定时开机
+		CslRTC_GetTime(&HCS_Time);
+		if(HCS_Time.Hou == HCS_Struct.pParams->Dinshikaiji / 60)
+		{
+			if(HCS_Time.Min == HCS_Struct.pParams->Dinshikaiji % 60)
+			{
+				HCS_Struct.Status = HCS_STATUS_STANDBY;
+				CsLCD_DisplayControl(0);
+				CslLCD_BLK(1);
+			}
+		}
+		vTaskDelay(100);
+	}
+	
+	return 0;
+}
+
+//Test
+uint8_t HCS_SM_Test(uint8_t param)
+{
+	_FireUp_Off_();
+	_MaterialMachine_Off_();
+	_AirBlower_Off_();
+	_LeadFan_Off_();
+	
+	while(1)
+	{
+		if(HCS_Struct.Status != HCS_STATUS_TEST)
+		{
+			break;
+		}
 	}
 	
 	return 0;

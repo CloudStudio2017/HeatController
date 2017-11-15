@@ -21,7 +21,7 @@
 //#define I2C1_BASE             (APB1PERIPH_BASE + 0x5400)
 #define I2C2_BASE             (APB1PERIPH_BASE + 0x5800)
 #define I2C3_BASE             (APB1PERIPH_BASE + 0x5C00)
-	#define RCC_APB1Periph_I2C1              ((uint32_t)0x00200000)
+#define RCC_APB1Periph_I2C1              ((uint32_t)0x00200000)
 #define RCC_APB1Periph_I2C2              ((uint32_t)0x00400000)
 #define RCC_APB1Periph_I2C3              ((uint32_t)0x00800000)
 

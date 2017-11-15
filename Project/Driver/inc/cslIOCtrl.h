@@ -60,7 +60,7 @@ typedef struct
 
 extern uint8_t CslIOCtrl_Reg(CslIOCtrl_RegTypeDef* pIO);
 extern uint8_t CslIOCtrl_SetLevelOut(CslIOCtrl_RegTypeDef* pIO, uint8_t NewMode);
-
+extern uint8_t CslIOCtrl_SetSCROut(CslIOCtrl_RegTypeDef* pIO, uint8_t Duty);
 
 #endif
 

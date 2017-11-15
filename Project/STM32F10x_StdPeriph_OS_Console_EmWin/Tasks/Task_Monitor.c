@@ -3,11 +3,15 @@
 #include "PT100.h"
 #include "MAX6675.h"
 #include "HeatControlSys.h"
+#include "cslIOCtrl.h"
 
 
 
 #define MONITOR_MAT_LOW_GPIO    _MAT_LOW_GPIO
 #define MONITOR_MAT_LOW_PIN     _MAT_LOW_PIN
+
+
+extern CslIOCtrl_RegTypeDef IO_Queliao;
 
 
 void vTask_Monitor( void *pvParameters )
@@ -73,13 +77,11 @@ void vTask_Monitor( void *pvParameters )
 
 void Monitor_InputIO_Init(void)
 {
-	GPIO_InitTypeDef GPIO_InitStruct;
+	IO_Queliao.GPIO = _MAT_LOW_GPIO;
+	IO_Queliao.Pin = _MAT_LOW_PIN;
+	IO_Queliao.IOMode = IOMode_Level_In;
 	
-	RCC_APB1PeriphClockCmd(GPIO2RCC(MONITOR_MAT_LOW_GPIO), ENABLE);
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IPU;
-	GPIO_InitStruct.GPIO_Pin = MONITOR_MAT_LOW_PIN;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(MONITOR_MAT_LOW_GPIO, &GPIO_InitStruct);
+	CslIOCtrl_Reg(&IO_Queliao);
 }
 
 void vTask_Monitor_Init(void)

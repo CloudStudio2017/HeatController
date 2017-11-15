@@ -193,11 +193,13 @@ void ui_FrmTest_UpdateEditAndExcute(uint8_t Cursor, int8_t IncValue)
 			{
 				TestStatus.DianhuoStatus = 1;
 				sprintf(ui_FrmTest_Str_Dianhuo, " ON");
+				_FireUp_On_();
 			}
 			else
 			{
 				TestStatus.DianhuoStatus = 0;
 				sprintf(ui_FrmTest_Str_Dianhuo, "OFF");
+				_FireUp_Off_();
 			}
 			break;
 		case 1:
@@ -205,11 +207,13 @@ void ui_FrmTest_UpdateEditAndExcute(uint8_t Cursor, int8_t IncValue)
 			{
 				TestStatus.LiaojiStatus = 1;
 				sprintf(ui_FrmTest_Str_Liaoji, " ON");
+				_MaterialMachine_On_();
 			}
 			else
 			{
 				TestStatus.DianhuoStatus = 0;
 				sprintf(ui_FrmTest_Str_Liaoji, "OFF");
+				_MaterialMachine_Off_();
 			}
 			break;
 		case 2:
@@ -219,6 +223,7 @@ void ui_FrmTest_UpdateEditAndExcute(uint8_t Cursor, int8_t IncValue)
 			else if(TestStatus.GufengStatus < 0)
 				TestStatus.GufengStatus = 0;
 			sprintf(ui_FrmTest_Str_Gufeng, "%3d%%", TestStatus.GufengStatus);
+			_AirBlowerSet_(TestStatus.GufengStatus);
 			break;
 		case 3:
 			TestStatus.YinfengStatus += IncValue;
@@ -227,6 +232,7 @@ void ui_FrmTest_UpdateEditAndExcute(uint8_t Cursor, int8_t IncValue)
 			else if(TestStatus.YinfengStatus < 0)
 				TestStatus.YinfengStatus = 0;
 			sprintf(ui_FrmTest_Str_Yinfeng, "%3d%%", TestStatus.YinfengStatus);
+			_LeadFanSet_(TestStatus.YinfengStatus);
 			break;
 	}
 }
@@ -292,6 +298,7 @@ void ui_FrmTest_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 			MyBeep_Beep(1);
 			vTaskDelay(50);
 			MyBeep_Beep(0);
+			HCS_Struct.Status = HCS_STATUS_STANDBY;
 			//TODO Close Device
 			MyButton_ReLinkCallBack(TEST_KEY_SET_INDEX, NULL);
 			MyButton_ReLinkCallBack(TEST_KEY_UP_INDEX, NULL);

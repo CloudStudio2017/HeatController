@@ -2,6 +2,7 @@
 #include "CslRTC.h"
 #include "stdio.h"
 #include "myButton.h"
+#include "cslIOCtrl.h"
 #include "HeatControlSys.h"
 #include "myBeep.h"
 
@@ -304,6 +305,8 @@ void ui_FrmMain_UpdateStatus(void)
 		case HCS_STATUS_STARTUP:
 			Bmp_SysStatusState.pBmp = (TBitmap_Head*)xBmpData_Standby;
 			break;
+		case HCS_STATUS_TEST:
+			break;
 	}
 	Bmp_SysStatusState.Obj.Draw(&Bmp_SysStatusState);
 }
@@ -329,6 +332,7 @@ void ui_FrmMain_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
 		vTaskDelay(100);
 		MyBeep_Beep(0);
 		UI_Index = 3;
+		HCS_Struct.Status = HCS_STATUS_TEST;
 		MyButton_ReLinkCallBack(MAIN_KEY_LEFT_INDEX, NULL);
 	}
 }

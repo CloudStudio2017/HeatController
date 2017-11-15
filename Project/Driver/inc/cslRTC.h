@@ -1,24 +1,23 @@
-#ifndef __CSL_IOCTRL_H__
-#define __CSL_IOCTRL_H__
+#ifndef __CSL_RTC_H__
+#define __CSL_RTC_H__
 
-#include "stm32f10x.h"
 #include "cslCommon.h"
 
-typedef struct CslRTC_Date
+typedef struct
 {
 	uint16_t Year;
 	uint8_t  Month;
 	uint8_t  Date;
 }CslRTC_Date;
 
-typedef struct CslRTC_Time
+typedef struct
 {
 	uint8_t Hou;
 	uint8_t Min;
 	uint8_t Sec;
 }CslRTC_Time;
 
-typedef struct CslRTC_Struct
+typedef struct
 {
 	CslRTC_Date Date;
 	CslRTC_Time Time;

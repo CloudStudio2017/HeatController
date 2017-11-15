@@ -2,9 +2,9 @@
 #define __HEAT_CONTROL_SYS_H__
 
 #include "stm32f10x.h"
+#include "sysParams.h"
 #include "board.h"
 #include "cslIOCtrl.h"
-#include "sysParams.h"
 
 #define HCS_IO_INPUT   volatile uint8_t
 #define HCS_IO_OUTPUT  volatile uint8_t
@@ -22,6 +22,17 @@
 	#define _LeadFanOn_               myLed_On(5)
 	#define _LeadFanOff_              myLed_On(5)
 #elif BOARD_TYPE == TEST_BOARD_V1
+	#define _MaterialMachineOn_       CslIOCtrl_SetLevelOut(&IO_Liaoji, 1)
+	#define _MaterialMachineOff_      CslIOCtrl_SetLevelOut(&IO_Liaoji, 0)
+	#define _FireUpOn_                CslIOCtrl_SetLevelOut(&IO_Dianhuo, 1)
+	#define _FireUpOff_               CslIOCtrl_SetLevelOut(&IO_Dianhuo, 0)
+	#define _AirBlowerOn_             CslIOCtrl_SetSCROut(&IO_Gufeng, 100)
+	#define _AirBlowerOff_            CslIOCtrl_SetSCROut(&IO_Gufeng, 0)
+	#define _AirBlowerSet_(Duty)      CslIOCtrl_SetSCROut(&IO_Gufeng, Duty)
+	#define _LeadFanOn_               CslIOCtrl_SetSCROut(&IO_Yinfeng, 100)
+	#define _LeadFanOff_              CslIOCtrl_SetSCROut(&IO_Yinfeng, 0)
+	#define _LeadFanSet_(Duty)        CslIOCtrl_SetSCROut(&IO_Yinfeng, Duty)
+#elif BOARD_TYPE == RELEASE_BOARD_V2
 	#define _MaterialMachineOn_       CslIOCtrl_SetLevelOut(&IO_Liaoji, 1)
 	#define _MaterialMachineOff_      CslIOCtrl_SetLevelOut(&IO_Liaoji, 0)
 	#define _FireUpOn_                CslIOCtrl_SetLevelOut(&IO_Dianhuo, 1)
@@ -92,6 +103,7 @@ typedef enum
 	HCS_STATUS_RUNNING,
 	HCS_STATUS_FIREPROTECT,
 	HCS_STATUS_POWEROFF,
+	HCS_STATUS_TEST,
 }HCS_STATUS_enum;
 
 typedef enum
@@ -162,6 +174,12 @@ typedef struct// HCS_TypeDef
 
 extern volatile HCS_TypeDef HCS_Struct;
 
+extern CslIOCtrl_RegTypeDef IO_Dianhuo;
+extern CslIOCtrl_RegTypeDef IO_Liaoji;
+extern CslIOCtrl_RegTypeDef IO_Gufeng;
+extern CslIOCtrl_RegTypeDef IO_Yinfeng;
+extern CslIOCtrl_RegTypeDef IO_Queliao;
+
 extern void HCS_Init(void);
 
 extern uint8_t HCS_SM_Standby(uint8_t param);
@@ -174,6 +192,7 @@ extern uint8_t HCS_SM_Running(uint8_t param);
 extern uint8_t HCS_SM_FireProtection(uint8_t param);
 extern uint8_t HCS_SM_Suspend(uint8_t param);
 extern uint8_t HCS_SM_PowerOff(uint8_t param);
+extern uint8_t HCS_SM_Test(uint8_t param);
 
 
 

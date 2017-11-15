@@ -295,11 +295,11 @@ void ui_FrmConfig1_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 				break;
 			case 10:
 				SysParam.Dinshikaiji += IncValue;
-				SysParam_ValueLimitTime16(&SysParam.Dinshikaiji);
+				SysParam_ValueLimit24Hour(&SysParam.Dinshikaiji);
 				break;
 			case 11:
 				SysParam.Dinshiguanji += IncValue;
-				SysParam_ValueLimitTime16(&SysParam.Dinshiguanji);
+				SysParam_ValueLimit24Hour(&SysParam.Dinshiguanji);
 				break;
 			case 12:
 				CslRTC_GetDate(&tmpDate);
@@ -472,6 +472,7 @@ void ui_FrmConfig1_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 			{
 				//Return to main frame
 				UI_Index = 0;
+				SysParam_SaveToFlash();
 				MyBeep_Beep(1);
 				vTaskDelay(200);
 				MyBeep_Beep(0);
