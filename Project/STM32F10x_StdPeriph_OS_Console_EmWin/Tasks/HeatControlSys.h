@@ -81,6 +81,10 @@
 		_AirBlowerOff_;             \
 		HCS_Struct.AirBlower = 0;   \
 }while(0)
+#define _AirBlower_Set_(Duty) do{ \
+		_AirBlowerSet_(Duty);         \
+		HCS_Struct.AirBlower = 1;     \
+}while(0)
 /*  开启/关闭 引风机  */
 #define _LeadFan_On_()      do{ \
 		_LeadFanOn_;                \
@@ -89,6 +93,10 @@
 #define _LeadFan_Off_()     do{ \
 		_LeadFanOff_;               \
 		HCS_Struct.LeadFan = 0;     \
+}while(0)
+#define _LeadFan_Set_(Duty) do{ \
+		_LeadFanSet_(Duty);         \
+		HCS_Struct.LeadFan = 1;     \
 }while(0)
 
 	

@@ -93,4 +93,10 @@ void SysParam_ValueLimitTemp16(signed short *pValue)
 		*pValue = 500;
 }
 
-
+void SysParam_ValueLimitDuty(signed short *pValue)
+{
+	if(*pValue > 100)
+		*pValue = 0;
+	if(*pValue < 0)
+		*pValue = 100;
+}

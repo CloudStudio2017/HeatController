@@ -57,7 +57,7 @@ float PT100_GetTempValue(void)
 	float ResValue;
 	float tmpRet;
 	
-	ADCValue = CslADC_GetADCValue(1);
+	ADCValue = CslADC_GetADCValue(0);
 	ResValue = k * ADCValue + b;
 
 	tmpRet = PT100_R2T(ResValue);

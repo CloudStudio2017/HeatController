@@ -223,27 +223,27 @@ void ui_FrmConfig2_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 			break;
 		case 6:
 			SysParam.Dianhuoyinfeng += IncValue;
-			SysParam_ValueLimitTemp16(&SysParam.Dianhuoyinfeng);
+			SysParam_ValueLimitDuty(&SysParam.Dianhuoyinfeng);
 			break;
 		case 7:
 			SysParam.Dianhuogufeng += IncValue;
-			SysParam_ValueLimitTemp16(&SysParam.Dianhuogufeng);
+			SysParam_ValueLimitDuty(&SysParam.Dianhuogufeng);
 			break;
 		case 8:
 			SysParam.Zhengchangyinfeng += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Zhengchangyinfeng);
+			SysParam_ValueLimitDuty(&SysParam.Zhengchangyinfeng);
 			break;
 		case 9:
 			SysParam.Zhengchanggufeng += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Zhengchanggufeng);
+			SysParam_ValueLimitDuty(&SysParam.Zhengchanggufeng);
 			break;
 		case 10:
 			SysParam.Baohuoyinfeng += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Baohuoyinfeng);
+			SysParam_ValueLimitDuty(&SysParam.Baohuoyinfeng);
 			break;
 		case 11:
 			SysParam.Baohuogufeng += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Baohuogufeng);
+			SysParam_ValueLimitDuty(&SysParam.Baohuogufeng);
 			break;
 	}
 	switch(Cursor)
