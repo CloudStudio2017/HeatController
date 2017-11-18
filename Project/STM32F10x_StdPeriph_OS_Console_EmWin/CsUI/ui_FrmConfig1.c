@@ -99,6 +99,7 @@ CS_FRAME(FrmConfig1, NULL, 0, 0, 480, 320, CSUI_BLACK, FrmConfig1_ChildTbl);
 #define CONFIG1_CURSOR_MAX         (16)
 volatile static uint8_t ui_FrmConfig1_Cursor = 0;
 volatile static uint8_t ui_FrmConfig1_EditUpdateFlag = 0;
+uint8_t ui_FrmConfig1_Modified = 0;
 
 void ui_FrmConfig1_SelectEdit(uint8_t Cursor);
 void ui_FrmConfig1_UpdateEdit(uint8_t Cursor, int8_t IncValue);
@@ -164,6 +165,8 @@ void ui_FrmConfig1_Process(void)
 	MyButton_ReLinkCallBack(CONFIG1_KEY_DOWN_INDEX, ui_FrmConfig1_KeyProcess_Down);
 	MyButton_ReLinkCallBack(CONFIG1_KEY_LEFT_INDEX, ui_FrmConfig1_KeyProcess_Left);
 	MyButton_ReLinkCallBack(CONFIG1_KEY_RIGHT_INDEX, ui_FrmConfig1_KeyProcess_Right);
+	
+	ui_FrmConfig1_Modified = 0;
 	
 	while(1)
 	{
@@ -431,6 +434,7 @@ void ui_FrmConfig1_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
 		case BUTTON_STATUS_HOLD:
 			ui_FrmConfig1_UpdateEdit(ui_FrmConfig1_Cursor, -1);
 			ui_FrmConfig1_EditUpdateFlag = 1;
+			ui_FrmConfig1_Modified = 1;
 			break;
 	}
 }
@@ -443,6 +447,7 @@ void ui_FrmConfig1_KeyProcess_Right(uint8_t BtnHandle, uint8_t BtnState)
 		case BUTTON_STATUS_HOLD:
 			ui_FrmConfig1_UpdateEdit(ui_FrmConfig1_Cursor, +1);
 			ui_FrmConfig1_EditUpdateFlag = 1;
+			ui_FrmConfig1_Modified = 1;
 			break;
 	}
 }
@@ -458,7 +463,10 @@ void ui_FrmConfig1_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 			{
 				//Enter the second config frame
 				HoldSave = 0;
-				UI_Index = 2;
+				if(ui_FrmConfig1_Modified)
+				{
+					SysParam_SaveToFlash();
+				}
 				MyBeep_Beep(1);
 				vTaskDelay(50);
 				MyBeep_Beep(0);
@@ -467,15 +475,19 @@ void ui_FrmConfig1_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 				vTaskDelay(50);
 				MyBeep_Beep(0);
 				MyButton_ReLinkCallBack(CONFIG1_KEY_SET_INDEX, NULL);
+				UI_Index = 2;
 			}
 			else
 			{
 				//Return to main frame
-				UI_Index = 0;
-				SysParam_SaveToFlash();
+				if(ui_FrmConfig1_Modified)
+				{
+					SysParam_SaveToFlash();
+				}
 				MyBeep_Beep(1);
 				vTaskDelay(200);
 				MyBeep_Beep(0);
+				UI_Index = 0;
 			}
 			break;
 		case BUTTON_STATUS_HOLD:

@@ -157,12 +157,12 @@ void HCS_Init(void)
 {
 	HCS_Struct.Status = HCS_STATUS_STANDBY;
 	
+	//Load Params
+	SysParam_LoadFromFlash();
+	
 	HCS_IO_Init();
 	SCRControl_Init();
 	HCS_Monitor_Init();
-
-	//Load Params
-	SysParam_LoadFromFlash();
 }
 
 //待机状态
@@ -271,8 +271,8 @@ uint8_t HCS_SM_PreBlowing(uint8_t param)
 		return 0;
 	}
 	
-	_AirBlower_On_();
-	_LeadFan_On_();
+	_AirBlower_Set_(HCS_Struct.pParams->Zhengchanggufeng);
+	_LeadFan_Set_(HCS_Struct.pParams->Zhengchangyinfeng);
 	tmpParams[0] = HCS_Struct.pParams->Gufengqianchui;
 	tmpParams[1] = HCS_Struct.pParams->Yinfengqianchui;
 	if(tmpParams[1] > tmpParams[0])
@@ -316,16 +316,16 @@ uint8_t HCS_SM_WarmedUp(uint8_t param)
 	if(tmpParams[1] > tmpParams[0])
 	{
 		vTaskDelay(tmpParams[0] * 1000);
-		_LeadFan_On_();
+		_LeadFan_Set_(HCS_Struct.pParams->Zhengchangyinfeng);
 		vTaskDelay((tmpParams[1] - tmpParams[0]) * 1000);
-		_AirBlower_On_();
+		_AirBlower_Set_(HCS_Struct.pParams->Zhengchanggufeng);
 	}
 	else
 	{
 		vTaskDelay(tmpParams[1] * 1000);
-		_AirBlower_On_();
+		_AirBlower_Set_(HCS_Struct.pParams->Zhengchanggufeng);
 		vTaskDelay((tmpParams[0] - tmpParams[1]) * 1000);
-		_LeadFan_On_();
+		_LeadFan_Set_(HCS_Struct.pParams->Zhengchangyinfeng);
 	}
 	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
 		HCS_Struct.Status = HCS_STATUS_PREMATERIAL;  //进入预料状态
@@ -364,8 +364,8 @@ uint8_t HCS_SM_FireUp(uint8_t param)
 	//参数：点火时间，引风滞后，鼓风滞后，料机滞后 单位：秒; 点火阀值 单位：摄氏度；点火间隔 单位：分钟；点火引风，点火鼓风 单位:  %
 	
 	_FireUp_On_();
-	_LeadFan_On_();
-	_AirBlower_On_();
+	_LeadFan_Set_(HCS_Struct.pParams->Dianhuoyinfeng);
+	_AirBlower_Set_(HCS_Struct.pParams->Dianhuogufeng);
 	i = HCS_Struct.pParams->Dianhuoshijian * 10;
 	do
 	{
@@ -440,8 +440,8 @@ uint8_t HCS_SM_Running(uint8_t param)
 			HCS_Struct.Status = HCS_STATUS_FIREPROTECT;  //进入保火模式
 	}
 	
-	_AirBlower_On_();
-	_LeadFan_On_();
+	_AirBlower_Set_(HCS_Struct.pParams->Zhengchanggufeng);
+	_LeadFan_Set_(HCS_Struct.pParams->Zhengchangyinfeng);
 	_FireUp_On_();
 	_MaterialMachine_On_();
 	vTaskDelay(HCS_Struct.pParams->Jinliaoshijian * 1000);
@@ -469,8 +469,8 @@ uint8_t HCS_SM_FireProtection(uint8_t param)
 			HCS_Struct.Status = HCS_STATUS_RUNNING;      //回到运行模式
 	}
 	
-	_AirBlower_On_();
-	_LeadFan_On_();
+	_AirBlower_Set_(HCS_Struct.pParams->Baohuogufeng);
+	_LeadFan_Set_(HCS_Struct.pParams->Baohuoyinfeng);
 	_FireUp_Off_();
 	_MaterialMachine_On_();
 	vTaskDelay(HCS_Struct.pParams->Baohuosongliao * 1000);

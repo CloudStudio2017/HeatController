@@ -5,6 +5,7 @@
 #include "Task_UI.h"
 #include "ui_source_bitmap.h"
 
+extern uint8_t ui_FrmConfig1_Modified;
 
 extern void ui_FrmConfig1_Init(void);
 extern void ui_FrmConfig1_ShowFrame(void);

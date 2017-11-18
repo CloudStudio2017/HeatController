@@ -37,15 +37,21 @@ typedef struct
 	signed short Zhengchanggufeng;
 	signed short Baohuoyinfeng;
 	signed short Baohuogufeng;
+	
+	signed short PT100_X100;
+	signed short PT100_X138_5;
 }SysParam_TypeDef;
 
 extern SysParam_TypeDef SysParam;
 
 extern void SysParam_LoadFromFlash(void);
 extern void SysParam_SaveToFlash(void);
+extern void SysParam_LoadDefaultSettings(void);
 extern void SysParam_ValueLimitTime16(signed short *pValue);
 extern void SysParam_ValueLimit24Hour(signed short *pValue);
 extern void SysParam_ValueLimitTime8(signed char *pValue);
 extern void SysParam_ValueLimitTemp16(signed short *pValue);
+extern void SysParam_ValueLimitDuty(signed short *pValue);
+extern void SysParam_ValueLimitRAWADC(signed short *pValue);
 
 #endif

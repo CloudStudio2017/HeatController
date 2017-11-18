@@ -88,6 +88,7 @@ void vTask_Monitor_Init(void)
 {
 	Monitor_InputIO_Init();
 	PT100_Init();
+	PT100_Update_kb(HCS_Struct.pParams->PT100_X100, HCS_Struct.pParams->PT100_X138_5);
 	MAX6675_Init();
 	
 	xTaskCreate(vTask_Monitor, "Task_Monitor", 256, NULL, tskIDLE_PRIORITY, NULL);

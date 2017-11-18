@@ -3,6 +3,7 @@
 #include "sysParams.h"
 #include "stdio.h"
 #include "myBeep.h"
+#include "PT100.h"
 
 #define CONFIG2_KEY_SET_INDEX    2
 #define CONFIG2_KEY_UP_INDEX     3
@@ -22,6 +23,8 @@ static char ui_FrmConfig2_Str_Zhengchangyinfeng[] = "100";
 static char ui_FrmConfig2_Str_Zhengchanggufeng[]  = "100";
 static char ui_FrmConfig2_Str_Baohuoyinfeng[]     = "100";
 static char ui_FrmConfig2_Str_Baohuogufeng[]      = "100";
+static char ui_FrmConfig2_Str_AD0Du[]             = "0000";
+static char ui_FrmConfig2_Str_AD100Du[]           = "0000";
 
 CS_BITMAP(Bmp_Cfg_Title2,                     NULL, 150, 10,  10, 10, CSUI_WHITE, CSUI_BLACK, xBitmapXitongshezhi);
 
@@ -51,6 +54,11 @@ CS_LABLE(Lable_Cfg_BaohuoyinfengValue,       NULL,390,135+60, 10, 10, CSUI_BLUE,
 CS_BITMAP(Bmp_Cfg_BaohuogufengTitle,         NULL,250,160+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_Baohuogufeng);
 CS_LABLE(Lable_Cfg_BaohuogufengValue,        NULL,390,165+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_Baohuogufeng, NULL);
 
+CS_BITMAP(Bmp_Cfg_AD0DuTitle,                NULL, 10,190+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_AD0Du);
+CS_LABLE(Lable_Cfg_AD0DuValue,               NULL,150,195+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_AD0Du, NULL);
+CS_BITMAP(Bmp_Cfg_AD100DuTitle,              NULL,250,190+60, 10, 10, CSUI_BLUE, CSUI_BLACK, xBmpData_AD100Du);
+CS_LABLE(Lable_Cfg_AD100DuValue,             NULL,390,195+60, 10, 10, CSUI_BLUE, CSUI_BLACK, ui_FrmConfig2_Str_AD100Du, NULL);
+
 TCsUI_BaseObjectTable FrmConfig2_ChildTbl[]={
 	&Bmp_Cfg_Title2.Obj,
 	&Bmp_Cfg_GufengqianchuiTitle.Obj, &Lable_Cfg_GufengqianchuiValue.Obj,
@@ -67,13 +75,16 @@ TCsUI_BaseObjectTable FrmConfig2_ChildTbl[]={
 	&Bmp_Cfg_BaohuoyinfengTitle.Obj, &Lable_Cfg_BaohuoyinfengValue.Obj,
 	&Bmp_Cfg_BaohuogufengTitle.Obj, &Lable_Cfg_BaohuogufengValue.Obj,
 	
+	&Bmp_Cfg_AD0DuTitle.Obj, &Lable_Cfg_AD0DuValue.Obj,
+	&Bmp_Cfg_AD100DuTitle.Obj, &Lable_Cfg_AD100DuValue.Obj,
 	};
 
 CS_FRAME(FrmConfig2, NULL, 0, 0, 480, 320, CSUI_BLACK, FrmConfig2_ChildTbl);
 
-#define CONFIG2_CURSOR_MAX         (11)
+#define CONFIG2_CURSOR_MAX         (13)
 volatile static uint8_t ui_FrmConfig2_Cursor = 0;
 volatile static uint8_t ui_FrmConfig2_EditUpdateFlag = 0;
+uint8_t ui_FrmConfig2_Modified = 0;
 
 void ui_FrmConfig2_SelectEdit(uint8_t Cursor);
 void ui_FrmConfig2_UpdateEdit(uint8_t Cursor, int8_t IncValue);
@@ -97,6 +108,8 @@ void ui_FrmConfig2_Init(void)
 	Lable_Cfg_ZhengchanggufengValue.Font = CsUI_Font_ASCII_1218;
 	Lable_Cfg_BaohuoyinfengValue.Font = CsUI_Font_ASCII_1218;
 	Lable_Cfg_BaohuogufengValue.Font = CsUI_Font_ASCII_1218;
+	Lable_Cfg_AD0DuValue.Font = CsUI_Font_ASCII_1218;
+	Lable_Cfg_AD100DuValue.Font = CsUI_Font_ASCII_1218;
 }
 
 void ui_FrmConfig2_ShowFrame(void)
@@ -122,6 +135,8 @@ void ui_FrmConfig2_Process(void)
 	ui_FrmConfig2_UpdateEdit(9, 0);
 	ui_FrmConfig2_UpdateEdit(10, 0);
 	ui_FrmConfig2_UpdateEdit(11, 0);
+	ui_FrmConfig2_UpdateEdit(12, 0);
+	ui_FrmConfig2_UpdateEdit(13, 0);
 	ui_FrmConfig2_SelectEdit(ui_FrmConfig2_Cursor);
 	
 	MyButton_ReLinkCallBack(CONFIG2_KEY_SET_INDEX, ui_FrmConfig2_KeyProcess_Set);
@@ -129,6 +144,8 @@ void ui_FrmConfig2_Process(void)
 	MyButton_ReLinkCallBack(CONFIG2_KEY_DOWN_INDEX, ui_FrmConfig2_KeyProcess_Down);
 	MyButton_ReLinkCallBack(CONFIG2_KEY_LEFT_INDEX, ui_FrmConfig2_KeyProcess_Left);
 	MyButton_ReLinkCallBack(CONFIG2_KEY_RIGHT_INDEX, ui_FrmConfig2_KeyProcess_Right);
+	
+	ui_FrmConfig2_Modified = 0;
 	
 	while(1)
 	{
@@ -163,6 +180,8 @@ void ui_FrmConfig2_SelectEdit(uint8_t Cursor)
 	Lable_Cfg_ZhengchanggufengValue.FrontColor = CSUI_BLUE;
 	Lable_Cfg_BaohuoyinfengValue.FrontColor = CSUI_BLUE;
 	Lable_Cfg_BaohuogufengValue.FrontColor = CSUI_BLUE;
+	Lable_Cfg_AD0DuValue.FrontColor = CSUI_BLUE;
+	Lable_Cfg_AD100DuValue.FrontColor = CSUI_BLUE;
 	switch(Cursor)
 	{
 		case 0: Lable_Cfg_GufengqianchuiValue.FrontColor = CSUI_WHITE; break;
@@ -177,6 +196,8 @@ void ui_FrmConfig2_SelectEdit(uint8_t Cursor)
 		case 9: Lable_Cfg_ZhengchanggufengValue.FrontColor = CSUI_WHITE; break;
 		case 10: Lable_Cfg_BaohuoyinfengValue.FrontColor = CSUI_WHITE; break;
 		case 11: Lable_Cfg_BaohuogufengValue.FrontColor = CSUI_WHITE; break;
+		case 12: Lable_Cfg_AD0DuValue.FrontColor = CSUI_WHITE; break;
+		case 13: Lable_Cfg_AD100DuValue.FrontColor = CSUI_WHITE; break;
 	}
 	
 	Lable_Cfg_GufengqianchuiValue.Obj.Draw(&Lable_Cfg_GufengqianchuiValue);
@@ -191,6 +212,8 @@ void ui_FrmConfig2_SelectEdit(uint8_t Cursor)
 	Lable_Cfg_ZhengchanggufengValue.Obj.Draw(&Lable_Cfg_ZhengchanggufengValue);
 	Lable_Cfg_BaohuoyinfengValue.Obj.Draw(&Lable_Cfg_BaohuoyinfengValue);
 	Lable_Cfg_BaohuogufengValue.Obj.Draw(&Lable_Cfg_BaohuogufengValue);
+	Lable_Cfg_AD0DuValue.Obj.Draw(&Lable_Cfg_AD0DuValue);
+	Lable_Cfg_AD100DuValue.Obj.Draw(&Lable_Cfg_AD100DuValue);
 }
 
 void ui_FrmConfig2_UpdateEdit(uint8_t Cursor, int8_t IncValue)
@@ -223,27 +246,37 @@ void ui_FrmConfig2_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 			break;
 		case 6:
 			SysParam.Dianhuoyinfeng += IncValue;
-			SysParam_ValueLimitTemp16(&SysParam.Dianhuoyinfeng);
+			SysParam_ValueLimitDuty(&SysParam.Dianhuoyinfeng);
 			break;
 		case 7:
 			SysParam.Dianhuogufeng += IncValue;
-			SysParam_ValueLimitTemp16(&SysParam.Dianhuogufeng);
+			SysParam_ValueLimitDuty(&SysParam.Dianhuogufeng);
 			break;
 		case 8:
 			SysParam.Zhengchangyinfeng += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Zhengchangyinfeng);
+			SysParam_ValueLimitDuty(&SysParam.Zhengchangyinfeng);
 			break;
 		case 9:
 			SysParam.Zhengchanggufeng += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Zhengchanggufeng);
+			SysParam_ValueLimitDuty(&SysParam.Zhengchanggufeng);
 			break;
 		case 10:
 			SysParam.Baohuoyinfeng += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Baohuoyinfeng);
+			SysParam_ValueLimitDuty(&SysParam.Baohuoyinfeng);
 			break;
 		case 11:
 			SysParam.Baohuogufeng += IncValue;
-			SysParam_ValueLimitTime16(&SysParam.Baohuogufeng);
+			SysParam_ValueLimitDuty(&SysParam.Baohuogufeng);
+			break;
+		case 12:
+			SysParam.PT100_X100 += IncValue;
+			SysParam_ValueLimitRAWADC(&SysParam.PT100_X100);
+			PT100_Update_kb(SysParam.PT100_X100, SysParam.PT100_X138_5);
+			break;
+		case 13:
+			SysParam.PT100_X138_5 += IncValue;
+			SysParam_ValueLimitRAWADC(&SysParam.PT100_X138_5);
+			PT100_Update_kb(SysParam.PT100_X100, SysParam.PT100_X138_5);
 			break;
 	}
 	switch(Cursor)
@@ -260,6 +293,8 @@ void ui_FrmConfig2_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 		case 9: sprintf(ui_FrmConfig2_Str_Zhengchanggufeng, "%03d", SysParam.Zhengchanggufeng);	break;
 		case 10: sprintf(ui_FrmConfig2_Str_Baohuoyinfeng, "%03d", SysParam.Baohuoyinfeng);	break;
 		case 11: sprintf(ui_FrmConfig2_Str_Baohuogufeng, "%03d", SysParam.Baohuogufeng);	break;
+		case 12: sprintf(ui_FrmConfig2_Str_AD0Du, "%04d", SysParam.PT100_X100);	break;
+		case 13: sprintf(ui_FrmConfig2_Str_AD100Du, "%04d", SysParam.PT100_X138_5);	break;
 	}
 }
 
@@ -298,6 +333,7 @@ void ui_FrmConfig2_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
 		case BUTTON_STATUS_HOLD:
 			ui_FrmConfig2_UpdateEdit(ui_FrmConfig2_Cursor, -1);
 			ui_FrmConfig2_EditUpdateFlag = 1;
+			ui_FrmConfig2_Modified = 1;
 			break;
 	}
 }
@@ -310,6 +346,7 @@ void ui_FrmConfig2_KeyProcess_Right(uint8_t BtnHandle, uint8_t BtnState)
 		case BUTTON_STATUS_HOLD:
 			ui_FrmConfig2_UpdateEdit(ui_FrmConfig2_Cursor, +1);
 			ui_FrmConfig2_EditUpdateFlag = 1;
+			ui_FrmConfig2_Modified = 1;
 			break;
 	}
 }
@@ -323,22 +360,27 @@ void ui_FrmConfig2_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 		case BUTTON_STATUS_RELEASE:
 			if(HoldSave)
 			{
-				//Enter the second config frame
+				//Return to main frame and restore default settings
 				HoldSave = 0;
-				UI_Index = 0;
+				SysParam_LoadDefaultSettings();
+				SysParam_SaveToFlash();
 				MyBeep_Beep(1);
-				vTaskDelay(50);
+				vTaskDelay(500);
 				MyBeep_Beep(0);
 				MyButton_ReLinkCallBack(CONFIG2_KEY_SET_INDEX, NULL);
+				UI_Index = 0;
 			}
 			else
 			{
-				//Return to main frame
-				UI_Index = 1;
-				SysParam_SaveToFlash();
+				//Enter the second config frame
+				if(ui_FrmConfig2_Modified)
+				{
+					SysParam_SaveToFlash();
+				}
 				MyBeep_Beep(1);
 				vTaskDelay(200);
 				MyBeep_Beep(0);
+				UI_Index = 1;
 			}
 			break;
 		case BUTTON_STATUS_HOLD:
