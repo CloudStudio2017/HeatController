@@ -27,30 +27,7 @@ void SysParam_LoadFromFlash(void)
 {
 	if(SysParam_CheckBlock(0))
 	{
-		SysParam.Yuliaoshijian      = 2;
-		SysParam.Dianhuoshijian     = 3;
-		SysParam.Jinliaoshijian     = 2;
-		SysParam.Tingliaoshijian    = 2;
-		SysParam.Baohuosongliao     = 2;
-		SysParam.Baohuotingliao     = 2;
-		SysParam.Kaijiwendu         = 80;
-		SysParam.Baohuowendu        = 90;
-		SysParam.Gufenghouchui      = 2;
-		SysParam.Dinshikaiji        = 12*60 + 0;
-		SysParam.Dinshiguanji       = 12*60 + 30;
-		
-		SysParam.Gufengqianchui     = 2;
-		SysParam.Yinfengqianchui    = 2;
-		SysParam.Dianhuoyuzhi       = 20;
-		SysParam.Yinfengzhihou      = 2;
-		SysParam.Gufengzhihou       = 2;
-		SysParam.Songliaozhihou     = 2;
-		SysParam.Dianhuoyinfeng     = 50;
-		SysParam.Dianhuogufeng      = 50;
-		SysParam.Zhengchangyinfeng  = 50;
-		SysParam.Zhengchanggufeng   = 50;
-		SysParam.Baohuoyinfeng      = 50;
-		SysParam.Baohuogufeng       = 50;
+		SysParam_LoadDefaultSettings();
 	}
 	else
 	{
@@ -63,6 +40,37 @@ void SysParam_SaveToFlash(void)
 	FlashControl_Erase(SYS_PARAM_BLOCK0_ADDR, 0x1000);
 	FlashControl_Write((uint8_t*)&SysParam, SYS_PARAM_BLOCK0_ADDR, sizeof(SysParam));
 	SysParam_MarkBlock(0);
+}
+
+void SysParam_LoadDefaultSettings(void)
+{
+	SysParam.Yuliaoshijian      = 2;
+	SysParam.Dianhuoshijian     = 3;
+	SysParam.Jinliaoshijian     = 2;
+	SysParam.Tingliaoshijian    = 2;
+	SysParam.Baohuosongliao     = 2;
+	SysParam.Baohuotingliao     = 2;
+	SysParam.Kaijiwendu         = 80;
+	SysParam.Baohuowendu        = 90;
+	SysParam.Gufenghouchui      = 2;
+	SysParam.Dinshikaiji        = 0;
+	SysParam.Dinshiguanji       = 0;
+	
+	SysParam.Gufengqianchui     = 2;
+	SysParam.Yinfengqianchui    = 2;
+	SysParam.Dianhuoyuzhi       = 20;
+	SysParam.Yinfengzhihou      = 2;
+	SysParam.Gufengzhihou       = 2;
+	SysParam.Songliaozhihou     = 2;
+	SysParam.Dianhuoyinfeng     = 80;
+	SysParam.Dianhuogufeng      = 80;
+	SysParam.Zhengchangyinfeng  = 80;
+	SysParam.Zhengchanggufeng   = 80;
+	SysParam.Baohuoyinfeng      = 80;
+	SysParam.Baohuogufeng       = 80;
+	
+	SysParam.PT100_X100         = 600;
+	SysParam.PT100_X138_5       = 3000;
 }
 
 void SysParam_ValueLimitTime16(signed short *pValue)
