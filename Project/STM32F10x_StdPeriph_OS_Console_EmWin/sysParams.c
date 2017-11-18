@@ -108,3 +108,11 @@ void SysParam_ValueLimitDuty(signed short *pValue)
 	if(*pValue < 0)
 		*pValue = 100;
 }
+
+void SysParam_ValueLimitRAWADC(signed short *pValue)
+{
+	if(*pValue > 4095)
+		*pValue = 0;
+	if(*pValue < 0)
+		*pValue = 4095;
+}

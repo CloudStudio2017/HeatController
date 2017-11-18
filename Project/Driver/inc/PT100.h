@@ -7,5 +7,6 @@
 extern float PT100_R2T(float PT100_ResValue);
 extern uint8_t PT100_Init(void);
 extern float PT100_GetTempValue(void);
+extern void PT100_Update_kb(signed short x100, signed short x138_5);
 
 #endif

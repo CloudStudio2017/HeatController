@@ -7,8 +7,8 @@
 
 #define X100      600    //For   0¡æ
 #define X138_5   3000    //For 100¡æ
-static const float k = 38.5 / (X138_5 - X100);
-static const float b = 100 - k * X100;
+static float k;
+static float b;
 
 float PT100_R2T(float PT100_ResValue)
 {
@@ -46,9 +46,16 @@ float PT100_R2T(float PT100_ResValue)
 	return T1;
 }
 
+void PT100_Update_kb(signed short x100, signed short x138_5)
+{
+	k = 38.5 / (x138_5 - x100);
+	b = 100 - k * x100;
+}
+
 uint8_t PT100_Init(void)
 {
 	CslADC_Init();
+	PT100_Update_kb(X100, X138_5);
 }
 
 float PT100_GetTempValue(void)

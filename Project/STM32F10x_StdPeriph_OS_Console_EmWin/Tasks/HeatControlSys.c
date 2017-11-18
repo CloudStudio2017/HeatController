@@ -157,12 +157,12 @@ void HCS_Init(void)
 {
 	HCS_Struct.Status = HCS_STATUS_STANDBY;
 	
+	//Load Params
+	SysParam_LoadFromFlash();
+	
 	HCS_IO_Init();
 	SCRControl_Init();
 	HCS_Monitor_Init();
-
-	//Load Params
-	SysParam_LoadFromFlash();
 }
 
 //´ý»ú×´Ì¬

@@ -59,6 +59,9 @@ extern const unsigned char xBmpData_Fen[];
 extern const unsigned char xBmpData_PT100[];
 extern const unsigned char xBmpData_KDianou[];
 
+extern const unsigned char xBmpData_AD0Du[];
+extern const unsigned char xBmpData_AD100Du[];
+
 extern const unsigned char xBitmapXitongshezhi[];
 
 extern const unsigned char xBitmapCaption[];
