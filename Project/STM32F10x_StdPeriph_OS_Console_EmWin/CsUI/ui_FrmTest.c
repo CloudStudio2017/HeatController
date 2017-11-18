@@ -4,6 +4,7 @@
 #include "stdio.h"
 #include "myBeep.h"
 #include "HeatControlSys.h"
+#include "cslADC.h"
 
 #define TEST_KEY_POWERSWITCH_INDEX 0
 #define TEST_KEY_SET_INDEX    2
@@ -19,6 +20,8 @@ static char ui_FrmTest_Str_Yinfeng[]   = "  0%";
 static char ui_FrmTest_Str_PT100[]     = "Error";
 static char ui_FrmTest_Str_KSensor[]   = "Error";
 static char ui_FrmTest_Str_Queliao[]   = "Yes";
+
+static unsigned char ui_FrmTest_Flag_PT100 = 0;  //0: TempValue  1: ADCValue
 
 CS_BITMAP(Bmp_Test_Title,                    NULL, 150, 10,  10, 10, CSUI_WHITE, CSUI_BLACK, xBitmapXitongshezhi);
 
@@ -65,6 +68,7 @@ void ui_FrmTest_KeyProcess_Down(uint8_t BtnHandle, uint8_t BtnState);
 void ui_FrmTest_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState);
 void ui_FrmTest_KeyProcess_Right(uint8_t BtnHandle, uint8_t BtnState);
 void ui_FrmTest_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState);
+void ui_FrmTest_KeyProcess_Switch(uint8_t BtnHandle, uint8_t BtnState);
 
 void ui_FrmTest_Init(void)
 {
@@ -107,7 +111,9 @@ void ui_FrmTest_Process(void)
 	MyButton_ReLinkCallBack(TEST_KEY_DOWN_INDEX, ui_FrmTest_KeyProcess_Down);
 	MyButton_ReLinkCallBack(TEST_KEY_LEFT_INDEX, ui_FrmTest_KeyProcess_Left);
 	MyButton_ReLinkCallBack(TEST_KEY_RIGHT_INDEX, ui_FrmTest_KeyProcess_Right);
-	MyButton_ReLinkCallBack(TEST_KEY_POWERSWITCH_INDEX, NULL);
+	MyButton_ReLinkCallBack(TEST_KEY_POWERSWITCH_INDEX, ui_FrmTest_KeyProcess_Switch);
+	
+	ui_FrmTest_Flag_PT100 = 0;
 	
 	while(1)
 	{
@@ -132,13 +138,22 @@ void ui_FrmTest_Process(void)
 			ui_FrmTest_iCount = 0;
 			//TODO Update TempSensor and Queliao Input
 			//PT100
-			if(HCS_Struct.WaterTemp.Flag)
+			if(ui_FrmTest_Flag_PT100)
 			{
-				sprintf(ui_FrmTest_Str_PT100, "Error");
+				//Display ADC value
+				sprintf(ui_FrmTest_Str_PT100, "%04d", CslADC_GetADCValue(0));
 			}
 			else
 			{
-				sprintf(ui_FrmTest_Str_PT100, " %3.0f ", HCS_Struct.WaterTemp.Value);
+				//Display temperature value
+				if(HCS_Struct.WaterTemp.Flag)
+				{
+					sprintf(ui_FrmTest_Str_PT100, "Error");
+				}
+				else
+				{
+					sprintf(ui_FrmTest_Str_PT100, " %3.0f ", HCS_Struct.WaterTemp.Value);
+				}
 			}
 			Lable_Test_PT100Value.Obj.Draw(&Lable_Test_PT100Value);
 			//K Sensor
@@ -305,6 +320,21 @@ void ui_FrmTest_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 			MyButton_ReLinkCallBack(TEST_KEY_DOWN_INDEX, NULL);
 			MyButton_ReLinkCallBack(TEST_KEY_LEFT_INDEX, NULL);
 			MyButton_ReLinkCallBack(TEST_KEY_RIGHT_INDEX, NULL);
+			MyButton_ReLinkCallBack(TEST_KEY_POWERSWITCH_INDEX, NULL);
+			break;
+	}
+}
+
+void ui_FrmTest_KeyProcess_Switch(uint8_t BtnHandle, uint8_t BtnState)
+{
+	switch(BtnState)
+	{
+		case BUTTON_STATUS_RELEASE:
+			ui_FrmTest_Flag_PT100 = 1 - ui_FrmTest_Flag_PT100;
+			Lable_Test_PT100Value.FrontColor = ui_FrmTest_Flag_PT100? CSUI_GREEN: CSUI_BLUE;
+			MyBeep_Beep(1);
+			vTaskDelay(50);
+			MyBeep_Beep(0);
 			break;
 	}
 }
