@@ -12,6 +12,16 @@
 #define HCS_VA_OUTPUT  volatile uint32_t
 	
 
+
+enum
+{
+	ID_DEV_FIRE = 0,
+	ID_DEV_FEEDER,
+	ID_DEV_LEADFAN,
+	ID_DEV_BLOWER,
+};
+
+
 #if BOARD_TYPE == RELEASE_BOARD_V1
 	#define _MaterialMachineOn_       myLed_On(1)
 	#define _MaterialMachineOff_      myLed_Off(1)
@@ -111,6 +121,7 @@ typedef enum
 	HCS_STATUS_RUNNING,
 	HCS_STATUS_FIREPROTECT,
 	HCS_STATUS_POWEROFF,
+	HCS_STATUS_STOPPING,
 	HCS_STATUS_TEST,
 }HCS_STATUS_enum;
 
@@ -188,19 +199,21 @@ extern CslIOCtrl_RegTypeDef IO_Gufeng;
 extern CslIOCtrl_RegTypeDef IO_Yinfeng;
 extern CslIOCtrl_RegTypeDef IO_Queliao;
 
-extern void HCS_Init(void);
+void HCS_Init(void);
 
-extern uint8_t HCS_SM_Standby(uint8_t param);
-extern uint8_t HCS_SM_Startup(uint8_t param);
-extern uint8_t HCS_SM_PreBlowing(uint8_t param);
-extern uint8_t HCS_SM_WarmedUp(uint8_t param);
-extern uint8_t HCS_SM_PreMaterial(uint8_t param);
-extern uint8_t HCS_SM_FireUp(uint8_t param);
-extern uint8_t HCS_SM_Running(uint8_t param);
-extern uint8_t HCS_SM_FireProtection(uint8_t param);
-extern uint8_t HCS_SM_Suspend(uint8_t param);
-extern uint8_t HCS_SM_PowerOff(uint8_t param);
-extern uint8_t HCS_SM_Test(uint8_t param);
+uint8_t HCS_SM_Standby(uint8_t param);
+uint8_t HCS_SM_Startup(uint8_t param);
+uint8_t HCS_SM_PreBlowing(uint8_t param);
+uint8_t HCS_SM_WarmedUp(uint8_t param);
+uint8_t HCS_SM_PreMaterial(uint8_t param);
+uint8_t HCS_SM_FireUp(uint8_t param);
+uint8_t HCS_SM_Running(uint8_t param);
+uint8_t HCS_SM_FireProtection(uint8_t param);
+uint8_t HCS_SM_Suspend(uint8_t param);
+uint8_t HCS_SM_PowerOn(uint8_t param);
+uint8_t HCS_SM_PowerOff(uint8_t param);
+uint8_t HCS_SM_Stopping(uint8_t param);
+uint8_t HCS_SM_Test(uint8_t param);
 
 
 

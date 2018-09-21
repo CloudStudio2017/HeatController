@@ -5,13 +5,20 @@
 #include "cslIOCtrl.h"
 #include "HeatControlSys.h"
 #include "myBeep.h"
+#include "Task_DeviceControl.h"
+#include "Task_Control.h"
 
-#define MAIN_KEY_POWERSWITCH_INDEX 0
+#define MAIN_KEY_SYSSWITCH_INDEX 0
 #define MAIN_KEY_SET_INDEX    2
 #define MAIN_KEY_UP_INDEX     3
 #define MAIN_KEY_DOWN_INDEX   4
 #define MAIN_KEY_LEFT_INDEX   5
 #define MAIN_KEY_RIGHT_INDEX  6
+
+extern Device_t dev_Fire;
+extern Device_t dev_Feeder;
+extern Device_t dev_LeadFan;
+extern Device_t dev_Blower;
 
 static char str_date[11];
 static char str_time[6];
@@ -63,7 +70,7 @@ static CslRTC_Date xDate;
 void ui_FrmMain_UpdateOutputStatus(void);
 void ui_FrmMain_UpdateStatus(void);
 void ui_FrmMain_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState);
-void ui_FrmMain_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState);
+void ui_FrmMain_KeyProcess_Up(uint8_t BtnHandle, uint8_t BtnState);
 
 void ui_FrmMain_Init(void)
 {
@@ -187,18 +194,18 @@ void ui_FrmMain_UpdateError(void)
 	}
 }
 
-extern void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState);
+extern void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState);
 
 void ui_FrmMain_Process(void)
 {
 	static uint32_t iCount = 0;
 	
 	MyButton_ReLinkCallBack(MAIN_KEY_SET_INDEX, ui_FrmMain_KeyProcess_Set);
-	MyButton_ReLinkCallBack(MAIN_KEY_UP_INDEX, ui_FrmMain_KeyProcess_Left);
+	MyButton_ReLinkCallBack(MAIN_KEY_UP_INDEX, ui_FrmMain_KeyProcess_Up);
 	MyButton_ReLinkCallBack(MAIN_KEY_DOWN_INDEX, NULL);
 	MyButton_ReLinkCallBack(MAIN_KEY_LEFT_INDEX, NULL);
 	MyButton_ReLinkCallBack(MAIN_KEY_RIGHT_INDEX, NULL);
-	MyButton_ReLinkCallBack(MAIN_KEY_POWERSWITCH_INDEX, KB_PowerSwitch);
+	MyButton_ReLinkCallBack(MAIN_KEY_SYSSWITCH_INDEX, KB_SysSwitch);
 
 	ui_FrmMain_UpdateTime(1);     //Force update date time
 	
@@ -220,7 +227,8 @@ void ui_FrmMain_Process(void)
 
 void ui_FrmMain_UpdateOutputStatus(void)
 {
-	if(HCS_Struct.MaterialMachine)
+	//
+	if(dev_Feeder.value)
 	{
 		Bmp_SongliaoState.pBmp = (TBitmap_Head*)xBmpData_Yunxing;
 		Bmp_SongliaoState.FrontColor = CSUI_GREEN;
@@ -230,7 +238,8 @@ void ui_FrmMain_UpdateOutputStatus(void)
 		Bmp_SongliaoState.pBmp = (TBitmap_Head*)xBmpData_Tingzhi;
 		Bmp_SongliaoState.FrontColor = CSUI_RED;
 	}
-	if(HCS_Struct.FireUp)
+	//
+	if(dev_Fire.value)
 	{
 		Bmp_DianhuoState.pBmp = (TBitmap_Head*)xBmpData_Yunxing;
 		Bmp_DianhuoState.FrontColor = CSUI_GREEN;
@@ -240,7 +249,8 @@ void ui_FrmMain_UpdateOutputStatus(void)
 		Bmp_DianhuoState.pBmp = (TBitmap_Head*)xBmpData_Tingzhi;
 		Bmp_DianhuoState.FrontColor = CSUI_RED;
 	}
-	if(HCS_Struct.LeadFan)
+	//
+	if(dev_LeadFan.value)
 	{
 		Bmp_YinfengState.pBmp = (TBitmap_Head*)xBmpData_Yunxing;
 		Bmp_YinfengState.FrontColor = CSUI_GREEN;
@@ -250,7 +260,8 @@ void ui_FrmMain_UpdateOutputStatus(void)
 		Bmp_YinfengState.pBmp = (TBitmap_Head*)xBmpData_Tingzhi;
 		Bmp_YinfengState.FrontColor = CSUI_RED;
 	}
-	if(HCS_Struct.AirBlower)
+	//
+	if(dev_Blower.value)
 	{
 		Bmp_GufengState.pBmp = (TBitmap_Head*)xBmpData_Yunxing;
 		Bmp_GufengState.FrontColor = CSUI_GREEN;
@@ -305,6 +316,9 @@ void ui_FrmMain_UpdateStatus(void)
 		case HCS_STATUS_STARTUP:
 			Bmp_SysStatusState.pBmp = (TBitmap_Head*)xBmpData_Standby;
 			break;
+		case HCS_STATUS_STOPPING:
+			//TODO
+			break;
 		case HCS_STATUS_TEST:
 			break;
 	}
@@ -323,7 +337,7 @@ void ui_FrmMain_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 	}
 }
 
-void ui_FrmMain_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
+void ui_FrmMain_KeyProcess_Up(uint8_t BtnHandle, uint8_t BtnState)
 {
 	if(BtnState == BUTTON_STATUS_RELEASE)
 	{
@@ -332,7 +346,10 @@ void ui_FrmMain_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
 		vTaskDelay(100);
 		MyBeep_Beep(0);
 		UI_Index = 3;
-		HCS_Struct.Status = HCS_STATUS_TEST;
-		MyButton_ReLinkCallBack(MAIN_KEY_LEFT_INDEX, NULL);
+		//HCS_Struct.Status = HCS_STATUS_TEST;
+		Control_SendMsg(CMD_CONTROL_TEST);
+		//DeviceControl_SendMsg_Run(1);
+		
+		//MyButton_ReLinkCallBack(MAIN_KEY_LEFT_INDEX, NULL);
 	}
 }

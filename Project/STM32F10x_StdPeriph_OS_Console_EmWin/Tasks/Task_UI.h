@@ -8,7 +8,9 @@
 
 extern volatile uint8_t UI_Index;   //0:Main   1:Config1  2:Config2  3:Test
 
-extern void vTask_UI( void *pvParameters );
+void vTask_UI( void *pvParameters );
+void UI_Start(void);
+void UI_Reset(void);
 
 
 #endif

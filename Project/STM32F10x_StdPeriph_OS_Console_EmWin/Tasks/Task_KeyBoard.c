@@ -1,41 +1,15 @@
 #include "stm32f10x.h"
 #include "Task_KeyBoard.h"
+#include "Task_Control.h"
 #include "myButton.h"
 #include "myBeep.h"
 #include "cslLCD.h"
+#include "Task_UI.h"
 #include "HeatControlSys.h"
 #include "board.h"
 
 //static uint32_t Is_Init=0;
 extern volatile uint8_t UI_Index;
-
-void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState)
-{
-	if(BtnState == BUTTON_STATUS_RELEASE)
-	{
-		switch(HCS_Struct.Status)
-		{
-			case HCS_STATUS_STANDBY:
-				HCS_Struct.Status = HCS_STATUS_STARTUP;
-				//TODO:发送消息现在开始启动
-				break;
-			case HCS_STATUS_STARTUP:
-			case HCS_STATUS_PREBLOW:
-			case HCS_STATUS_PREMATERIAL:
-			case HCS_STATUS_WARMEDUP:
-			case HCS_STATUS_FIREUP:
-			case HCS_STATUS_RUNNING:
-			case HCS_STATUS_FIREPROTECT:
-			case HCS_STATUS_TEST:
-				HCS_Struct.Status = HCS_STATUS_STANDBY;
-				//TODO:发送消息现在进入待机状态
-				break;
-			case HCS_STATUS_POWEROFF:
-				//关机状态不处理
-				break;
-		}
-	}
-}
 
 void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
 {
@@ -44,6 +18,8 @@ void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
 		switch(HCS_Struct.Status)
 		{
 			case HCS_STATUS_STANDBY:
+				Control_SendMsg(CMD_CONTROL_START);    //Send message to start
+				break;
 			case HCS_STATUS_STARTUP:
 			case HCS_STATUS_PREBLOW:
 			case HCS_STATUS_PREMATERIAL:
@@ -52,19 +28,39 @@ void KB_SysSwitch(uint8_t BtnHandle, uint8_t BtnState)
 			case HCS_STATUS_RUNNING:
 			case HCS_STATUS_FIREPROTECT:
 			case HCS_STATUS_TEST:
-				HCS_Struct.Status = HCS_STATUS_POWEROFF;
-				//TODO:发送消息  进入关机状态
-				CsLCD_DisplayControl(1);
-				CslLCD_BLK(0);
-				UI_Index = 0;
+				Control_SendMsg(CMD_CONTROL_STOP);     //Send message to stop
 				break;
 			case HCS_STATUS_POWEROFF:
-				HCS_Struct.Status = HCS_STATUS_STANDBY;
-				//TODO:发送消息  进入待机状态
-				CsLCD_DisplayControl(0);
-				CslLCD_BLK(1);
-				UI_Index = 0;
+				//关机状态不处理
+			case HCS_STATUS_STOPPING:
+				//关闭状态不处理
 				break;
+		}
+	}
+}
+
+void KB_PowerSwitch(uint8_t BtnHandle, uint8_t BtnState)
+{
+	if(BtnState == BUTTON_STATUS_RELEASE)
+	{
+		switch(HCS_Struct.Status)
+		{
+			case HCS_STATUS_STANDBY:
+			case HCS_STATUS_STARTUP:
+			case HCS_STATUS_PREBLOW:
+			case HCS_STATUS_PREMATERIAL:
+			case HCS_STATUS_WARMEDUP:
+			case HCS_STATUS_FIREUP:
+			case HCS_STATUS_RUNNING:
+			case HCS_STATUS_FIREPROTECT:
+			case HCS_STATUS_STOPPING:
+			case HCS_STATUS_TEST:
+				Control_SendMsg(CMD_CONTROL_POWEROFF);     //Send message to power off
+				UI_Reset();
+				break;
+			case HCS_STATUS_POWEROFF:
+				Control_SendMsg(CMD_CONTROL_POWERON);     //Send message to power on
+				UI_Start();
 				break;
 		}
 	}
@@ -143,12 +139,12 @@ void KeyBoard_Regs(void)
 	
 	btn.ButtonIdleState = SET;
 	
-	btn.CallBackFunc = KB_PowerSwitch;
+	btn.CallBackFunc = KB_SysSwitch;
 	btn.ButtonGPIO = _BUTTON_POWER_GPIO;
 	btn.ButtonPin = _BUTTON_POWER_PIN;
 	MyButton_Reg(0, &btn);
 	
-	btn.CallBackFunc = KB_SysSwitch;
+	btn.CallBackFunc = KB_PowerSwitch;
 	btn.ButtonGPIO = _BUTTON_SWITCH_GPIO;
 	btn.ButtonPin = _BUTTON_SWITCH_PIN;
 	MyButton_Reg(1, &btn);

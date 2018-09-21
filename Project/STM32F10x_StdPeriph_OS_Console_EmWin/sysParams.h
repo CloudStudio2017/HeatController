@@ -12,6 +12,7 @@
 
 typedef struct
 {
+	signed short Yureshijian;
 	signed short Yuliaoshijian;
 	signed short Dianhuoshijian;
 	signed short Jinliaoshijian;

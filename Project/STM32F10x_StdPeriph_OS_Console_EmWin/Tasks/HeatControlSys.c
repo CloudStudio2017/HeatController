@@ -1,10 +1,26 @@
 #include "HeatControlSys.h"
 #include "FreeRTOS.h"
 #include "Task.h"
-#include "myBeep.h"
+#include "Task_Beep.h"
 #include "Task_Monitor.h"
 #include "cslRTC.h"
 #include "cslLCD.h"
+#include "Task_DeviceControl.h"
+
+
+extern Device_t dev_Fire;
+extern Device_t dev_Feeder;
+extern Device_t dev_LeadFan;
+extern Device_t dev_Blower;
+
+#define DEVICE_COUNT  4
+DCB_t devs[DEVICE_COUNT]=
+{
+	{.Device = &dev_Fire},
+	{.Device = &dev_Feeder},
+	{.Device = &dev_LeadFan},
+	{.Device = &dev_Blower},
+};
 
 
 CslIOCtrl_Device_Level_TypeDef Device_Dianhuo = {.ActiveLevel = 1, .Res = 0};
@@ -26,6 +42,10 @@ volatile HCS_TypeDef HCS_Struct =
 };
 
 static CslRTC_Time HCS_Time;
+
+
+static TickType_t Start_Tick;
+static uint8_t flag;
 
 static void HCS_IO_Init(void)
 {
@@ -62,6 +82,8 @@ static void HCS_IO_Init(void)
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOE, &GPIO_InitStruct);
 #endif
+	
+	DeviceControl_Init(devs, DEVICE_COUNT);
 }
 
 static void HCS_Monitor_Init(void)
@@ -137,6 +159,7 @@ uint8_t HCS_CheckSysError(void)
 	//{
 	//	return 0xFF;
 	//}
+	return 0;
 	if(HCS_Struct.MaterialLow)
 	{
 		return 0xFF;
@@ -155,7 +178,7 @@ uint8_t HCS_CheckSysError(void)
 
 void HCS_Init(void)
 {
-	HCS_Struct.Status = HCS_STATUS_STANDBY;
+	HCS_Struct.Status = HCS_STATUS_POWEROFF;
 	
 	//Load Params
 	SysParam_LoadFromFlash();
@@ -165,7 +188,7 @@ void HCS_Init(void)
 	HCS_Monitor_Init();
 }
 
-//待机状态
+//待机状态    ******就绪****待测试******
 uint8_t HCS_SM_Standby(uint8_t param)
 {
 	//检测水位、缺料、水温、炉温
@@ -174,36 +197,30 @@ uint8_t HCS_SM_Standby(uint8_t param)
 	//液晶屏亮着，没有按开关按键开启，可触发水泵防冻功能，不启动水泵循环水功能
 	//参数：防冻温度 单位：摄氏度
 	
-	//HCS_Struct.WaterLow = HCS_GetWaterLow();
+	//流程：鼓风关闭 -> 点火关闭 -> 送料关闭 -> 引风关闭 -> 检测缺料 ↓
+	//                                                ↑-----------
 	
-	//_WaterPump_Off_();   //不启动水泵循环功能
-	_AirBlower_Off_();
-	_FireUp_Off_();
-	_MaterialMachine_Off_();
-	_LeadFan_Off_();
-	
-	//if(HCS_Struct.WaterLow)
-	//{
-	//	//提示加水
-	//	HCS_WaterLowIndicationSet();
-	//	//等待加水完成
-	//	while(HCS_Struct.WaterLow)
-	//	{
-	//		HCS_Struct.WaterLow = HCS_GetWaterLow();
-	//	}
-	//	
-	//	HCS_WaterLowIndicationReset();
-	//}
-	if(HCS_Struct.MaterialLow)
+	switch(param)
 	{
-		//提示加料
-		HCS_MaterialLowIndicationSet();
+		case 0:
+			DeviceControl_SendMsg_Stop(ID_DEV_BLOWER);
+			DeviceControl_SendMsg_Stop(ID_DEV_FIRE);
+			DeviceControl_SendMsg_Stop(ID_DEV_FEEDER);
+			DeviceControl_SendMsg_Stop(ID_DEV_LEADFAN);
+			param++;
+			break;
+		case 1:
+			if(HCS_Struct.MaterialLow)
+			{
+				//提示加料
+				HCS_MaterialLowIndicationSet();
+			}
+			break;
 	}
-	
-	return 0;
+	return param;
 }
 
-//开启状态
+//开启状态    ******就绪****待测试******
 uint8_t HCS_SM_Startup(uint8_t param)
 {
 	//按开关键开启，检测水位、水温、炉温
@@ -215,140 +232,161 @@ uint8_t HCS_SM_Startup(uint8_t param)
 	//水泵运行模式：水泵是根据水温独立运行，它是循环泵，把锅炉热水循环出去使用，高温开泵，低温停泵（例如：水泵高于开泵温度70度，开泵；低于停泵温度50度，停泵），水泵在按开关键时就开始工作，暂停或关闭时继续工作，直到停泵，或者按‘电源’键时停止。在暂停待机状态（液晶屏亮着没有进入运行状态）触发‘防冻’功能
 	//锅炉运行模式：开启-前吹—预热—预料—点火—运行—保火—暂停—关闭
 	//开机时：水温：1.低于‘停机温度’开机，前吹，预料，预热，点火，运行，保火。2.高于‘停机温度’，进入‘暂停’，当水泵把水温循环出去降到‘开机温度’以下，自动开机进入前吹，预料，预热，点火，运行，保火
-	uint8_t i;
-	
-	
+
 	
 	if(HCS_CheckSysError())
 	{
-		for(i=0;i<3;i++)
-		{
-			MyBeep_Beep(1);
-			vTaskDelay(50);
-			MyBeep_Beep(0);
-			vTaskDelay(50);
-		}
+		//Task_Beep(3, 50, 50);
 		HCS_Struct.Status = HCS_STATUS_STANDBY;
-		
 		return 0;
 	}
-	
-	/* Beep 1s to start normal */
-	MyBeep_Beep(1);
-	vTaskDelay(500);
-	MyBeep_Beep(0);
-	
-	/* wait until temperature down to level */
-	if(HCS_Struct.WaterTemp.Value > HCS_Struct.pParams->Baohuowendu)
+	switch(param)
 	{
-		HCS_Struct.Status = HCS_STATUS_STANDBY;
-		//现在高于开机温度，需要等待温度降低
-		while(HCS_Struct.WaterTemp.Value > HCS_Struct.pParams->Kaijiwendu)
-		{
-			if(HCS_Struct.Status == HCS_STATUS_POWEROFF)
+		case 0:
+			/* Beep 1s to start normal */
+			//Task_Beep(1, 500, 0);
+			param++;
+		case 1:
+			if(HCS_Struct.WaterTemp.Value > HCS_Struct.pParams->Baohuowendu)
 			{
-				return 0;
+				//TODO : 提示当前温度大于保火温度  beep?
 			}
-		}
-		HCS_Struct.Status = HCS_STATUS_PREBLOW;
+			else
+			{
+				param++;
+			}
+			break;
+		case 2:
+			/* wait until temperature down to level */
+			if(HCS_Struct.WaterTemp.Value < HCS_Struct.pParams->Kaijiwendu)
+			{
+				param++;
+			}
+			HCS_Struct.Status = HCS_STATUS_PREBLOW;         //进入前吹状态
+			return 0;
 	}
-	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
-		HCS_Struct.Status = HCS_STATUS_PREBLOW;
-	
-	return 0;
+	return param;
 }
 
-//前吹状态
+//前吹状态    ******就绪****待测试******
 uint8_t HCS_SM_PreBlowing(uint8_t param)
-{
-	uint16_t tmpParams[2];
-	
+{	
 	//吹灰尘，启动鼓风机和引风机
 	//参数：鼓风前吹，引风前吹  单位:秒
+	
 	if(HCS_CheckSysError())
 	{
 		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		return 0;
 	}
-	
-	_AirBlower_Set_(HCS_Struct.pParams->Zhengchanggufeng);
-	_LeadFan_Set_(HCS_Struct.pParams->Zhengchangyinfeng);
-	tmpParams[0] = HCS_Struct.pParams->Gufengqianchui;
-	tmpParams[1] = HCS_Struct.pParams->Yinfengqianchui;
-	if(tmpParams[1] > tmpParams[0])
+	switch(param)
 	{
-		vTaskDelay(tmpParams[0] * 1000);
-		_AirBlower_Off_();
-		vTaskDelay((tmpParams[1] - tmpParams[0]) * 1000);
-		_LeadFan_Off_();
+		case 0:
+			DeviceControl_SendMsg_Set(ID_DEV_BLOWER, HCS_Struct.pParams->Zhengchanggufeng);
+			DeviceControl_SendMsg_Set(ID_DEV_LEADFAN, HCS_Struct.pParams->Zhengchangyinfeng);
+			Start_Tick = xTaskGetTickCount();
+			flag = 0;
+			param++;
+			break;
+		case 1:
+			if((!(flag & 0x1)) && ((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Gufengqianchui * 1000))
+			{
+				DeviceControl_SendMsg_Stop(ID_DEV_BLOWER);
+				flag |= 0x1;
+			}
+			if((!(flag & 0x2)) && ((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Yinfengqianchui * 1000))
+			{
+				DeviceControl_SendMsg_Stop(ID_DEV_LEADFAN);
+				flag |= 0x2;
+			}
+			if((flag & 0x3) == 0x3)
+			{
+				param++;
+			}
+			break;
+		case 2:
+			HCS_Struct.Status = HCS_STATUS_WARMEDUP;    //进入预热状态
+			return 0;
 	}
-	else
-	{
-		vTaskDelay(tmpParams[1] * 1000);
-		_LeadFan_Off_();
-		vTaskDelay((tmpParams[0] - tmpParams[1]) * 1000);
-		_AirBlower_Off_();
-	}
-	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
-		HCS_Struct.Status = HCS_STATUS_WARMEDUP;    //进入预热状态
-	
-	return 0;
+	return param;
 }
 
-//预热状态
+//预热状态  ******就绪****待测试******
 uint8_t HCS_SM_WarmedUp(uint8_t param)
-{
-	uint16_t tmpParams[2];
-	
+{	
 	//在点火前不吹风，让点火器单独运行，只启动点火
 	//参数：预热时间  单位：秒
+	
+	//流程：点火打开 -> 预热时间到 -> 点火关闭 -> 进入预料
+	
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_STANDBY;	
+		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		return 0;
 	}
-	
-	_AirBlower_Off_();
-	_LeadFan_Off_();
-	_FireUp_On_();
-	tmpParams[0] = HCS_Struct.pParams->Yinfengzhihou;
-	tmpParams[1] = HCS_Struct.pParams->Gufengzhihou;
-	if(tmpParams[1] > tmpParams[0])
+	switch(param)
 	{
-		vTaskDelay(tmpParams[0] * 1000);
-		_LeadFan_Set_(HCS_Struct.pParams->Zhengchangyinfeng);
-		vTaskDelay((tmpParams[1] - tmpParams[0]) * 1000);
-		_AirBlower_Set_(HCS_Struct.pParams->Zhengchanggufeng);
+		case 0:
+			DeviceControl_SendMsg_Run(ID_DEV_FIRE);
+			Start_Tick = xTaskGetTickCount();
+			flag = 0;
+			param++;
+			break;
+		case 1:
+			if((!(flag & 0x1) && ((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Yureshijian * 1000)))
+			{
+				DeviceControl_SendMsg_Run(ID_DEV_FIRE);
+				flag |= 0x1;
+			}
+			if((flag & 0x1) == 0x1)
+			{
+				param++;
+			}
+			break;
+		case 2:
+			HCS_Struct.Status = HCS_STATUS_PREMATERIAL;  //进入预料状态
+			return 0;
 	}
-	else
-	{
-		vTaskDelay(tmpParams[1] * 1000);
-		_AirBlower_Set_(HCS_Struct.pParams->Zhengchanggufeng);
-		vTaskDelay((tmpParams[0] - tmpParams[1]) * 1000);
-		_LeadFan_Set_(HCS_Struct.pParams->Zhengchangyinfeng);
-	}
-	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
-		HCS_Struct.Status = HCS_STATUS_PREMATERIAL;  //进入预料状态
-	return 0;
+	return param;
 }
 
-//预料状态
+//预料状态    ******就绪****待测试******
 uint8_t HCS_SM_PreMaterial(uint8_t param)
 {
 	//在点火前先进点料供点火使用，启动料机
 	//参数：预料时间  单位：秒
+	
+	//流程：送料打开 -> 预料时间到 -> 送料关闭 -> 点火
+	
 	if(HCS_CheckSysError())
 	{
 		HCS_Struct.Status = HCS_STATUS_STANDBY;
 		return 0;
 	}
-	
-	_MaterialMachine_On_();
-	vTaskDelay(HCS_Struct.pParams->Yuliaoshijian * 1000);
-	//_MaterialMachine_Off_();
-	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
-		HCS_Struct.Status = HCS_STATUS_FIREUP;    //进入点火状态
-	return 0;
+	switch(param)
+	{
+		case 0:
+			DeviceControl_SendMsg_Run(ID_DEV_FEEDER);
+			Start_Tick = xTaskGetTickCount();
+			flag = 0;
+			param++;
+			break;
+		case 1:
+			if((!(flag & 0x1)) && ((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Yuliaoshijian * 1000))
+			{
+				DeviceControl_SendMsg_Stop(ID_DEV_FEEDER);
+				flag |= 0x1;
+			}
+			if((flag & 0x1) == 0x1)
+			{
+				param++;
+			}
+			break;
+		case 2:
+			HCS_Struct.Status = HCS_STATUS_FIREUP;    //进入点火状态
+			return 0;
+	}
+	return param;
 }
 
 //点火状态
@@ -363,124 +401,177 @@ uint8_t HCS_SM_FireUp(uint8_t param)
 	//引风，鼓风度数可调 在‘点火状态’开始后滞后开启；料机在‘点火状态’结束后滞后开启
 	//参数：点火时间，引风滞后，鼓风滞后，料机滞后 单位：秒; 点火阀值 单位：摄氏度；点火间隔 单位：分钟；点火引风，点火鼓风 单位:  %
 	
-	_FireUp_On_();
-	_LeadFan_Set_(HCS_Struct.pParams->Dianhuoyinfeng);
-	_AirBlower_Set_(HCS_Struct.pParams->Dianhuogufeng);
-	i = HCS_Struct.pParams->Dianhuoshijian * 10;
-	do
+	//流程：点火打开 -> 检测点火阈值 ---> 点火关闭 -> 料机打开 -> 料机滞后时间到 -> 料机关闭 -> 进入运行状态
+	//             ↑   未达到↓    达到
+	//              <-------- -------> 再次点火再没达到就点火报警 -> 进入待机状态
+	//                未超时    超时
+	//   -> 引风打开 -> 引风滞后时间到 -> 引风关闭
+	//   -> 鼓风打开 -> 鼓风滞后时间到 -> 鼓风关闭
+	switch(param)
 	{
-		vTaskDelay(100);
-		i--;
-		if(HCS_FireUpCheck() == 0x00)
-		{
-			IsFire = 1;    //点火成功
+		case 0:
+			DeviceControl_SendMsg_Run(ID_DEV_FIRE);
+			DeviceControl_SendMsg_Set(ID_DEV_LEADFAN, HCS_Struct.pParams->Dianhuoyinfeng);
+			DeviceControl_SendMsg_Set(ID_DEV_BLOWER, HCS_Struct.pParams->Dianhuogufeng);
+			Start_Tick = xTaskGetTickCount();
+			param++;
 			break;
-		}
-	}while(i>0);
-	if((HCS_Struct.pParams->Dianhuoyuzhi != (short)0xFFFF) && (IsFire == 0))
-	{
-		//有点火阈值需要 则在来一次
-		MyBeep_Beep(1);
-		vTaskDelay(200);
-		MyBeep_Beep(0);
-		
-		i = HCS_Struct.pParams->Dianhuoshijian * 10;
-		do
-		{
-			vTaskDelay(100);
-			i--;
+		case 1:
 			if(HCS_FireUpCheck() == 0x00)
 			{
-				IsFire = 1;    //点火成功
+				param = 4;       //点火成功
 				break;
 			}
-		}while(i>0);
+			if((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Dianhuoshijian * 1000)
+			{
+				//TODO : alarm beep
+				param = 2;       //first fire time up, try it again
+				break;
+			}
+			break;
+		case 2:
+			if(HCS_FireUpCheck() == 0x00)
+			{
+				param = 4;       //点火成功
+				break;
+			}
+			if((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Dianhuoshijian * 1000)
+			{
+				//TODO : alarm beep
+				HCS_Struct.Status = HCS_STATUS_STANDBY;
+				return 0;
+				break;
+			}
+			break;
+		case 3:
+			param++;
+		case 4:
+			DeviceControl_SendMsg_Run(ID_DEV_FEEDER);
+			Start_Tick = xTaskGetTickCount();
+			param++;
+		case 5:
+			if((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Songliaozhihou * 1000)
+			{
+				DeviceControl_SendMsg_Stop(ID_DEV_FEEDER);
+				HCS_Struct.Status = HCS_STATUS_RUNNING;     //进入运行模式
+				return 0;
+			}
+			break;
 	}
-	_FireUp_Off_();
-	
-	if(!IsFire)
-	{
-		HCS_Struct.Status = HCS_STATUS_POWEROFF;  //进入关闭模式
-		//点火报警
-		MyBeep_Beep(1);
-		vTaskDelay(100);
-		MyBeep_Beep(0);
-		vTaskDelay(50);
-		MyBeep_Beep(1);
-		vTaskDelay(100);
-		MyBeep_Beep(0);
-		vTaskDelay(50);
-		MyBeep_Beep(1);
-		vTaskDelay(100);
-		MyBeep_Beep(0);
-		vTaskDelay(50);
-		//
-		return 0xFF;
-	}
-	if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
-		HCS_Struct.Status = HCS_STATUS_RUNNING;     //进入运行模式
-	return 0;
+	return param;
 }
 
-//运行状态
+//运行状态    ******就绪****待测试******
 uint8_t HCS_SM_Running(uint8_t param)
 {
 	//锅炉点着火后进料加温，料机间歇进料，鼓风，引风的进风量为正常进风量
 	//参数：进料时间，停料时间 单位：秒
+	
+	//流程：点火打开 -> 鼓风打开 -> 引风打开 -> 料机打开 -> 进料时间到 -> 料机关闭 ->停料时间到
+	//                                           ↑                                  ↓
+	//                                            ------------------------------------
+	//      高于保火温度 -> 进入保火模式
+	
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_STANDBY;
-		
+		HCS_Struct.Status = HCS_STATUS_STANDBY;	
 		return 0;
 	}
 	
-	if(HCS_Struct.WaterTemp.Value >= HCS_Struct.pParams->Baohuowendu)
+	switch(param)
 	{
-		if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
-			HCS_Struct.Status = HCS_STATUS_FIREPROTECT;  //进入保火模式
+		case 0:
+			DeviceControl_SendMsg_Run(ID_DEV_FIRE);
+			DeviceControl_SendMsg_Set(ID_DEV_BLOWER, HCS_Struct.pParams->Zhengchanggufeng);
+			DeviceControl_SendMsg_Set(ID_DEV_LEADFAN, HCS_Struct.pParams->Zhengchangyinfeng);
+			param++;
+		case 1:
+			DeviceControl_SendMsg_Run(ID_DEV_FEEDER);
+			Start_Tick = xTaskGetTickCount();
+		case 2:
+			if(HCS_Struct.WaterTemp.Value >= HCS_Struct.pParams->Baohuowendu)
+			{
+				HCS_Struct.Status = HCS_STATUS_FIREPROTECT;  //进入保火模式
+				return 0;
+			}
+			if((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Jinliaoshijian * 1000)
+			{
+				param = 3;
+			}
+			break;
+		case 3:
+			DeviceControl_SendMsg_Stop(ID_DEV_FEEDER);
+			Start_Tick = xTaskGetTickCount();
+		case 4:
+			if(HCS_Struct.WaterTemp.Value >= HCS_Struct.pParams->Baohuowendu)
+			{
+				HCS_Struct.Status = HCS_STATUS_FIREPROTECT;  //进入保火模式
+				return 0;
+			}
+			if((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Tingliaoshijian * 1000)
+			{
+				param = 1;
+			}
 	}
-	
-	_AirBlower_Set_(HCS_Struct.pParams->Zhengchanggufeng);
-	_LeadFan_Set_(HCS_Struct.pParams->Zhengchangyinfeng);
-	_FireUp_On_();
-	_MaterialMachine_On_();
-	vTaskDelay(HCS_Struct.pParams->Jinliaoshijian * 1000);
-	_MaterialMachine_Off_();
-	vTaskDelay(HCS_Struct.pParams->Tingliaoshijian * 1000);
-	
-	return 0;
+	return param;
 }
 
-//保火状态
+//保火状态    ******就绪****待测试******
 uint8_t HCS_SM_FireProtection(uint8_t param)
 {
 	//锅炉到达保火温度转为保火状态
 	//温度重新下降到开机温度重新进入运行状态，一直循环到关机状态
+	
+	//流程：点火关闭 -> 鼓风打开 -> 引风打开 -> 料机打开 -> 进料时间到 -> 料机关闭 ->停料时间到
+	//                 （保火）    （保火）       ↑                                  ↓
+	//                                            ------------------------------------
+	//      低于保火温度 -> 进入运行模式
+	
 	if(HCS_CheckSysError())
 	{
-		HCS_Struct.Status = HCS_STATUS_STANDBY;
-		
+		HCS_Struct.Status = HCS_STATUS_STANDBY;	
 		return 0;
 	}
 	
-	if(HCS_Struct.WaterTemp.Value <= HCS_Struct.pParams->Baohuowendu)
+	switch(param)
 	{
-		if((HCS_Struct.Status != HCS_STATUS_POWEROFF) && (HCS_Struct.Status != HCS_STATUS_STANDBY))
-			HCS_Struct.Status = HCS_STATUS_RUNNING;      //回到运行模式
+		case 0:
+			DeviceControl_SendMsg_Stop(ID_DEV_FIRE);
+			DeviceControl_SendMsg_Set(ID_DEV_BLOWER, HCS_Struct.pParams->Baohuogufeng);
+			DeviceControl_SendMsg_Set(ID_DEV_LEADFAN, HCS_Struct.pParams->Baohuoyinfeng);
+			param++;
+		case 1:
+			DeviceControl_SendMsg_Run(ID_DEV_FEEDER);
+			Start_Tick = xTaskGetTickCount();
+		case 2:
+			if(HCS_Struct.WaterTemp.Value < HCS_Struct.pParams->Baohuowendu)
+			{
+				HCS_Struct.Status = HCS_STATUS_RUNNING;  //进入运行模式
+				return 0;
+			}
+			if((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Baohuosongliao * 1000)
+			{
+				param = 3;
+			}
+			break;
+		case 3:
+			DeviceControl_SendMsg_Stop(ID_DEV_FEEDER);
+			Start_Tick = xTaskGetTickCount();
+		case 4:
+			if(HCS_Struct.WaterTemp.Value < HCS_Struct.pParams->Baohuowendu)
+			{
+				HCS_Struct.Status = HCS_STATUS_RUNNING;  //进入运行模式
+				return 0;
+			}
+			if((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Baohuotingliao * 1000)
+			{
+				param = 1;
+			}
 	}
-	
-	_AirBlower_Set_(HCS_Struct.pParams->Baohuogufeng);
-	_LeadFan_Set_(HCS_Struct.pParams->Baohuoyinfeng);
-	_FireUp_Off_();
-	_MaterialMachine_On_();
-	vTaskDelay(HCS_Struct.pParams->Baohuosongliao * 1000);
-	_MaterialMachine_Off_();
-	vTaskDelay(HCS_Struct.pParams->Baohuotingliao * 1000);
-	
-	return 0;
+	return param;
 }
 
-//暂停状态
+//暂停状态  *****暂时不支持******
 uint8_t HCS_SM_Suspend(uint8_t param)
 {
 	//当水温达到‘停机温度’，料机停，鼓风，引风（度数为保火度数）在后吹延时完成后停
@@ -496,59 +587,90 @@ uint8_t HCS_SM_Suspend(uint8_t param)
 	return 0;
 }
 
+//开机
+uint8_t HCS_SM_PowerOn(uint8_t param)
+{
+	return 0;
+}
+
 //关闭状态
 uint8_t HCS_SM_PowerOff(uint8_t param)
 {
-	uint16_t tmpParams[2];
-	
+	return 0;
+}
+
+//停止  ******就绪****待测试*******
+uint8_t HCS_SM_Stopping(uint8_t param)
+{	
 	//按开关键关闭，锅炉关闭，料机、点火关闭，鼓风、引风在后吹延时完成后停止，再次进入待机界面
 	//参数：鼓风后吹，引风后吹  单位：秒
 	//关闭状态下才触发防冻功能
 	
-	_FireUp_Off_();
-	//_WaterPump_Off_();
-	_MaterialMachine_Off_();
+	//流程：送料关闭 -> 点火关闭 ↓
+	//                          -> 鼓风打开 -> 鼓风时间到 -> 鼓风关闭
+	//                          -> 引风打开 -> 引风时间到 -> 引风关闭
+	//                                                               -> 进入待机界面
 	
-	tmpParams[0] = HCS_Struct.pParams->Gufenghouchui;
-	tmpParams[1] = HCS_Struct.pParams->Yinfenghouchui;
-	if(HCS_Struct.pParams->Gufenghouchui > HCS_Struct.pParams->Yinfenghouchui)
+	switch(param)
 	{
-		vTaskDelay(HCS_Struct.pParams->Yinfenghouchui * 1000);
-		_LeadFan_Off_();
-		vTaskDelay((HCS_Struct.pParams->Gufenghouchui - HCS_Struct.pParams->Yinfenghouchui) * 1000);
-		_AirBlower_Off_();
-	}
-	else
-	{
-		vTaskDelay(HCS_Struct.pParams->Gufenghouchui * 1000);
-		_AirBlower_Off_();
-		vTaskDelay((HCS_Struct.pParams->Yinfenghouchui - HCS_Struct.pParams->Gufenghouchui) * 1000);
-		_LeadFan_Off_();
-	}
-	
-	//等待开启
-	while(1)
-	{
-		if(HCS_Struct.Status != HCS_STATUS_POWEROFF)
-		{
+		case 0:
+			DeviceControl_SendMsg_Stop(ID_DEV_FEEDER);
+			DeviceControl_SendMsg_Stop(ID_DEV_FIRE);
+			param++;
+		case 1:
+			DeviceControl_SendMsg_Set(ID_DEV_LEADFAN, HCS_Struct.pParams->Zhengchanggufeng);
+			DeviceControl_SendMsg_Set(ID_DEV_BLOWER, HCS_Struct.pParams->Zhengchangyinfeng);
+			flag = 0;
+			param++;
 			break;
-		}
-		//防冻功能
-		//定时开机
-		CslRTC_GetTime(&HCS_Time);
-		if(HCS_Time.Hou == HCS_Struct.pParams->Dinshikaiji / 60)
-		{
-			if(HCS_Time.Min == HCS_Struct.pParams->Dinshikaiji % 60)
+		case 2:
+			if((!(flag & 0x1)) && ((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Gufenghouchui * 1000))
 			{
-				HCS_Struct.Status = HCS_STATUS_STANDBY;
-				CsLCD_DisplayControl(0);
-				CslLCD_BLK(1);
+				DeviceControl_SendMsg_Stop(ID_DEV_BLOWER);
+				flag |= 0x1;
 			}
-		}
-		vTaskDelay(100);
+			if((!(flag & 0x2)) && ((xTaskGetTickCount() - Start_Tick) > HCS_Struct.pParams->Yinfenghouchui * 1000))
+			{
+				DeviceControl_SendMsg_Stop(ID_DEV_LEADFAN);
+				flag |= 0x2;
+			}
+			if((flag & 0x3) == 0x3)
+			{
+				param++;
+			}
+			break;
+		case 3:
+			HCS_Struct.Status = HCS_STATUS_STANDBY;
+			return 0;
 	}
-	
-	return 0;
+	return param;
+
+//	//等待开启
+//	while(1)
+//	{
+//		if(HCS_Struct.Status != HCS_STATUS_POWEROFF)
+//		{
+//			break;
+//		}
+//		//防冻功能
+//		//定时开机
+//		CslRTC_GetTime(&HCS_Time);
+//		if(HCS_Struct.pParams->Dinshikaiji >= 0)
+//		{
+//			if(HCS_Time.Hou == HCS_Struct.pParams->Dinshikaiji / 60)
+//			{
+//				if(HCS_Time.Min == HCS_Struct.pParams->Dinshikaiji % 60)
+//				{
+//					HCS_Struct.Status = HCS_STATUS_STANDBY;
+//					CsLCD_DisplayControl(0);
+//					CslLCD_BLK(1);
+//				}
+//			}
+//		}
+//		vTaskDelay(100);
+//	}
+//	
+//	return 0;
 }
 
 //Test

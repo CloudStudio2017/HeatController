@@ -11,6 +11,7 @@
 #define CONFIG1_KEY_LEFT_INDEX   5
 #define CONFIG1_KEY_RIGHT_INDEX  6
 
+static char ui_FrmConfig1_Str_Yureshijian[]     = "00:00";
 static char ui_FrmConfig1_Str_Yuliaoshijian[]   = "00:00";
 static char ui_FrmConfig1_Str_Dianhuoshijian[]  = "00:00";
 static char ui_FrmConfig1_Str_Jinliaoshijian[]  = "00:00";
@@ -297,12 +298,34 @@ void ui_FrmConfig1_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 				SysParam_ValueLimitTime16(&SysParam.Yinfenghouchui);
 				break;
 			case 10:
-				SysParam.Dinshikaiji += IncValue;
-				SysParam_ValueLimit24Hour(&SysParam.Dinshikaiji);
+				if(SysParam.Dinshikaiji >= 0)
+				{
+					SysParam.Dinshikaiji += IncValue;
+					if((SysParam.Dinshikaiji >= (24*60)) || (SysParam.Dinshikaiji < 0))
+						SysParam.Dinshikaiji = -1;
+				}
+				else
+				{
+					if(IncValue > 0)
+						SysParam.Dinshikaiji = 0;
+					else
+						SysParam.Dinshikaiji = 24 * 60 - 1;
+				}
 				break;
 			case 11:
-				SysParam.Dinshiguanji += IncValue;
-				SysParam_ValueLimit24Hour(&SysParam.Dinshiguanji);
+				if(SysParam.Dinshiguanji >= 0)
+				{
+					SysParam.Dinshiguanji += IncValue;
+					if((SysParam.Dinshiguanji >= (24*60)) || (SysParam.Dinshiguanji < 0))
+						SysParam.Dinshiguanji = -1;
+				}
+				else
+				{
+					if(IncValue > 0)
+						SysParam.Dinshiguanji = 0;
+					else
+						SysParam.Dinshiguanji = 24 * 60 - 1;
+				}
 				break;
 			case 12:
 				CslRTC_GetDate(&tmpDate);
@@ -389,8 +412,26 @@ void ui_FrmConfig1_UpdateEdit(uint8_t Cursor, int8_t IncValue)
 		case 7: sprintf(ui_FrmConfig1_Str_Baohuowendu, "%03d", SysParam.Baohuowendu);	break;
 		case 8: sprintf(ui_FrmConfig1_Str_Gufenghouchui, "%02d:%02d", SysParam.Gufenghouchui / 60, SysParam.Gufenghouchui % 60);	break;
 		case 9: sprintf(ui_FrmConfig1_Str_Yinfenghouchui, "%02d:%02d", SysParam.Yinfenghouchui / 60, SysParam.Yinfenghouchui % 60);	break;
-		case 10: sprintf(ui_FrmConfig1_Str_Dinshikaiji, "%02d:%02d", SysParam.Dinshikaiji / 60, SysParam.Dinshikaiji % 60);	break;
-		case 11: sprintf(ui_FrmConfig1_Str_Dinshiguanji, "%02d:%02d", SysParam.Dinshiguanji / 60, SysParam.Dinshiguanji % 60);	break;
+		case 10:
+			if(SysParam.Dinshikaiji >= 0)
+			{
+				sprintf(ui_FrmConfig1_Str_Dinshikaiji, "%02d:%02d", SysParam.Dinshikaiji / 60, SysParam.Dinshikaiji % 60);
+			}
+			else
+			{
+				sprintf(ui_FrmConfig1_Str_Dinshikaiji, "--:--");    //"Din shi kai ji" is not avaliable
+			}
+			break;
+		case 11:
+			if(SysParam.Dinshiguanji >= 0)
+			{
+				sprintf(ui_FrmConfig1_Str_Dinshiguanji, "%02d:%02d", SysParam.Dinshiguanji / 60, SysParam.Dinshiguanji % 60);
+			}
+			else
+			{
+				sprintf(ui_FrmConfig1_Str_Dinshiguanji, "--:--");   //"Din shi guan ji" is not avaliable
+			}
+			break;
 		case 12: CslRTC_GetDate(&tmpDate); sprintf(ui_FrmConfig1_Str_Year, "%4d", tmpDate.Year); break;
 		case 13: CslRTC_GetDate(&tmpDate); sprintf(ui_FrmConfig1_Str_Month, "%2d", tmpDate.Month); break;
 		case 14: CslRTC_GetDate(&tmpDate); sprintf(ui_FrmConfig1_Str_Date, "%2d", tmpDate.Date); break;
@@ -432,7 +473,7 @@ void ui_FrmConfig1_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
 	{
 		case BUTTON_STATUS_RELEASE:
 		case BUTTON_STATUS_HOLD:
-			ui_FrmConfig1_UpdateEdit(ui_FrmConfig1_Cursor, -1);
+			ui_FrmConfig1_UpdateEdit(ui_FrmConfig1_Cursor, +1);
 			ui_FrmConfig1_EditUpdateFlag = 1;
 			ui_FrmConfig1_Modified = 1;
 			break;
@@ -445,7 +486,7 @@ void ui_FrmConfig1_KeyProcess_Right(uint8_t BtnHandle, uint8_t BtnState)
 	{
 		case BUTTON_STATUS_RELEASE:
 		case BUTTON_STATUS_HOLD:
-			ui_FrmConfig1_UpdateEdit(ui_FrmConfig1_Cursor, +1);
+			ui_FrmConfig1_UpdateEdit(ui_FrmConfig1_Cursor, -1);
 			ui_FrmConfig1_EditUpdateFlag = 1;
 			ui_FrmConfig1_Modified = 1;
 			break;

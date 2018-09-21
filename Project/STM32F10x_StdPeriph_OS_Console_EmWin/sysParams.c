@@ -44,6 +44,7 @@ void SysParam_SaveToFlash(void)
 
 void SysParam_LoadDefaultSettings(void)
 {
+	SysParam.Yureshijian        = 2;
 	SysParam.Yuliaoshijian      = 2;
 	SysParam.Dianhuoshijian     = 3;
 	SysParam.Jinliaoshijian     = 2;
@@ -69,8 +70,8 @@ void SysParam_LoadDefaultSettings(void)
 	SysParam.Baohuoyinfeng      = 80;
 	SysParam.Baohuogufeng       = 80;
 	
-	SysParam.PT100_X100         = 600;
-	SysParam.PT100_X138_5       = 3000;
+	SysParam.PT100_X100         =   76;
+	SysParam.PT100_X138_5       = 3700;
 }
 
 void SysParam_ValueLimitTime16(signed short *pValue)
