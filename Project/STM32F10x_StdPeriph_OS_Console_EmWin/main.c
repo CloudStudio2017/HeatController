@@ -30,6 +30,7 @@
 #include "Task_UI.h"
 #include "Task_Control.h"
 #include "Task_KeyBoard.h"
+#include "Task_Beep.h"
 #include "Task_Common.h"
 #include "FlashControl.h"
 
@@ -68,10 +69,11 @@ int main(void)
 	
 	FlashControl_Init();
 	
+	Task_Beep_Init();
 	xTaskCreate(vTask_Console, "Task_Console", 1024, NULL, tskIDLE_PRIORITY, NULL);
-	xTaskCreate(vTask_UI, "Task_UI", 1024, NULL, tskIDLE_PRIORITY, NULL);
+	xTaskCreate(vTask_UI, "Task_UI", 1524, NULL, tskIDLE_PRIORITY, NULL);
 	xTaskCreate(vTask_Control, "Task_Control", 1024, NULL, tskIDLE_PRIORITY, NULL);
-	xTaskCreate(vTask_KeyBoard, "Task_KeyBoard", 1024, NULL, tskIDLE_PRIORITY, NULL);
+	xTaskCreate(vTask_KeyBoard, "Task_KeyBoard", 256, NULL, tskIDLE_PRIORITY, NULL);
 
 	vTaskStartScheduler();
   /* Infinite loop */

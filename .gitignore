@@ -57,3 +57,6 @@ Libraries/emWin/Tool/*.c
 Libraries/emWin/Tool/*.txt
 !Libraries/emWin/Lib/*
 !Libraries/emWin/Lib/ARM/*
+
+Project/STM32F10x_StdPeriph_OS_Console_EmWin/MDK-ARM/Project.uvguix.*
+Project/STM32F10x_StdPeriph_OS_Console_EmWin/MDK-ARM/Project.uvoptx

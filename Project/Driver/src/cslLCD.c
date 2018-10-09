@@ -197,7 +197,7 @@ void CslLCD_Init(void)
 	Delay(120);
 	CSL_LCD_WriteComm(0x29);
 	
-	CslLCD_BLK(1);
+	CslLCD_BLK(0);
 }
 
 void BlockWrite(unsigned int Xstart, unsigned int Xend, unsigned int Ystart, unsigned int Yend)

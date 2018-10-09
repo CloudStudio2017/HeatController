@@ -36,6 +36,7 @@ extern const unsigned char xBmpData_Kaijiwendu[];
 extern const unsigned char xBmpData_Tingliaoshijian[];
 extern const unsigned char xBmpData_Yinfenghouchui[];
 extern const unsigned char xBmpData_Yuliaoshijian[];
+extern const unsigned char xBmpData_Yureshijian[];
 
 extern const unsigned char xBmpData_Gufengqianchui[];
 extern const unsigned char xBmpData_Yinfengqianchui[];

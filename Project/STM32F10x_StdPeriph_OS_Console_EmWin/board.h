@@ -175,9 +175,9 @@
 	#define _BUTTON_DOWN_GPIO         GPIOC
 	#define _BUTTON_DOWN_PIN          GPIO_Pin_4
 	#define _BUTTON_POWER_GPIO        GPIOD
-	#define _BUTTON_POWER_PIN         GPIO_Pin_12
+	#define _BUTTON_POWER_PIN         GPIO_Pin_13
 	#define _BUTTON_SWITCH_GPIO       GPIOD
-	#define _BUTTON_SWITCH_PIN        GPIO_Pin_13
+	#define _BUTTON_SWITCH_PIN        GPIO_Pin_12
 
 	#define _OUT_RL1_GPIO              GPIOC
 	#define _OUT_RL1_PIN               GPIO_Pin_6

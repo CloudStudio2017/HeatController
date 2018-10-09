@@ -6,7 +6,7 @@
 #include "HeatControlSys.h"
 #include "cslADC.h"
 
-#define TEST_KEY_POWERSWITCH_INDEX 0
+#define TEST_KEY_SYSSWITCH_INDEX 0
 #define TEST_KEY_SET_INDEX    2
 #define TEST_KEY_UP_INDEX     3
 #define TEST_KEY_DOWN_INDEX   4
@@ -111,7 +111,7 @@ void ui_FrmTest_Process(void)
 	MyButton_ReLinkCallBack(TEST_KEY_DOWN_INDEX, ui_FrmTest_KeyProcess_Down);
 	MyButton_ReLinkCallBack(TEST_KEY_LEFT_INDEX, ui_FrmTest_KeyProcess_Left);
 	MyButton_ReLinkCallBack(TEST_KEY_RIGHT_INDEX, ui_FrmTest_KeyProcess_Right);
-	MyButton_ReLinkCallBack(TEST_KEY_POWERSWITCH_INDEX, ui_FrmTest_KeyProcess_Switch);
+	MyButton_ReLinkCallBack(TEST_KEY_SYSSWITCH_INDEX, ui_FrmTest_KeyProcess_Switch);
 	
 	ui_FrmTest_Flag_PT100 = 0;
 	
@@ -285,7 +285,7 @@ void ui_FrmTest_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
 	{
 		case BUTTON_STATUS_RELEASE:
 		case BUTTON_STATUS_HOLD:
-			ui_FrmTest_UpdateEditAndExcute(ui_FrmTest_Cursor, -1);
+			ui_FrmTest_UpdateEditAndExcute(ui_FrmTest_Cursor, +1);
 			ui_FrmTest_EditUpdateFlag = 1;
 			break;
 	}
@@ -297,7 +297,7 @@ void ui_FrmTest_KeyProcess_Right(uint8_t BtnHandle, uint8_t BtnState)
 	{
 		case BUTTON_STATUS_RELEASE:
 		case BUTTON_STATUS_HOLD:
-			ui_FrmTest_UpdateEditAndExcute(ui_FrmTest_Cursor, +1);
+			ui_FrmTest_UpdateEditAndExcute(ui_FrmTest_Cursor, -1);
 			ui_FrmTest_EditUpdateFlag = 1;
 			break;
 	}
@@ -320,7 +320,7 @@ void ui_FrmTest_KeyProcess_Set(uint8_t BtnHandle, uint8_t BtnState)
 			MyButton_ReLinkCallBack(TEST_KEY_DOWN_INDEX, NULL);
 			MyButton_ReLinkCallBack(TEST_KEY_LEFT_INDEX, NULL);
 			MyButton_ReLinkCallBack(TEST_KEY_RIGHT_INDEX, NULL);
-			MyButton_ReLinkCallBack(TEST_KEY_POWERSWITCH_INDEX, NULL);
+			MyButton_ReLinkCallBack(TEST_KEY_SYSSWITCH_INDEX, NULL);
 			break;
 	}
 }

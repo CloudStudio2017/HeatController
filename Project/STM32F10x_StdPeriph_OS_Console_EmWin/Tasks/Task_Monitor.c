@@ -13,6 +13,71 @@
 
 extern CslIOCtrl_RegTypeDef IO_Queliao;
 
+static uint8_t monitor_sim_mode = 1;
+
+void monitor_simulator(void)
+{
+	static int sim_count = 0;
+	static TickType_t last_tick;
+	static uint8_t mode = 0;
+	
+	switch(HCS_Struct.Status)
+	{
+		case HCS_STATUS_STANDBY:
+			HCS_Struct.MaterialLow = 0;
+			HCS_Struct.StoveTemp.Flag = 0;
+			HCS_Struct.StoveTemp.Value = 10;
+			HCS_Struct.WaterTemp.Flag = 0;
+			HCS_Struct.WaterTemp.Value = 10;
+			break;
+		case HCS_STATUS_STARTUP:
+		case HCS_STATUS_PREBLOW:
+		case HCS_STATUS_PREMATERIAL:
+		case HCS_STATUS_WARMEDUP:
+			break;
+		case HCS_STATUS_FIREUP:
+			HCS_Struct.StoveTemp.Value += 10;
+			break;
+		case HCS_STATUS_RUNNING:
+			if(mode != 2)
+			{
+				sim_count++;
+				if(sim_count > 10)
+				{
+					mode = 2;
+					sim_count = 0;
+				}
+			}
+			break;
+		case HCS_STATUS_FIREPROTECT:
+			if(mode != 1)
+			{
+				sim_count++;
+				if(sim_count > 10)
+				{
+					mode = 1;
+					sim_count = 0;
+				}
+			}
+			break;
+		case HCS_STATUS_POWEROFF:
+		case HCS_STATUS_STOPPING:
+		case HCS_STATUS_TEST:
+			break;
+	}
+	switch(mode)
+	{
+		case 1:    // water temperature failling
+			HCS_Struct.WaterTemp.Value -= 1;
+			break;
+		case 2:    // water temperature rising
+			HCS_Struct.WaterTemp.Value += 1;
+			break;
+		default:
+			break;
+	}
+	vTaskDelay(200);
+}
 
 void vTask_Monitor( void *pvParameters )
 {
@@ -22,6 +87,12 @@ void vTask_Monitor( void *pvParameters )
 	
 	while(1)
 	{
+		if(monitor_sim_mode)
+		{
+			/* simulator mode for monitor process */
+			monitor_simulator();
+			continue;
+		}
 		/* Get Mat low */
 		if(GPIO_ReadInputDataBit(MONITOR_MAT_LOW_GPIO, MONITOR_MAT_LOW_PIN) == RESET)
 		{

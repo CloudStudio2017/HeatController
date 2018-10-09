@@ -331,7 +331,7 @@ void ui_FrmConfig2_KeyProcess_Left(uint8_t BtnHandle, uint8_t BtnState)
 	{
 		case BUTTON_STATUS_RELEASE:
 		case BUTTON_STATUS_HOLD:
-			ui_FrmConfig2_UpdateEdit(ui_FrmConfig2_Cursor, -1);
+			ui_FrmConfig2_UpdateEdit(ui_FrmConfig2_Cursor, +1);
 			ui_FrmConfig2_EditUpdateFlag = 1;
 			ui_FrmConfig2_Modified = 1;
 			break;
@@ -344,7 +344,7 @@ void ui_FrmConfig2_KeyProcess_Right(uint8_t BtnHandle, uint8_t BtnState)
 	{
 		case BUTTON_STATUS_RELEASE:
 		case BUTTON_STATUS_HOLD:
-			ui_FrmConfig2_UpdateEdit(ui_FrmConfig2_Cursor, +1);
+			ui_FrmConfig2_UpdateEdit(ui_FrmConfig2_Cursor, -1);
 			ui_FrmConfig2_EditUpdateFlag = 1;
 			ui_FrmConfig2_Modified = 1;
 			break;
